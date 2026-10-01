@@ -9,7 +9,8 @@ results/
 /AGENTS.md
 .local-history/
 .DS_Store
-data/
-datasets/
-ml/
+# Anchor recording directories to the root; agfl/datasets/ is source code.
+/data/
+/datasets/
+/ml/
 *.gdf
