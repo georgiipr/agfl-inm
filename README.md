@@ -110,66 +110,6 @@ Each selected classifier is evaluated across all declared availability condition
 without retraining for individual masks. Configuration details and interpretation
 limits are in [the experiment protocol](docs/experiment.md).
 
-## Launch with Slurm
-
-Slurm job files are managed outside this repository. Keep the latest launcher
-in `cluster-jobs/AGFL-inm/run_inm.sbatch`, beside the project checkout, and update
-that file in place. Copy it separately to the cluster when needed.
-
-Activate the environment and set `AGFL_INM_VENV` as above. From the repository
-root on the cluster, inspect the task mapping and submit the external launcher:
-
-```bash
-python run.py --config configs/study.json --plan
-export AGFL_INM_JOB_FILE="../cluster-jobs/AGFL-inm/run_inm.sbatch"
-sbatch "$AGFL_INM_JOB_FILE"
-```
-
-Set `AGFL_INM_JOB_FILE` to the launcher's actual cluster location. Submit from
-the repository root: the launcher uses `SLURM_SUBMIT_DIR` as its working directory.
-
-The external launcher uses array tasks `0–26`, with at most two concurrent tasks.
-Each task requests one GPU, four CPUs, 16 GB RAM, and 24 hours. Task index
-`3 * (participant_number - 1) + seed` identifies the participant/seed pair.
-The time limit is a resource request, not a measured runtime.
-
-The default Slurm partition is `gpu`. Override resource settings for your site,
-for example:
-
-```bash
-sbatch --partition=YOUR_GPU_PARTITION --array=0-26%1 "$AGFL_INM_JOB_FILE"
-```
-
-For a fresh clone without an external job file, the same resource layout can be
-submitted directly from the repository root after setting `AGFL_INM_VENV`:
-
-```bash
-sbatch --job-name=agfl-inm --partition=gpu --gpus=1 \
-  --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=16G --time=24:00:00 \
-  --array=0-26%2 --output='agfl-inm-%A_%a.log' --export=ALL --chdir="$PWD" \
-  --wrap='
-export PYTHONUNBUFFERED=1 MPLBACKEND=Agg CUBLAS_WORKSPACE_CONFIG=:4096:8
-export OMP_NUM_THREADS="$SLURM_CPUS_PER_TASK" MKL_NUM_THREADS="$SLURM_CPUS_PER_TASK"
-srun "$AGFL_INM_VENV/bin/python" run.py --config configs/study.json \
-  --task-index "$SLURM_ARRAY_TASK_ID"
-'
-```
-
-Submit one of these commands for a given output directory. Monitor the job ID
-returned by `sbatch`:
-
-```bash
-squeue -j JOB_ID
-tail -n 40 agfl-inm-JOB_ID_0.log
-```
-
-Resubmit an interrupted task with, for example,
-`sbatch --array=8 "$AGFL_INM_JOB_FILE"`. For direct submission, replace the array
-argument with `--array=8` in the command above.
-Completed matching fits are reused; an interrupted classifier fit restarts.
-Keep source, environment, and configuration fixed during a study. Use a new
-`output_dir` for changed experiments to preserve their separate identities.
-
 ## Reports and plots
 
 Reports refresh after classifier fits. Start with
