@@ -1,10 +1,10 @@
 # Declared experiment and reporting
 
-The current schema-2 study reduces the attention matrix to MHA and Performer.
-Its output is `results/inm-v2`; previous studies retain their own configuration
-and results. The participant cohort, three seeds, EEGNet-derived encoder,
-splits, calibration and evaluation-mask design are unchanged. Signal Transformer
-remains available in the model library and is outside this experiment matrix.
+The supplied study compares MHA and Performer with an EEGNet-derived encoder
+for nine participants and three seeds. Its output directory is configured in
+`configs/study.json` (default: `results/inm-v2`). Signal Transformer is available
+in the model library and is outside this experiment matrix. Dataset download
+and launch instructions are in the [README](../README.md).
 
 ## Cohort and splits
 
@@ -21,7 +21,7 @@ samples at 250 Hz. Artifact-flagged, boundary-crossing and unusable/nonfinite
 trials are excluded consistently for every arm. Saved data metadata includes
 source checksums, excluded counts and remaining class counts.
 
-Each 250-sample window is independently filtered with the existing fourth-order
+Each 250-sample window is independently filtered with a fourth-order
 2–30 Hz Butterworth SOS zero-phase routine. No filter padding, convolution or
 per-trial normalization may bring a hidden window into an observed one. This
 offline processing is not causal and the short-window boundaries can affect

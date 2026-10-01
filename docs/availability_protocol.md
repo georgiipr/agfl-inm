@@ -116,6 +116,5 @@ a reproducible way to measure whether it helps.
 
 The implementation is in `inm/availability.py`. Public helpers are
 `make_mask_bank`, `training_mask_bank`, `evaluation_scenarios`,
-`availability_metadata`, `subset_partition` and `mask_bank_digest`. No tests,
-training or model inference were run locally; numerical and runtime behavior
-remain to be validated on the cluster.
+`availability_metadata`, `subset_partition` and `mask_bank_digest`.
+See the [README](../README.md) for dataset setup and cluster launch instructions.

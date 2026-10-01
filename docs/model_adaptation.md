@@ -2,19 +2,17 @@
 
 ## Purpose and scope
 
-The new experiment compares spatial attention on EEGNet-derived features with
+The experiment compares spatial attention on EEGNet-derived features with
 and without a tensor representation under controlled electrode unavailability.
-This is not a reproduction of standard EEGNet or the older AGFL project's
-`spatial_fusion` architecture. Their full-channel spatial convolution cannot be
-applied before simulated channel removal without mixing unavailable signals
-into the remaining channels.
+Its channel-local encoder differs from standard EEGNet and the model library's
+`spatial_fusion` architecture. A full-channel spatial convolution before masking
+would mix unavailable signals into the remaining channels.
 
 `inm/model.py` is the complete reviewable model implementation. The three
 convolution blocks reproduce the channel-local path in the retained
 `agfl/models/eegnet/backbone.py`. MHA and Performer are imported from
-`agfl/attention/`. MHA is standard scaled dot-product attention; the retired
-bias/gate branches have been removed. Performer retains its random-feature
-implementation.
+`agfl/attention/`. MHA uses standard scaled dot-product attention; Performer
+uses its positive random-feature approximation.
 
 ## Shared encoder
 
@@ -39,7 +37,7 @@ only, select its epoch with validation data, and freeze it once per subject
 and seed. Discard the pretraining classifier. All later attention and tensor
 arms receive the identical frozen feature values. This is a deliberate
 departure from the proposal's fixed spectral features: it preserves the
-requested EEGNet feature family, but does not establish that the results
+EEGNet feature family, but does not establish that the results
 would hold for the proposal's spectral encoder. MHA-based pretraining is a
 shared feature-source choice and should be disclosed because it may favor
 MHA. It is not evidence that any tensor/attention method improves end-to-end
@@ -92,7 +90,7 @@ learned reconstruction method.
 
 Classifier initialization is paired across attention methods within a
 representation: common parameters are created before attention modules, and
-the upstream attention factory isolates its random draws. Different
+the attention factory isolates its random draws. Different
 representations intentionally have different shapes and parameter budgets.
-Neither accuracy improvement nor successful runtime has been established by
-local execution; the implementation is prepared for cluster validation.
+Report measured accuracy and runtime from the configured experiment;
+architecture alone does not establish an improvement.

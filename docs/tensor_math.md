@@ -92,9 +92,9 @@ input feature dtype.
 ## Fitting factors on training data only
 
 For the current subject and seed, use only that subject's designated training
-trials and training masks. The user-selected protocol is individual-subject
-training across nine subjects, replacing the proposal's subject-disjoint folds.
-The initial experiment fits one common factor pair from **full-channel training
+trials and training masks. The protocol trains nine subjects individually,
+using within-subject partitions rather than subject-disjoint folds.
+The supplied experiment fits one common factor pair from **full-channel training
 features** and reuses it for the full-availability and mixed-availability
 classifier-training regimes, and for the core and completion routes. This is
 a known-sensor calibration assumption: all 22 electrodes are observed during
@@ -173,8 +173,7 @@ completed_features = tucker.complete(available_features, availability_mask)
 Shapes are `[B,C,P,F]` for features, `[B,C,P]` for boolean masks, and `[B,Rc,P,Rf]`
 for cores. Optional `epochs`, `lr`, and `batch_size` keyword arguments to `fit`
 override its constructor fitting defaults. Save and restore the state dictionary
-with the same constructor ranks/ridge settings. These examples are documentation;
-no project code or experiments were executed locally.
+with the same constructor ranks/ridge settings.
 
 ## Interpretation limits
 

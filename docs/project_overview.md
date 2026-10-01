@@ -41,11 +41,8 @@ This does not simulate training an encoder from permanently absent channels.
 
 ## Proposal mapping
 
-The supplied PDF and same-name DOCX are preserved in `references/`; the readable
-extraction was made from the DOCX. `references/upstream_snapshot.json` records
-the upstream identities of retained source files. The full pre-cleanup source,
-configuration, documentation and hash manifests are preserved in
-`references/pre-cleanup-v1.tar.gz`. The EEG experiment lives in `inm/`.
+The research proposal is available in `references/` as PDF, DOCX and extracted
+text. The EEG experiment is implemented in `inm/`.
 
 | Proposal element | This implementation |
 |---|---|
@@ -53,19 +50,18 @@ configuration, documentation and hash manifests are preserved in
 | Shared Tucker-2 channel/feature factors | Implemented; frozen train-only fit with exact masked ridge core solves |
 | Core and observed-preserving completion routes | Both implemented |
 | Masked reconstruction objective | Implemented in standalone tensor module; this study calibrates once on full training inputs |
-| Fixed spectral features | Adapted to frozen EEGNet-derived window features to satisfy the requested backbone |
-| Subject-disjoint folds | Replaced, at the user's direction, by individual training for all nine subjects |
+| Fixed spectral features | Frozen EEGNet-derived window features |
+| Subject-disjoint folds | Individual training and within-participant splits for all nine subjects |
 | Temporal position embeddings | Not included: spatial attention per window, followed by order-invariant window averaging |
 | Baseline attention comparisons | MHA and Performer |
 | Bottleneck/mean-imputation controls | MHA separable linear core and training-mean completion |
 | Availability varying between training/evaluation | Full vs mixed classifier-training regimes; held-out masks/count/patterns |
 
-These are explicit adaptations, not an exact reproduction of the proposal or
-standard EEGNet. In particular, changing window filtering and freezing an adapted
-encoder means the absolute scores cannot be compared directly with earlier
-AGFL/EEGNet experiments as though only the attention changed.
+These are explicit adaptations of the proposal and EEGNet. Window-local
+filtering and a frozen encoder are part of the experimental design; comparisons
+with other EEGNet protocols must account for those differences.
 
-## What this first experiment can establish
+## Scope of the experiment
 
 - Whether frozen Tucker core inference helps each attention under the specified
   channel losses, and at what cost on full inputs.
@@ -96,8 +92,7 @@ matrix are not a multiple-comparison-corrected confirmatory claim.
 | `inm/plots.py` | Optional figures from saved tables, no checkpoint inference |
 | `agfl/` | Maintained EEG library: two models, two attentions, data/split and optimization helpers |
 
-The original project is not needed at runtime. Experimental changes can be
-removed by setting aside this separate folder; the original code is untouched.
+The repository is self-contained and does not import from another checkout.
 
 ## Maintained scope
 
@@ -113,13 +108,10 @@ The availability experiment has its own channel/window-local encoder in
 experiment would require an explicit window-local adaptation and a new declared
 comparison. The retained full-trial model library is not used as a masked encoder.
 
-The former generic training CLI, tuning, study-specific analysis, checkpoint
-replay, presets and visualization tree have been removed from active source.
-`inm/reporting.py` and `inm/plots.py` own the current reports and plots.
-Temporal kernels and dynamic masks remain; temporal-attention workflows do not.
+`run.py` is the experiment entry point. `inm/reporting.py` and `inm/plots.py`
+produce the reports and optional plots. Temporal kernels and dynamic masks are
+part of the EEG pipeline; attention operates spatially within each window.
 
-The pre-cleanup archive contains the former source tree, study settings,
-documentation and complete upstream/project hash manifests. It is provenance,
-not an importable package or a second active protocol. The current project hash
-manifest covers the maintained files and the archive checksum. The original
-proposal documents remain preserved separately.
+Each study records its configuration, source and package identities, input-data
+checksums, splits and calibration state in its output directory. Keep these
+artifacts with the results when archiving or sharing an experiment.

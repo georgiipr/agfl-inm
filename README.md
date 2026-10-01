@@ -1,203 +1,197 @@
-# AGFL-inm: EEGNet features, tensor attention and missing EEG channels
+# AGFL-inm
 
-This is a separate research project built from the existing AGFL codebase and
-`Proposal_Tensor_Attention_Variable_Signal_Availability`. It measures whether
-training-fitted Tucker-2 representations improve classification when electrode
-availability changes. It does **not** assume an accuracy improvement.
+EEG classification under changing channel availability, comparing spatial
+**MHA** and **Performer** with baseline features and training-fitted **Tucker-2**
+representations.
 
-All nine BCI Competition IV 2a participants are trained **individually**. The
-supplied Slurm job performs the complete experiment; no tests or training were
-run while preparing this project. The original AGFL project is not modified.
+The model library contains **EEGNet** and **Signal Transformer**, with attention
+selected separately. The supplied experiment uses a shared, frozen
+EEGNet-derived window encoder; Signal Transformer is available in the library
+but is not part of this experiment matrix. Attention operates across electrodes
+or latent spatial components within each window. Temporal convolutions and
+dynamic availability masks are supported; attention is not applied across time.
 
-The maintained model library contains **EEGNet** and **Signal Transformer**, with
-**MHA** and **Performer** selected independently. The supplied experiment still
-uses the EEGNet-derived window encoder; Signal Transformer is retained as a model
-implementation and is not added to this study's matrix.
-
-## Start here
-
-- [Project goals and proposal mapping](docs/project_overview.md).
-- [Mathematical apparatus and Tucker-2 API](docs/tensor_math.md).
-- [Standalone tensor/hypermatrix implementation](inm/tensor_attention.py).
-- [EEGNet adaptation and representation controls](docs/model_adaptation.md).
-- [Channel-availability protocol](docs/availability_protocol.md).
-- [Experimental protocol, outputs and interpretation](docs/experiment.md).
-- [Complete configuration](configs/study.json) and [Slurm launcher](run_inm.sbatch).
-
-“Tensor” and “hypermatrix” mean the same multidimensional array here. The tested
-intervention is the learned Tucker-2 factorization and masked core inference,
-not two unrelated mechanisms bearing those names.
-
-## What runs
-
-| Setting | Default |
-|---|---|
-| Participants | A01–A09, trained separately |
-| Seeds | 0, 1, 2 |
-| Input | 22 EEG channels; four 1-second windows per cue trial |
-| Dataset files | `../ml/A01T.gdf` through `../ml/A09T.gdf` |
-| Split | Within each participant's T session: stratified 60% train / 20% validation / 20% test |
-| Backbone | Shared, frozen EEGNet-derived channel-local window encoder |
-| Attention | MHA, Performer |
-| Primary routes | Baseline and Tucker-2 core for each attention |
-| MHA controls | Tucker completion, separable linear core, training-mean completion |
-| Classifier availability training | Full channels; mixed channel availability |
-| Evaluation | Full channels; static random/spatial and dynamic random/spatial losses |
-| Channels retained | 22, 16, 11, 6 |
-| Mask repeats | Five per degraded condition; one full-input condition |
-
-There are **14 classifier fits per subject/seed, 378 classifier fits total**,
-plus 27 shared encoder fits and 27 factor fits. Each selected classifier is
-evaluated on 13 conditions on both validation and held-out test data; it is
-**not retrained for every evaluation mask**. Six retained electrodes means
-72.73% exclusion, the largest whole-channel removal that does not exceed 75%.
-
-The encoder and factors first receive full-channel **training calibration**.
-`full` and `mixed` describe subsequent classifier training. Attention operates
-spatially within each window; there is no temporal attention for EEG. Core
-tokens are latent channel components, not named brain regions.
-
-The old temporal-attention studies, replay branches, presets and plotting
-commands have been removed. Temporal convolutions still encode each EEG window,
-and dynamic channel availability still changes between windows. These operations
-do not introduce attention across time. `run.py` is the experiment entry point;
-`agfl/` now supplies library code rather than a second experiment CLI.
-
-This reduced matrix uses schema version 2 and `results/inm-v2`. Earlier source,
-configuration and provenance manifests are preserved in
-`references/pre-cleanup-v1.tar.gz`. Existing results are not deleted or relabeled.
-
-## Upload from the Mac
-
-Run this in your Mac terminal after stopping writers using this project's source.
-The first transfer removes retired files **only inside this project's `agfl/`
-source directory**. The second uploads the rest without deleting cluster results:
+## Get the project
 
 ```bash
-rsync -av --delete --progress /Users/egor/Downloads/AGFL-inm/agfl/ \
-  georgii.promyslov@10.5.1.1:/trinity/home/georgii.promyslov/AGFL-inm/agfl/
-
-rsync -av --progress --exclude='results/' --exclude='*.log' \
-  --exclude='.venv/' --exclude='__pycache__/' \
-  /Users/egor/Downloads/AGFL-inm/ \
-  georgii.promyslov@10.5.1.1:/trinity/home/georgii.promyslov/AGFL-inm/
+git clone https://github.com/georgiipr/agfl-inm.git
+cd agfl-inm
 ```
 
-The destination is a sibling of your existing `AGFL` and `ml` folders. The
-project is self-contained; it does not import from the other AGFL checkout.
-It uses the existing Python **3.12+** environment and existing AGFL dependencies.
-No package installation, pytest invocation or preflight training is in the job.
-`requirements.txt` records the already-used packages, not a new install step.
+Run the commands below from the repository root on the experiment machine.
 
-## Submit on the cluster
+## Python environment
 
-Working directory: `/trinity/home/georgii.promyslov/AGFL-inm`.
-Dataset directory: `/trinity/home/georgii.promyslov/ml` by default.
-Output directory: `AGFL-inm/results/inm-v2`.
+Use **Python 3.12 or newer**, a CUDA-capable GPU, and the packages listed in
+[requirements.txt](requirements.txt). On a cluster, reuse an existing compatible
+Python virtual environment with CUDA-enabled PyTorch:
 
 ```bash
-cd /trinity/home/georgii.promyslov/AGFL-inm
+export AGFL_INM_VENV=/path/to/your/venv
+source "$AGFL_INM_VENV/bin/activate"
+```
+
+If you need to provision a separate environment, install the listed dependencies
+in a virtual environment on the experiment machine:
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+export AGFL_INM_VENV="$PWD/.venv"
+```
+
+Use a PyTorch build compatible with the cluster's GPU drivers. Optional plots
+also require Matplotlib 3.8 or newer, below version 4. The Slurm launcher installs
+nothing and does not require pytest. It activates `AGFL_INM_VENV`, falling back
+to `$HOME/.venv` if that variable is unset.
+
+## Dataset: BCI Competition IV, data set 2a
+
+The dataset contains nine participants performing four motor-imagery tasks:
+left hand, right hand, both feet, and tongue. Recordings contain 22 EEG channels
+at 250 Hz, plus three EOG channels that this project excludes from classifier
+inputs. See the [official dataset description](https://www.bbci.de/competition/iv/desc_2a.pdf).
+
+1. Open the [official competition download page](https://www.bbci.de/competition/iv/#download),
+   review the dataset terms and citation requirements, and follow the download
+   link for **Data sets 2a: GDF files zipped**.
+2. Extract the archive. This configuration requires the nine training-session
+   recordings named **`A01T.gdf` through `A09T.gdf`**, with their original names.
+3. Put those files directly in a directory named `ml` beside the repository:
+
+   ```text
+   workspace/
+   ├── agfl-inm/
+   │   ├── run.py
+   │   └── configs/study.json
+   └── ml/
+       ├── A01T.gdf
+       ├── A02T.gdf
+       ├── ...
+       └── A09T.gdf
+   ```
+
+   Create the directory with `mkdir -p ../ml` from the repository root, then
+   copy the extracted GDF files into it. Keep recordings outside version control.
+4. For a different location, set `data.data_dir` in
+   [configs/study.json](configs/study.json) before submission. The default is
+   `../ml`; relative paths are resolved from the directory where you launch.
+
+Use the GDF release rather than a converted MATLAB/NPZ dataset. Labels for the
+T-session files are read from their cue events. The supplied study does not need
+`A01E.gdf`–`A09E.gdf` or separate evaluation-label files.
+
+**Evaluation protocol:** each participant's T session is split into approximately
+60% training, 20% validation and 20% test trials, stratified by class. This is a
+within-session, participant-specific experiment; it does not implement the
+competition's train-on-T/test-on-E benchmark. Training statistics and Tucker
+factors use training data only; full-input validation selects epochs.
+
+## Experiment configuration
+
+| Setting | Supplied configuration |
+|---|---|
+| Participants and seeds | A01–A09 trained individually; seeds 0, 1, 2 |
+| Input | 22 EEG channels; four 250-sample windows per trial |
+| Encoder | Shared, frozen EEGNet-derived window encoder |
+| Attention | MHA and Performer |
+| Main representations | Baseline and Tucker-2 core |
+| Additional MHA controls | Tensor completion, separable linear core, mean completion |
+| Classifier training | Full availability and mixed availability |
+| Evaluation | Full input; static/dynamic random and spatial channel loss |
+| Retained channels | 22, 16, 11, 6 |
+| Repeated masks | Five per degraded condition; one full-input condition |
+| Output directory | `results/inm-v2` |
+
+There are **27 participant/seed tasks**, each fitting one shared encoder, one
+Tucker factor pair, and **14 classifiers**: **378 classifier fits** in total.
+Each selected classifier is evaluated across all declared availability conditions
+without retraining for individual masks. Configuration details and interpretation
+limits are in [the experiment protocol](docs/experiment.md).
+
+## Launch with Slurm
+
+Activate the environment and set `AGFL_INM_VENV` as above. From the repository
+root on the cluster, inspect the declared task mapping and submit:
+
+```bash
+python run.py --config configs/study.json --plan
 sbatch run_inm.sbatch
 ```
 
-The array has tasks 0–26, at most two running concurrently. Each task requests
-one GPU, four CPUs, 16 GB RAM and 24 hours. Task `3*(subject-1)+seed` runs that
-participant/seed combination and its 14 classifiers. Actual duration is unknown
-until cluster execution; the time limit is a resource request, not a prediction.
-The launcher activates `$HOME/.venv`. If needed, set `AGFL_INM_VENV` to the existing
-environment directory before submission. Edit `data.data_dir` in
-`configs/study.json` before submission if the GDF folder is elsewhere.
+The supplied launcher uses array tasks `0–26`, with at most two concurrent tasks.
+Each task requests one GPU, four CPUs, 16 GB RAM, and 24 hours. Task index
+`3 * (participant_number - 1) + seed` identifies the participant/seed pair.
+The time limit is a resource request, not a measured runtime.
 
-For one concurrent GPU allocation instead, submit the same experiment as:
+The default Slurm partition is `gpu`. Override resource settings for your site,
+for example:
 
 ```bash
-sbatch --array=0-26%1 run_inm.sbatch
+sbatch --partition=YOUR_GPU_PARTITION --array=0-26%1 run_inm.sbatch
 ```
 
-This changes concurrency only. Do not submit both commands for the same output
-folder simultaneously. For a longer permitted allocation, an `sbatch --time=...`
-override avoids changing the source file while a study is in progress.
-
-## Progress and interrupted jobs
-
-`sbatch` prints the job ID. For example, replace `JOBID` below with that number:
+Submit one of these commands for a given output directory. Monitor the job ID
+returned by `sbatch`:
 
 ```bash
-squeue -j JOBID
-tail -n 40 agfl-inm-JOBID_0.log
+squeue -j JOB_ID
+tail -n 40 agfl-inm-JOB_ID_0.log
 ```
 
-Logs show stage/fit transitions and full-input test accuracy after each completed
-fit. Epoch progress uses a progress bar when a terminal is available; batch logs
-avoid per-epoch console spam. Epoch histories remain in `artifacts/`.
+Resubmit an interrupted task with, for example, `sbatch --array=8 run_inm.sbatch`.
+Completed matching fits are reused; an interrupted classifier fit restarts.
+Keep source, environment, and configuration fixed during a study. Use a new
+`output_dir` for changed experiments to preserve their separate identities.
 
-Resubmitting `sbatch run_inm.sbatch` reuses **only completed fits with matching
-code, configuration, environment, input-data, split and calibration identities**.
-An interrupted classifier fit restarts; completed fits are retained. To resubmit
-only task 8, for example:
+## Reports and plots
 
-```bash
-sbatch --array=8 run_inm.sbatch
-```
+Reports refresh after classifier fits. Start with
+`results/inm-v2/report/summary.md`. Individual completed runs appear in
+`accuracy_by_run.csv`; all-participant averages remain blank until their required
+fits are complete. `paired_tensor_gain.csv` contains matched tensor-minus-baseline
+comparisons.
 
-Do not modify code/configuration during a running study. Changed scientific code,
-packages or settings require a new `output_dir`, such as `results/inm-v3`; old
-scores will not silently count toward the new experiment. Documentation-only
-edits do not change its identity.
-
-## Accuracy tables and diagnostics
-
-Reports refresh automatically after fits. Download only `report/`, which contains
-the tables, progress/errors, data summary and source/configuration manifest:
+Rebuild reports from saved results on the experiment machine:
 
 ```bash
-rsync -av --progress \
-  georgii.promyslov@10.5.1.1:/trinity/home/georgii.promyslov/AGFL-inm/results/inm-v2/report/ \
-  /Users/egor/Downloads/AGFL-inm-report/
-```
-
-Open `summary.md` first. `accuracy_by_run.csv` shows completed runs even while
-other jobs are pending. `accuracy_table.csv` contains nine-subject averages;
-these stay blank until all required subjects/seeds are complete.
-`paired_tensor_gain.csv` answers whether Tucker improves the same attention
-under matched conditions. See [output definitions](docs/experiment.md).
-
-If you want to rebuild the saved-results summary on the cluster, no GPU job is
-needed:
-
-```bash
-cd /trinity/home/georgii.promyslov/AGFL-inm
-source "$HOME/.venv/bin/activate"
 python run.py --config configs/study.json --summarize-only
 ```
 
-This reads saved results; it does not train or evaluate models. There is no
-separate checkpoint-diagnostic command: selected classifier weights stay in
-memory, all declared evaluation conditions are scored automatically, and the
-stored per-class metrics/errors/histories provide the diagnostics. Shared encoder,
-features, normalization and tensor-factor state are retained in `artifacts/`
-for provenance and restart, separate from the downloadable report.
-
-## Optional plots — separate command
-
-After the needed groups have completed, use the already available AGFL plotting
-environment on the cluster:
+Generate the optional PNG/PDF availability curves, MHA-control comparisons, and
+paired-gain plots:
 
 ```bash
-cd /trinity/home/georgii.promyslov/AGFL-inm
-source "$HOME/.venv/bin/activate"
 python run.py --config configs/study.json --summarize-only --plots
 ```
 
-This uses the existing optional Matplotlib dependency; nothing installs a library.
-It writes PNG/PDF curves and paired-gain figures to `report/plots/` and a
-`report/plots_status.json` manifest. Incomplete figure groups are skipped with
-an explicit reason. The main `.sbatch` run needs no plotting dependency.
-Repeat the separate download command above to fetch changed reports and plots.
+Figures are saved under `results/inm-v2/report/plots/`. The accompanying
+`plots_status.json` explains any figure groups skipped because results are
+incomplete. These commands read saved results; they do not retrain models.
+The plotting environment must already contain Matplotlib.
 
-## Verification status
+To copy reports from a cluster, replace the account, host and remote project
+location in this example:
 
-Preparation includes static Python/configuration/shell checks and code review.
-No project imports, tests, model inference, training, Slurm submission or numerical
-validation were executed locally. Runtime behavior and measured gains remain
-unverified until you run the cluster experiment.
+```bash
+rsync -av --progress \
+  USER@HOST:/path/to/agfl-inm/results/inm-v2/report/ \
+  ./downloaded-report/
+```
+
+Keep `artifacts/` with the study for calibration state, splits, histories and
+per-fit records. Selected classifier weights are evaluated in memory and are
+not saved as separate checkpoints. Reports preserve unfavorable results and
+explicitly mark incomplete comparisons.
+
+## Project map
+
+- [Project overview](docs/project_overview.md): research question and implementation map.
+- [Model adaptation](docs/model_adaptation.md): encoder, representations and masking.
+- [Tensor mathematics](docs/tensor_math.md): Tucker-2 fitting and masked core inference.
+- [Availability protocol](docs/availability_protocol.md): deterministic outage masks.
+- [Experiment protocol](docs/experiment.md): splits, selection, aggregation and outputs.
+- `agfl/`: EEG model, attention, data and optimization helpers.
+- `inm/`: experiment implementation, reports and optional plots.
+- `references/`: research proposal documents.
