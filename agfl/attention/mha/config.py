@@ -1,0 +1,1 @@
+DEFAULTS = {'heads': 4}
