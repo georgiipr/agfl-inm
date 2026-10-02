@@ -1,0 +1,12 @@
+{
+  "extends": "study.json",
+  "name": "debug_eegnet_three_subjects_v3",
+  "subjects": [1, 2, 3],
+  "seeds": [0],
+  "models": ["eegnet"],
+  "training": {"epochs": 12, "minimum_epochs": 12, "warmup_epochs": 1, "patience": 0},
+  "tensor": {"fit_epochs": 3},
+  "mask_repeats": 1,
+  "bootstrap_repeats": 200,
+  "output_dir": "results/inm-v3-debug"
+}

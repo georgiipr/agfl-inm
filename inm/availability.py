@@ -32,7 +32,6 @@ CHANNEL_COORDINATES = {
     "POz": (0.0, -3.0),
 }
 RETAINED_COUNTS = (22, 16, 11, 6)
-TRAINING_RETAINED_COUNTS = (22, 16, 6)
 DEGRADED_PATTERNS = (
     "random_static", "spatial_static", "dynamic_random", "dynamic_spatial",
 )
@@ -84,7 +83,7 @@ def _validate_windows(n_windows: int, dynamic: bool = False) -> None:
 def subset_partition(observed: np.ndarray, channel_ids: Iterable[str] = CHANNEL_IDS) -> str:
     """Canonical allocation of a nonfull channel subset to one data partition.
 
-    Hashing original IDs (rather than a trial/attention seed) guarantees that a
+    Hashing original IDs (rather than a trial/model seed) guarantees that a
     particular subset cannot occur in two partitions, even across loss patterns.
     """
     ids = _channel_ids(channel_ids)
@@ -175,9 +174,9 @@ def make_mask_bank(
     sample_ids: Iterable[object] | None = None,
     channel_ids: Iterable[str] = CHANNEL_IDS,
 ) -> np.ndarray:
-    """Create a deterministic evaluation/fit bank, shape [N,22,P], dtype bool.
+    """Create a deterministic evaluation bank, shape [N,22,P], dtype bool.
 
-    Seed keys deliberately exclude attention name and tensor representation.
+    Seed keys deliberately exclude model name and tensor variant.
     Supply stable original-trial IDs to remain invariant to trial reordering.
     Nonfull subsets are disjoint across train/validation/test partitions.
     """
@@ -197,41 +196,6 @@ def make_mask_bank(
             int(seed), str(subject), partition, pattern, int(retained), int(repeat), trial
         ))
         bank[row] = _trial_mask(n_windows, retained, pattern, rng, partition, ids)
-    return bank
-
-
-def training_mask_bank(
-    n_trials: int,
-    n_windows: int,
-    regime: str = "mixed",
-    seed: int = 0,
-    epoch: int = 0,
-    subject: str = "",
-    sample_ids: Iterable[object] | None = None,
-    channel_ids: Iterable[str] = CHANNEL_IDS,
-) -> np.ndarray:
-    """Per-epoch masks shared by all comparison arms, with no 11-channel examples.
-
-    Mixed: retain 22/16/6 uniformly per trial. At 16 or 6, choose random_static
-    versus dynamic_random uniformly. Spatial patterns are evaluation-only.
-    """
-    if regime not in ("full", "mixed"):
-        raise ValueError("training regime must be 'full' or 'mixed'")
-    ids = _channel_ids(channel_ids)
-    trials = _sample_ids(n_trials, sample_ids)
-    _validate_windows(n_windows, dynamic=regime == "mixed")
-    if regime == "full":
-        return np.ones((n_trials, 22, n_windows), dtype=bool)
-    bank = np.empty((n_trials, 22, n_windows), dtype=bool)
-    for row, trial in enumerate(trials):
-        rng = np.random.default_rng(_stable_seed(
-            int(seed), str(subject), "train", "epoch", int(epoch), trial
-        ))
-        retained = TRAINING_RETAINED_COUNTS[int(rng.integers(3))]
-        pattern = "full" if retained == 22 else (
-            "random_static" if int(rng.integers(2)) == 0 else "dynamic_random"
-        )
-        bank[row] = _trial_mask(n_windows, retained, pattern, rng, "train", ids)
     return bank
 
 
@@ -264,9 +228,9 @@ def availability_metadata() -> dict[str, object]:
         "coordinate_interpretation": "fixed schematic 10-20 projection, not measured anatomy",
         "retained_counts": list(RETAINED_COUNTS),
         "missing_percent": {str(k): 100.0 * (22 - k) / 22 for k in RETAINED_COUNTS},
-        "training_retained_counts": list(TRAINING_RETAINED_COUNTS),
-        "training_patterns": ["full", "random_static", "dynamic_random"],
-        "evaluation_only": {"retained_count": 11, "patterns": ["spatial_static", "dynamic_spatial"]},
+        "training_retained_counts": [22],
+        "training_patterns": ["full"],
+        "evaluation_only": {"retained_counts": [16, 11, 6], "patterns": list(DEGRADED_PATTERNS)},
         "dynamic_schedule": "A for [0,P//3), B for [P//3,2*P//3), A thereafter",
         "dynamic_count": "exactly k observed electrodes in every window",
         "partition_disjointness": "canonical subset SHA256 modulo 3; full mask is shared exception",

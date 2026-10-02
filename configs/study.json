@@ -1,27 +1,12 @@
 {
-  "schema_version": 2,
-  "name": "eegnet_tensor_availability_v2",
-  "subjects": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9
-  ],
-  "seeds": [
-    0,
-    1,
-    2
-  ],
+  "schema_version": 3,
+  "name": "four_models_channel_availability_v3",
+  "subjects": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "seeds": [0, 1, 2],
+  "models": ["eegnet", "eegnet_tensor", "signal_transformer", "signal_transformer_tensor"],
   "data": {
     "data_dir": "../ml",
-    "sessions": [
-      "T"
-    ],
+    "sessions": ["T"],
     "labels_dir": null,
     "artifact_policy": "exclude",
     "normalization": "train_channel",
@@ -32,90 +17,30 @@
     "lowcut": 2.0,
     "highcut": 30.0
   },
-  "split": {
-    "protocol": "stratified",
-    "train": 0.6,
-    "validation": 0.2,
-    "test": 0.2
-  },
-  "encoder": {
-    "channels": 22,
-    "windows": 4,
-    "window_samples": 250,
-    "f1": 16,
-    "d": 2,
-    "f2": 32,
-    "kernel_length": 32,
-    "pool1": 8,
-    "pool2": 16,
-    "dropout": 0.5
-  },
-  "classifier": {
-    "num_classes": 4,
-    "dim": 32,
-    "heads": 4,
-    "depth": 1,
-    "dropout": 0.1
-  },
+  "split": {"protocol": "stratified", "train": 0.6, "validation": 0.2, "test": 0.2},
+  "model_options": {"eegnet": {}, "signal_transformer": {}},
   "training": {
-    "encoder": {
-      "epochs": 250,
-      "batch_size": 32,
-      "learning_rate": 0.001,
-      "weight_decay": 0.0001,
-      "loss": "cross_entropy",
-      "focal_gamma": 2.0,
-      "class_weights": false,
-      "warmup_epochs": 10,
-      "gradient_clip": 1.0,
-      "patience": 50,
-      "minimum_epochs": 75
-    },
-    "classifier": {
-      "epochs": 250,
-      "batch_size": 32,
-      "learning_rate": 0.001,
-      "weight_decay": 0.0001,
-      "loss": "cross_entropy",
-      "focal_gamma": 2.0,
-      "class_weights": false,
-      "warmup_epochs": 10,
-      "gradient_clip": 1.0,
-      "patience": 50,
-      "minimum_epochs": 75
-    }
+    "epochs": 250,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "loss": "cross_entropy",
+    "focal_gamma": 2.0,
+    "class_weights": false,
+    "warmup_epochs": 10,
+    "gradient_clip": 1.0,
+    "patience": 50,
+    "minimum_epochs": 75
   },
   "tensor": {
     "rank_channels": 4,
-    "rank_features": 4,
+    "rank_features": 16,
     "ridge": 0.001,
     "fit_epochs": 30,
     "fit_lr": 0.01,
     "fit_batch_size": 64
   },
-  "attentions": {
-    "mha": {
-      "heads": 4
-    },
-    "performer": {
-      "heads": 4,
-      "random_features": 64
-    }
-  },
-  "representations": [
-    "baseline",
-    "tensor_core"
-  ],
-  "mha_controls": [
-    "tensor_completion",
-    "linear_core",
-    "mean_completion"
-  ],
-  "regimes": [
-    "full",
-    "mixed"
-  ],
   "mask_repeats": 5,
   "bootstrap_repeats": 2000,
-  "output_dir": "results/inm-v2"
+  "output_dir": "results/inm-v3"
 }

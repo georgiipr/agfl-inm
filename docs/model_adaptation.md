@@ -1,96 +1,64 @@
-# EEGNet feature and attention adaptation
+# Four models with built-in MHA
 
-## Purpose and scope
+The concrete classes are `EEGNet`, `EEGNetTensor`, `SignalTransformer` and
+`SignalTransformerTensor`, in `eeg_models/models/`. Use `build_model(model_key,
+metadata, model_options, window_samples=250, tensor_options=...)` to construct
+one of these models. There is no attention argument, attention registry or
+attention factory. MHA uses four heads directly in each backbone.
 
-The experiment compares spatial attention on EEGNet-derived features with
-and without a tensor representation under controlled electrode unavailability.
-Its channel-local encoder differs from standard EEGNet and the model library's
-`spatial_fusion` architecture. A full-channel spatial convolution before masking
-would mix unavailable signals into the remaining channels.
+## EEGNet
 
-`inm/model.py` is the complete reviewable model implementation. The three
-convolution blocks reproduce the channel-local path in the retained
-`agfl/models/eegnet/backbone.py`. MHA and Performer are imported from
-`agfl/attention/`. MHA uses standard scaled dot-product attention; Performer
-uses its positive random-feature approximation.
+A full trial `[B,22,1000]` enters EEGNet's temporal convolution and BatchNorm.
+The `[B,16,22,1000]` result gives 22 electrode tokens at each time step. Sensor
+identity and built-in MHA mix those tokens, with a residual connection. The
+result enters the full 22-channel depthwise spatial filter, ELU and pooling,
+then the separable temporal convolution, pooling and flattened classifier.
+All seven final pooled time bins remain ordered. There is no parallel classifier
+branch, independent-window head or frozen channel-local encoder.
 
-## Shared encoder
+Defaults are temporal kernel 125, F1=16, depth multiplier 2, F2=32, pooling 8/16,
+dropout 0.5, and max norms 1.0 for the spatial convolution and 0.25 for the
+classifier. MHA operates before the depthwise spatial filter. Accuracy must be
+measured under the declared training, artifact, filtering and selection protocol.
 
-An input trial has 22 channels and 1,000 samples. Split each channel into four
-nonoverlapping 250-sample windows **before** convolution. Apply shared temporal
-convolution (16 filters, kernel 32), a grouped 1-by-1 expansion (depth multiplier
-2), and separable temporal convolution (32 output filters, kernel 16). Pooling
-factors 8 then 16 leave one sample per window and therefore 32 features. The
-result is `X[B,22,4,32]`. There is no convolution across electrodes or across
-window boundaries. The 1-by-1 expansion is not standard EEGNet's full-head
-spatial convolution.
+## Signal Transformer
 
-For a raw availability mask `M[B,22,4]`, `torch.where(M, raw, 0)` runs before
-the first convolution; the output of each missing window is zeroed again.
-This also blocks hidden NaNs, unlike multiplication by zero. BatchNorm uses
-shared statistics while fitting the all-observed encoder, then frozen training
-statistics during feature extraction. No validation/test BatchNorm updates
-are permitted.
+A shared per-electrode temporal convolution (kernel 15), GELU, eight ordered
+adaptive temporal bins and projection produce one 64-dimensional token per
+original electrode. Two residual blocks each contain LayerNorm, fixed MHA and
+an MLP. Final LayerNorm and learned signed spatial readout feed the classifier.
+Temporal bin order remains in the tokenizer; attention mixes electrodes rather
+than time positions. The tokenizer and every classifier layer are trained end
+to end, independently of EEGNet.
 
-Fit the shared encoder with an MHA spatial classifier using training labels
-only, select its epoch with validation data, and freeze it once per subject
-and seed. Discard the pretraining classifier. All later attention and tensor
-arms receive the identical frozen feature values. This is a deliberate
-departure from the proposal's fixed spectral features: it preserves the
-EEGNet feature family, but does not establish that the results
-would hold for the proposal's spectral encoder. MHA-based pretraining is a
-shared feature-source choice and should be disclosed because it may favor
-MHA. It is not evidence that any tensor/attention method improves end-to-end
-standard EEGNet.
+## Masks and tensor variants
 
-## Spatial classification and masking
+Every `forward(raw, mask)` accepts raw `[B,C,T]` signals and Boolean `[B,C,P]`
+availability. `SignalInput` uses selection before any convolution or arithmetic
+on hidden entries. Missing normalized samples become zero in baseline models,
+which is the training-channel mean. The channel axis always has 22 original
+sensor positions; it is never physically shortened or renumbered.
 
-Each window is processed independently. Baseline tokens have shape
-`[B*4,22,32]`. A tensor core has shape `[B,Rc,4,Rf]`, giving `Rc` tokens per
-window; these are **latent spatial components, not anatomical regions or
-electrodes**. Tensor completion reconstructs 22 electrode tokens instead.
-Every classifier uses a 32-dimensional projection, learned node identities,
-one residual attention/FFN block by default, layer normalization and a linear
-four-class head. The default is four attention heads. No temporal attention
-or time-position bias is used. Available windows are averaged at readout.
+Tensor variants use Tucker-2 to complete only missing signal windows before the
+same backbone. The signal tensor is `[B,22,4,250]`: channels and within-window
+samples have training-fitted factors; the four window positions stay ordered.
+Factors are frozen buffers. No classifier parameters are frozen. Full-channel
+training/validation bypass completion exactly, preserving every signal sample.
+Paired models use matched initialization and batch order; the tensor intervention
+therefore targets inference under missing inputs, not full-channel compression.
 
-All attention families receive (1) the full 22-element observed-channel mask
-for that window and (2) each electrode's observed flag, or the observed-channel
-fraction for a latent core token. Baseline missing tokens use learned
-placeholders and are excluded from the final spatial mean. They can still
-participate in attention, with their unavailable status explicitly encoded.
-This is a common **mask-conditioned fixed-token control**, not an exact
-softmax key-padding mask. This convention applies to both MHA and Performer
-and must be reported.
+Both variants retain the original mask for MHA keys. EEGNet excludes unavailable
+electrodes at each time sample. Signal Transformer excludes an electrode key
+only if it is absent throughout the trial; partially observed channels retain
+their masked/completed temporal token. Inferred channels can still contribute
+through queries, residual paths and the backbone's spatial readout. There is no
+extra availability embedding or trainable representation adapter. Existing
+sensor identities inside the architectures are retained.
 
-Tensor/mean completion pools both observed and imputed electrode tokens while
-retaining original observation flags. Tensor/linear cores pool latent tokens.
-Completely absent windows are rejected in every arm; each declared mask retains
-at least six electrodes in every window. Those readout changes are part of each declared
-representation, not hidden attention-specific changes.
+Filtering is independent in each availability window before masking, so an
+observed interval cannot contain filtered hidden-interval information. Temporal
+convolutions run across the entire masked/completed trial; their neighbors are
+observations, zero placeholders or estimates, never hidden reference samples.
+Train-only channel normalization is shared by both backbones and variants.
 
-## Controls and interpretation
-
-- **Baseline:** measured features plus learned missing placeholders; no tensor.
-- **Tensor core:** frozen training-only Tucker factors and masked core inference;
-  attention over the latent spatial components.
-- **Tensor completion:** the same factors reconstruct missing entries, while
-  preserving observed values exactly; attention remains over electrodes.
-- **Linear core:** supervised trainable channel/feature bottlenecks with the
-  same core dimensions, without a reconstruction objective.
-- **Mean completion:** fill missing channel-feature entries with the training
-  mean, retain observed values and flags, and attend over electrodes.
-
-The baseline and tensor core use both attention methods. Completion,
-linear-core and mean-completion controls use MHA. Report parameter counts and
-representation sizes; equal token/feature dimensions do not imply equal
-parameter counts or training objectives. If normalization makes training means
-nearly zero, report that rather than interpreting mean fill as a distinct
-learned reconstruction method.
-
-Classifier initialization is paired across attention methods within a
-representation: common parameters are created before attention modules, and
-the attention factory isolates its random draws. Different
-representations intentionally have different shapes and parameter budgets.
-Report measured accuracy and runtime from the configured experiment;
-architecture alone does not establish an improvement.
+See [tensor mathematics](tensor_math.md) and [experiment protocol](experiment.md).

@@ -1,25 +1,29 @@
-"""AGFL-inm cluster entry point. Local execution is not part of preparation."""
+"""Entry point for the four-model channel-availability study."""
 from __future__ import annotations
 import argparse
-from inm.protocol import arms, load_config, tasks
+from inm.protocol import load_config, models, tasks
 
 
 def main():
-    parser = argparse.ArgumentParser(description='EEGNet-derived tensor/availability study')
+    parser = argparse.ArgumentParser(description='EEGNet / Signal Transformer, each with and without tensors; built-in MHA')
     parser.add_argument('--config', default='configs/study.json')
-    parser.add_argument('--plots', action='store_true', help='Optional saved-table plots with --summarize-only')
+    parser.add_argument('--plots', action='store_true', help='Saved-table plots with --summarize-only')
     operation = parser.add_mutually_exclusive_group(required=True)
-    operation.add_argument('--task-index', type=int, help='Subject/seed task, 0..26 for the supplied study')
+    operation.add_argument('--task-index', type=int, help='Participant/seed task; each trains the configured models once')
+    operation.add_argument('--task-count', action='store_true', help='Print the declared participant/seed task count')
     operation.add_argument('--summarize-only', action='store_true')
-    operation.add_argument('--plan', action='store_true', help='Print the declared array tasks without training')
+    operation.add_argument('--plan', action='store_true', help='Print the declared models and tasks without training')
     args = parser.parse_args()
     if args.plots and not args.summarize_only:
         parser.error('--plots is used with --summarize-only after results are available')
     cfg = load_config(args.config)
-    if args.plan:
+    if args.task_count:
+        print(len(tasks(cfg)))
+    elif args.plan:
+        print('Models: ' + ', '.join(cfg['models']))
         for index, (subject, seed) in enumerate(tasks(cfg)):
-            print(f'{index}: A{subject:02d}, seed={seed}, classifier fits={len(arms(cfg))}')
-        print(f'Total classifier fits: {len(tasks(cfg)) * len(arms(cfg))}')
+            print(f'{index}: A{subject:02d}, seed={seed}, model runs={len(models(cfg))}')
+        print(f'Total model runs: {len(tasks(cfg)) * len(models(cfg))}; train on 22 channels once per run')
     elif args.summarize_only:
         from inm.study import summarize_existing
         result = summarize_existing(cfg)

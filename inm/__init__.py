@@ -1,1 +1,1 @@
-"""Independent tensor-assisted EEG availability study."""
+"""Four-model, participant-specific EEG channel-availability experiment."""

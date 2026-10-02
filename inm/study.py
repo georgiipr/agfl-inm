@@ -1,6 +1,5 @@
-"""Cluster experiment: shared training calibration, paired availability arms."""
+"""Train each full-trial model once; sweep availability after epoch selection."""
 from __future__ import annotations
-import copy
 import fcntl
 import hashlib
 import os
@@ -9,15 +8,15 @@ import time
 import traceback
 import numpy as np
 import torch
-from agfl.datasets.splits import get_split
-from agfl.reproducibility import seed_everything
-from agfl.storage import run_directory
+from eeg_models.datasets.splits import get_split
+from eeg_models.models import build_model
+from eeg_models.reproducibility import seed_everything
+from eeg_models.storage import run_directory
 from .availability import (CHANNEL_IDS, availability_metadata, evaluation_scenarios,
-                           make_mask_bank, mask_bank_digest, training_mask_bank)
+                           make_mask_bank, mask_bank_digest)
 from .data import load_subject
-from .model import EEGWindowEncoder, EEGPretrainModel, FeatureClassifier
-from .protocol import arms, digest, read_json, source_identity, task_name, tasks, write_json
-from .tensor_attention import Tucker2
+from .protocol import digest, models, n_windows, read_json, source_identity, task_name, tasks, write_json
+from eeg_models.models._shared.tensor import Tucker2
 from .training import fit, metrics, predict
 
 
@@ -44,12 +43,11 @@ def initialize(cfg):
         fcntl.flock(lock, fcntl.LOCK_EX)
         path = output / 'study.json'
         if path.exists():
-            previous = read_json(path)
-            if previous.get('study_id') != study_id:
-                raise RuntimeError('Code, packages, Python, or settings changed. Use a NEW output_dir; old results will not be reused.')
+            if read_json(path).get('study_id') != study_id:
+                raise RuntimeError('Source, environment or configuration changed. Use a NEW output_dir; old results will not be reused.')
         else:
             write_json(path, {**identity, 'study_id': study_id, 'tasks': tasks(cfg),
-                             'arms': arms(cfg), 'availability': availability_metadata()})
+                             'models': models(cfg), 'availability': availability_metadata()})
         report = output / 'report'
         report.mkdir(exist_ok=True)
         write_json(report / 'study_manifest.json', read_json(path))
@@ -61,7 +59,6 @@ def _seed(seed):
 
 
 def _register_dataset(output, subject, bundle):
-    # All seeds of one participant must use the same source and preprocessed trials.
     with (output / '.manifest.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         path = output / 'datasets.json'
@@ -82,64 +79,45 @@ def _full(n, windows):
 
 
 def _calibrate(cfg, bundle, split, directory, identity, seed, device):
-    """Full TRAIN sensor calibration shared by all classifier-availability arms."""
-    cache = directory / 'calibration.pt'
-    record = directory / 'calibration.json'
+    """Fit train-only signal statistics and shared raw-window Tucker factors.
+
+    No classifier or encoder is fitted here. Both backbones remain trainable
+    end to end; paired variants share exactly the same data calibration.
+    """
+    cache, record = directory / 'calibration.pt', directory / 'calibration.json'
     if cache.is_file() and record.is_file():
         previous = read_json(record)
         if previous.get('identity') != identity or previous.get('cache_sha256') != file_sha256(cache):
             raise RuntimeError('Calibration identity/checksum changed. Use a new output directory.')
-        # This is our own provenance-checked local artifact, never an arbitrary checkpoint.
         stage = torch.load(cache, map_location='cpu', weights_only=False)
         if stage['identity'] != identity:
             raise RuntimeError('Calibration payload identity mismatch')
-        return stage, previous['cache_sha256']
-    _seed(seed)
-    train, val = split['train'], split['validation']
-    raw = bundle.x
-    mean = raw[train].mean(axis=(0, 2), keepdims=True, dtype=np.float64)
-    std = raw[train].std(axis=(0, 2), keepdims=True, dtype=np.float64)
-    std = np.maximum(std, 1e-12)
-    raw = torch.from_numpy(((raw - mean) / std).astype(np.float32))
-    encoder = EEGWindowEncoder(**cfg['encoder'])
-    pretrain = EEGPretrainModel(encoder, **cfg['classifier'])
-    windows = cfg['encoder']['windows']
-    print(f'{directory.name}: training shared EEGNet-derived encoder', flush=True)
-    selection = fit(pretrain, raw[train], bundle.y[train], raw[val], bundle.y[val],
-                    lambda epoch: _full(len(train), windows), _full(len(val), windows),
-                    cfg['training']['encoder'], seed=seed, device=device,
-                    history_path=directory / 'encoder_history.json', description='Common encoder')
-    encoder.freeze().to(device)
-    feature_batches = []
-    with torch.no_grad():
-        batch_size = cfg['training']['encoder']['batch_size']
-        for start in range(0, len(raw), batch_size):
-            feature_batches.append(encoder(raw[start:start + batch_size].to(device)).cpu())
-    features = torch.cat(feature_batches)
-    feature_mean = features[train].double().mean(dim=(0, 2), keepdim=True).float()
-    feature_std = features[train].double().std(dim=(0, 2), correction=0, keepdim=True).float().clamp_min(1e-6)
-    features = (features - feature_mean) / feature_std
-    if not torch.isfinite(features).all():
-        raise FloatingPointError('Nonfinite frozen EEG features')
-    _seed(seed)
-    tensor = Tucker2(channels=22, features=encoder.features, **cfg['tensor']).to(device)
-    print(f'{directory.name}: fitting training-only Tucker factors', flush=True)
-    factor_history = tensor.fit(features[train].to(device), _full(len(train), windows).to(device))
-    write_json(directory / 'factor_history.json', factor_history)
-    stage = {'identity': identity, 'features': features, 'encoder': encoder.cpu().state_dict(),
-             'encoder_selection': selection, 'tensor': tensor.cpu().state_dict(),
-             'raw_mean': torch.from_numpy(mean), 'raw_std': torch.from_numpy(std),
-             'feature_mean': feature_mean, 'feature_std': feature_std,
-             'train_feature_mean': features[train].mean(dim=(0, 2)),
-             'feature_count': encoder.features}
+        raw = torch.from_numpy(((bundle.x - stage['raw_mean'].numpy()) /
+                                stage['raw_std'].numpy()).astype(np.float32))
+        return raw, stage, previous['cache_sha256']
+    train = split['train']
+    mean = bundle.x[train].mean(axis=(0, 2), keepdims=True, dtype=np.float64)
+    std = np.maximum(bundle.x[train].std(axis=(0, 2), keepdims=True, dtype=np.float64), 1e-12)
+    raw = torch.from_numpy(((bundle.x - mean) / std).astype(np.float32))
+    stage = {'identity': identity, 'raw_mean': torch.from_numpy(mean),
+             'raw_std': torch.from_numpy(std), 'tensor': None}
+    if any(model['tensor'] for model in models(cfg)):
+        _seed(seed)
+        tensor = Tucker2(channels=22, features=cfg['data']['filter_window_samples'], **cfg['tensor']).to(device)
+        train_windows = raw[train].reshape(len(train), 22, n_windows(cfg), -1).to(device)
+        print(f'{directory.name}: fitting train-only Tucker signal factors', flush=True)
+        history = tensor.fit(train_windows, _full(len(train), n_windows(cfg)).to(device))
+        write_json(directory / 'factor_history.json', history)
+        stage['tensor'] = tensor.cpu().state_dict()
+        del tensor, train_windows
     save_torch(cache, stage)
     checksum = file_sha256(cache)
     write_json(record, {'identity': identity, 'cache_sha256': checksum,
-                       'encoder_selection': selection, 'feature_count': encoder.features,
-                       'calibration': 'full training channels; frozen for every downstream arm',
+                       'calibration': 'training-only channel statistics and raw-window Tucker factors; no frozen encoder',
                        'raw_mean': mean.tolist(), 'raw_std': std.tolist(),
-                       'feature_mean': feature_mean.tolist(), 'feature_std': feature_std.tolist()})
-    return stage, checksum
+                       'tensor_fitted': stage['tensor'] is not None,
+                       'tensor_input': [22, n_windows(cfg), cfg['data']['filter_window_samples']]})
+    return raw, stage, checksum
 
 
 def _evaluation_banks(cfg, bundle, split, subject, seed):
@@ -147,62 +125,172 @@ def _evaluation_banks(cfg, bundle, split, subject, seed):
     for partition in ('validation', 'test'):
         indices = split[partition]
         for scenario in evaluation_scenarios():
-            repeats = 1 if scenario['retained'] == 22 else cfg['mask_repeats']
-            for repeat in range(repeats):
-                mask = make_mask_bank(len(indices), cfg['encoder']['windows'],
-                                      scenario['retained'], scenario['pattern'], seed=seed,
-                                      partition=partition, subject=f'A{subject:02d}', repeat=repeat,
+            for repeat in range(1 if scenario['retained'] == 22 else cfg['mask_repeats']):
+                mask = make_mask_bank(len(indices), n_windows(cfg), scenario['retained'], scenario['pattern'],
+                                      seed=seed, partition=partition, subject=f'A{subject:02d}', repeat=repeat,
                                       sample_ids=[bundle.sample_ids[i] for i in indices])
-                row = {'partition': partition, 'scenario': scenario['name'],
-                       'pattern': scenario['pattern'], 'retained': scenario['retained'],
-                       'excluded_fraction': (22 - scenario['retained']) / 22,
+                row = {'partition': partition, 'scenario': scenario['name'], 'pattern': scenario['pattern'],
+                       'retained': scenario['retained'], 'excluded_fraction': (22 - scenario['retained']) / 22,
                        'mask_repeat': repeat, 'mask_sha256': mask_bank_digest(mask)}
                 banks.append((row, torch.from_numpy(mask)))
     return banks
 
 
 @torch.no_grad()
-def _reconstruction_scores(tensor, train_mean, features, split, banks, batch_size, device):
-    """Hidden reference values are accessed ONLY for post-fit scoring."""
+def _reconstruction_scores(tensor, raw, split, banks, cfg, device):
+    """Hidden reference samples are targets ONLY for post-fit scoring."""
     scores = {}
     tensor.to(device)
     for row, mask in banks:
         key = (row['partition'], row['scenario'], row['mask_repeat'])
         if row['retained'] == 22:
-            scores[key] = {'tensor': None, 'mean': None}
+            scores[key] = None
             continue
-        part = features[split[row['partition']]]
-        numerator = {'tensor': 0., 'mean': 0.}
-        denominator = 0.
-        for start in range(0, len(part), batch_size):
-            truth = part[start:start + batch_size].to(device)
+        indices = split[row['partition']]
+        numerator, denominator = 0., 0.
+        batch_size = cfg['training']['batch_size']
+        for start in range(0, len(indices), batch_size):
+            truth = raw[indices[start:start + batch_size]].to(device).reshape(-1, 22, n_windows(cfg),
+                                                                            cfg['data']['filter_window_samples'])
             available = mask[start:start + batch_size].to(device)
             observed = torch.where(available[..., None], truth, torch.zeros_like(truth))
-            reconstruction = tensor.reconstruct(observed, available)
-            estimates = {'tensor': reconstruction, 'mean': train_mean[None, :, None, :].to(device)}
+            estimate = tensor.reconstruct(observed, available)
             hidden = ~available[..., None]
             denominator += float(torch.where(hidden, truth.double().square(), 0.).sum())
-            for name, estimate in estimates.items():
-                numerator[name] += float(torch.where(hidden, (estimate.double() - truth.double()).square(), 0.).sum())
-        scores[key] = {name: (value / denominator) ** .5 if denominator > 0 else None
-                       for name, value in numerator.items()}
+            numerator += float(torch.where(hidden, (estimate.double() - truth.double()).square(), 0.).sum())
+        scores[key] = (numerator / denominator) ** .5 if denominator > 0 else None
     tensor.cpu()
     return scores
 
 
-def _valid_result(path, identity, arm, cfg):
+def _valid_result(path, identity, model, cfg):
     if not path.is_file():
         return False
+    from .reporting import _expected_cells, _validated_checkpoint, _validated_result
     value = read_json(path)
-    if value.get('identity') != identity or value.get('arm') != arm:
+    if value.get('identity') != identity or value.get('model') != model:
         raise RuntimeError(f'Result identity mismatch at {path}; use a new output directory.')
-    expected = {(partition, item['name'], repeat)
-                for partition in ('validation', 'test') for item in evaluation_scenarios()
-                for repeat in range(1 if item['retained'] == 22 else cfg['mask_repeats'])}
-    rows = value.get('metrics', [])
-    return (value.get('status') == 'complete' and len(rows) == len(expected)
-            and {(r['partition'], r['scenario'], r['mask_repeat']) for r in rows} == expected
-            and all(all(np.isfinite(r[k]) for k in ('accuracy', 'balanced_accuracy', 'f1_macro')) for r in rows))
+    try:
+        _validated_result(value, identity['subject'], identity['seed'], model,
+                          identity['study_id'], _expected_cells(cfg))
+        _validated_checkpoint(path, value)
+    except (OSError, ValueError, TypeError, KeyError):
+        return False
+    checkpoint = path.parent / 'checkpoint.pt'
+    if not checkpoint.is_file() or value.get('checkpoint_sha256') != file_sha256(checkpoint):
+        raise RuntimeError(f'Completed result has a missing/changed checkpoint at {path.parent}')
+    return True
+
+
+def _train_or_restore(model, directory, identity, definition, cfg, raw, bundle, split, stage, seed, device):
+    """A saved selected checkpoint avoids retraining if evaluation was interrupted."""
+    checkpoint, record = directory / 'checkpoint.pt', directory / 'checkpoint.json'
+    if checkpoint.is_file() and record.is_file():
+        saved = read_json(record)
+        if (saved.get('identity') != identity or saved.get('model') != definition
+                or saved.get('checkpoint_sha256') != file_sha256(checkpoint)):
+            raise RuntimeError('Checkpoint identity/checksum mismatch; use a new output directory')
+        payload = torch.load(checkpoint, map_location='cpu', weights_only=False)
+        if payload['identity'] != identity or payload['model'] != definition:
+            raise RuntimeError('Checkpoint payload identity mismatch')
+        model.load_state_dict(payload['state_dict'])
+        model.to(device).eval()
+        return payload['selection'], saved['checkpoint_sha256']
+    train, val = split['train'], split['validation']
+    selection = fit(model, raw[train], bundle.y[train], raw[val], bundle.y[val], cfg['training'],
+                    seed=seed, device=device, windows=n_windows(cfg),
+                    history_path=directory / 'history.json', description=definition['name'])
+    payload = {'identity': identity, 'model': definition, 'selection': selection,
+               'state_dict': {key: value.detach().cpu().clone() for key, value in model.state_dict().items()},
+               'model_options': cfg['model_options'][definition['backbone']], 'tensor_options': cfg['tensor'],
+               'window_samples': cfg['data']['filter_window_samples'], 'metadata': bundle.metadata,
+               'raw_mean': stage['raw_mean'], 'raw_std': stage['raw_std']}
+    save_torch(checkpoint, payload)
+    checksum = file_sha256(checkpoint)
+    write_json(record, {'identity': identity, 'model': definition, 'selection': selection,
+                        'checkpoint_sha256': checksum})
+    return selection, checksum
+
+
+def _run_models(cfg, output, study_id, directory, subject, seed, device):
+    from .reporting import summarize
+    bundle = load_subject({**cfg['data'], 'subjects': [subject]})
+    if bundle.metadata['channel_names'] != list(CHANNEL_IDS) or bundle.metadata['sampling_rate'] != 250.:
+        raise ValueError('Expected canonical 22 BCI2a EEG channels sampled at 250 Hz.')
+    _register_dataset(output, subject, bundle)
+    split = get_split(bundle, cfg['split'], seed, directory / 'splits')
+    write_json(directory / 'split.json', split)
+    write_json(directory / 'dataset.json', bundle.metadata)
+    identity = {'study_id': study_id, 'subject': subject, 'seed': seed,
+                'dataset_fingerprint': bundle.fingerprint, 'split_id': split['split_id']}
+    raw, stage, checksum = _calibrate(cfg, bundle, split, directory, identity, seed, device)
+    identity = {**identity, 'calibration_sha256': checksum}
+    banks = _evaluation_banks(cfg, bundle, split, subject, seed)
+    reconstruction = None
+    failures = []
+    definitions = models(cfg)
+    for number, definition in enumerate(definitions, 1):
+        model_dir = directory / 'MODELS' / definition['name']
+        model_dir.mkdir(parents=True, exist_ok=True)
+        result_path = model_dir / 'result.json'
+        model = None
+        started = time.monotonic()
+        try:
+            if _valid_result(result_path, identity, definition, cfg):
+                print(f'{directory.name} {number}/{len(definitions)}: verified complete {definition["name"]}', flush=True)
+                continue
+            if digest({'config': cfg, 'source': source_identity()}) != study_id:
+                raise RuntimeError('Source/environment changed during the study; use a new output directory.')
+            # Matched baseline/tensor initialization and batch order. Completion
+            # adds only buffers and is bypassed on all full-channel training batches.
+            _seed(seed)
+            print(f'{directory.name} model {number}/{len(definitions)}: {definition["name"]}', flush=True)
+            write_json(model_dir / 'config.json', {'identity': identity, 'model': definition, 'config': cfg})
+            model = build_model(definition['name'], bundle.metadata,
+                                cfg['model_options'][definition['backbone']],
+                                window_samples=cfg['data']['filter_window_samples'], tensor_options=cfg['tensor'])
+            if definition['tensor']:
+                model.signal_input.completion.load_state_dict(stage['tensor'])
+            selection, checkpoint_hash = _train_or_restore(model, model_dir, identity, definition, cfg, raw,
+                                                           bundle, split, stage, seed, device)
+            # Everything is fitted/selected before the degraded sweep. Test
+            # labels are read only by metrics, never by training or factor fitting.
+            if definition['tensor'] and reconstruction is None:
+                tensor = Tucker2(channels=22, features=cfg['data']['filter_window_samples'], **cfg['tensor'])
+                tensor.load_state_dict(stage['tensor'])
+                reconstruction = _reconstruction_scores(tensor, raw, split, banks, cfg, device)
+                del tensor
+            rows = []
+            for row, mask in banks:
+                indices = split[row['partition']]
+                probabilities = predict(model, raw[indices], mask, cfg['training']['batch_size'], device)
+                key = (row['partition'], row['scenario'], row['mask_repeat'])
+                rows.append({**row, **metrics(bundle.y[indices], probabilities),
+                             'reconstruction_nrmse': reconstruction[key] if definition['tensor'] else None})
+            if digest({'config': cfg, 'source': source_identity()}) != study_id:
+                raise RuntimeError('Source/environment changed during this model run; no complete result published.')
+            result = {'schema_version': 3, 'status': 'complete', 'study_id': study_id, 'identity': identity,
+                      'subject': subject, 'seed': seed, 'model': definition, 'selection': selection,
+                      'metrics': rows, 'checkpoint_sha256': checkpoint_hash,
+                      'token_axis': model.token_axis, 'attention_tokens': model.num_tokens,
+                      'trainable_parameters': sum(p.numel() for p in model.parameters() if p.requires_grad),
+                      'elapsed_seconds': time.monotonic() - started}
+            write_json(result_path, result)
+            full = next(row for row in rows if row['partition'] == 'test' and row['scenario'] == 'full_22')
+            print(f'  Full test: accuracy={full["accuracy"]:.2%}, balanced={full["balanced_accuracy"]:.2%}', flush=True)
+        except Exception as error:
+            failures.append(definition['name'])
+            write_json(model_dir / 'error.json', {'study_id': study_id, 'model': definition,
+                       'error': str(error), 'traceback': traceback.format_exc()})
+            traceback.print_exc()
+        finally:
+            if model is not None:
+                model.cpu()
+                del model
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            summarize(output, cfg, study_id)
+    return failures
 
 
 def run_task(cfg, task_index, device='cuda'):
@@ -210,101 +298,27 @@ def run_task(cfg, task_index, device='cuda'):
     if not 0 <= task_index < len(tasks(cfg)):
         raise ValueError(f'task-index must be in 0..{len(tasks(cfg)) - 1}')
     if device == 'cuda' and not torch.cuda.is_available():
-        raise RuntimeError('The declared study needs the allocated GPU; CUDA is unavailable.')
+        raise RuntimeError('The study needs the allocated GPU; CUDA is unavailable.')
     output, study_id = initialize(cfg)
     subject, seed = tasks(cfg)[task_index]
     _seed(seed)
     directory = output / 'artifacts' / task_name(subject, seed)
     with run_directory(directory):
-        data_config = {**cfg['data'], 'subjects': [subject]}
-        bundle = load_subject(data_config)
-        if bundle.metadata['channel_names'] != list(CHANNEL_IDS) or bundle.metadata['sampling_rate'] != 250.:
-            raise ValueError('Expected canonical 22 BCI2a EEG channels sampled at 250 Hz.')
-        _register_dataset(output, subject, bundle)
-        split = get_split(bundle, cfg['split'], seed, directory / 'splits')
-        write_json(directory / 'split.json', split)
-        write_json(directory / 'dataset.json', bundle.metadata)
-        identity = {'study_id': study_id, 'subject': subject, 'seed': seed,
-                    'dataset_fingerprint': bundle.fingerprint, 'split_id': split['split_id']}
-        stage, checksum = _calibrate(cfg, bundle, split, directory, identity, seed, device)
-        identity = {**identity, 'calibration_sha256': checksum}
-        tensor = Tucker2(channels=22, features=stage['feature_count'], **cfg['tensor'])
-        tensor.load_state_dict(stage['tensor'])
-        banks = _evaluation_banks(cfg, bundle, split, subject, seed)
-        # All fitted state is frozen before any degraded validation/test scoring.
-        reconstruction = _reconstruction_scores(tensor, stage['train_feature_mean'], stage['features'],
-                                                split, banks, cfg['training']['classifier']['batch_size'], device)
-        windows = cfg['encoder']['windows']
-        train, val = split['train'], split['validation']
-        train_ids = [bundle.sample_ids[i] for i in train]
-        failures = []
-        for number, arm in enumerate(arms(cfg), 1):
-            arm_dir = directory / 'ARMS' / arm['name']
-            arm_dir.mkdir(parents=True, exist_ok=True)
-            result_path = arm_dir / 'result.json'
-            if _valid_result(result_path, identity, arm, cfg):
-                print(f'{directory.name} {number}/{len(arms(cfg))}: verified complete {arm["name"]}', flush=True)
-                continue
-            if digest({'config': cfg, 'source': source_identity()}) != study_id:
-                raise RuntimeError('Source/environment changed during the study; stop and use a new output directory.')
-            _seed(seed)
-            print(f'{directory.name} fit {number}/{len(arms(cfg))}: {arm["name"]}', flush=True)
-            write_json(arm_dir / 'config.json', {'identity': identity, 'arm': arm, 'config': cfg})
-            model = None
-            started = time.monotonic()
-            try:
-                model = FeatureClassifier(arm['attention'], arm['representation'],
-                                          channels=22, windows=windows, features=stage['feature_count'],
-                                          **cfg['classifier'],
-                                          rank_channels=cfg['tensor']['rank_channels'],
-                                          rank_features=cfg['tensor']['rank_features'],
-                                          tensor=copy.deepcopy(tensor) if arm['representation'].startswith('tensor_') else None,
-                                          train_feature_mean=stage['train_feature_mean'],
-                                          attention_options=cfg['attentions'][arm['attention']])
-                train_masks = lambda epoch: training_mask_bank(
-                    len(train), windows, regime=arm['regime'], seed=seed, epoch=epoch,
-                    subject=f'A{subject:02d}', sample_ids=train_ids)
-                selection = fit(model, stage['features'][train], bundle.y[train],
-                                stage['features'][val], bundle.y[val], train_masks, _full(len(val), windows),
-                                cfg['training']['classifier'], seed=seed, device=device,
-                                history_path=arm_dir / 'history.json', description=arm['name'])
-                rows = []
-                for row, mask in banks:
-                    indices = split[row['partition']]
-                    probabilities = predict(model, stage['features'][indices], mask,
-                                            cfg['training']['classifier']['batch_size'], device)
-                    score = metrics(bundle.y[indices], probabilities)
-                    rec = reconstruction[(row['partition'], row['scenario'], row['mask_repeat'])]
-                    rec_name = ('tensor' if arm['representation'].startswith('tensor_') else
-                                'mean' if arm['representation'] == 'mean_completion' else None)
-                    rows.append({**row, **score, 'reconstruction_nrmse': rec[rec_name] if rec_name else None})
-                result = {'status': 'complete', 'study_id': study_id, 'identity': identity,
-                          'subject': subject, 'seed': seed, 'arm': arm,
-                          'selection': selection, 'metrics': rows,
-                          'token_axis': model.token_axis, 'attention_tokens': model.num_tokens,
-                          'classifier_trainable_parameters': sum(p.numel() for p in model.parameters() if p.requires_grad),
-                          'elapsed_seconds': time.monotonic() - started}
-                write_json(result_path, result)
-                full = next(r for r in rows if r['partition'] == 'test' and r['scenario'] == 'full_22')
-                print(f'  Full test: accuracy={full["accuracy"]:.2%}, balanced={full["balanced_accuracy"]:.2%}', flush=True)
-            except Exception as error:
-                failures.append(arm['name'])
-                write_json(arm_dir / 'error.json', {'study_id': study_id, 'arm': arm,
-                           'error': str(error), 'traceback': traceback.format_exc()})
-                traceback.print_exc()
-            finally:
-                if model is not None:
-                    model.cpu()
-                    del model
-                if torch.cuda.is_available():
-                    torch.cuda.empty_cache()
-                summarize(output, cfg, study_id)
-        write_json(directory / 'task_status.json', {'study_id': study_id, 'subject': subject,
-                   'seed': seed, 'status': 'failed' if failures else 'complete', 'failed_arms': failures})
-        progress = summarize(output, cfg, study_id)
-        print(f'Report: {output / "report"}. Completed fits: {progress["completed_fits"]}/{progress["expected_fits"]}', flush=True)
-        if failures:
-            raise RuntimeError(f'{len(failures)} arms failed; resubmit this task after reviewing error.json.')
+        try:
+            failures = _run_models(cfg, output, study_id, directory, subject, seed, device)
+            write_json(directory / 'task_status.json', {'study_id': study_id, 'subject': subject, 'seed': seed,
+                       'status': 'failed' if failures else 'complete', 'failed_models': failures})
+            if failures:
+                raise RuntimeError(f'{len(failures)} models failed; review error.json and resubmit this task.')
+        except Exception as error:
+            write_json(directory / 'error.json', {'study_id': study_id, 'subject': subject, 'seed': seed,
+                       'error': str(error), 'traceback': traceback.format_exc()})
+            write_json(directory / 'task_status.json', {'study_id': study_id, 'subject': subject,
+                       'seed': seed, 'status': 'failed', 'error': str(error)})
+            raise
+        finally:
+            progress = summarize(output, cfg, study_id)
+            print(f'Report: {output / "report"}. Model runs: {progress["completed_fits"]}/{progress["expected_fits"]}', flush=True)
 
 
 def summarize_existing(cfg):

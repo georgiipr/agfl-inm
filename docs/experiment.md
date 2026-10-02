@@ -1,192 +1,77 @@
-# Declared experiment and reporting
+# Experiment pipeline
 
-The supplied study compares MHA and Performer with an EEGNet-derived encoder
-for nine participants and three seeds. Its output directory is configured in
-`configs/study.json` (default: `results/inm-v2`). Signal Transformer is available
-in the model library and is outside this experiment matrix. Dataset download
-and launch instructions are in the [README](../README.md).
+The full preset is `configs/study.json`: four models, nine individually trained
+participants, three seeds, **108 end-to-end training runs**. A task owns one
+participant/seed and runs its selected models sequentially. `pilot.json` has one seed (36 runs); `debug.json`
+has EEGNet on three participants, one seed and 12 epochs (3 runs). Presets
+inherit the full configuration and use distinct output directories.
+`smoke.json` runs all four model paths on one participant with the short debug
+budget (4 runs), exercising both tensor paths before a full run.
 
-## Cohort and splits
+## Data and fitting
 
-Nine independently trained BCI Competition IV 2a participants, A01–A09; seeds
-0, 1, 2. Each participant's T session is stratified by class into approximately
-60/20/20 train/validation/test trials. Fractions are rounded separately within
-each class. This is **within-session, subject-dependent** evaluation, not the
-official train-on-T/test-on-E competition protocol. E files are not required.
-No participant pooling or participant exclusion is based on measured accuracy.
+Load cue-aligned four-second T-session trials from BCI IV 2a, exclude marked
+artifacts, and retain the canonical 22 EEG channels at 250 Hz. Four one-second
+filter windows are processed independently with the 2–30 Hz zero-phase bandpass.
+No filter crosses into a window that may later become unavailable. Each model
+still receives the entire trial, with ordered temporal information.
 
-Cue classes 769–772 map to left hand, right hand, feet and tongue. The first 22
-EEG channels are retained, excluding EOG. Trials begin at the cue and use 1,000
-samples at 250 Hz. Artifact-flagged, boundary-crossing and unusable/nonfinite
-trials are excluded consistently for every arm. Saved data metadata includes
-source checksums, excluded counts and remaining class counts.
+Persist a class-stratified 60/20/20 train/validation/test split per participant
+and seed. Both backbones and their tensor variants use that same split. Fit
+channel means and standard deviations only on training samples. If tensor
+models are selected, fit one shared Tucker channel/sample factor pair on
+normalized full-channel training windows. Factors and normalization remain
+fixed afterward. There is no supervised common-encoder pretraining or frozen
+feature cache.
 
-Each 250-sample window is independently filtered with a fourth-order
-2–30 Hz Butterworth SOS zero-phase routine. No filter padding, convolution or
-per-trial normalization may bring a hidden window into an observed one. This
-offline processing is not causal and the short-window boundaries can affect
-accuracy; it is chosen to define a valid dynamic-availability simulation.
-Raw-channel and learned-feature means/stds use **only the training partition**.
+Train each model once, on all 22 channels. All backbone, MHA and classifier
+parameters receive gradients. Use the declared AdamW, loss, warmup/cosine
+schedule, clipping and early-stop budget. Evaluate only 22-channel validation
+during training; select the epoch with highest validation balanced accuracy,
+breaking ties with lowest unweighted validation log loss. Test labels and
+degraded validation scores never participate in checkpoint selection.
 
-## Shared calibration and classifier matrix
+Save the selected checkpoint before evaluation. After selection, predict on
+validation and then held-out test for 22, 16, 11 and 6 channels. Each degraded
+count has random/spatial static and dynamic masks, five repeats by default.
+There are 13 scenarios and 61 prediction conditions per partition, 122 metric
+rows per full-preset model run. All sweeps use the same selected weights, with
+no optimizer steps or factor updates. Masks are shared across all four models.
 
-For each subject/seed, a single full-input MHA-supervised encoder is fitted and
-selected on full-input validation. Its frozen features are shared across all
-arms. Tucker ranks are `Rc=4`, `Rf=4`, ridge `0.001`; 30 projected alternating
-fit epochs on full **training** features. There is no test-based rank search.
-Both regimes therefore have full-channel calibration; only downstream
-classifier training has differing availability.
+## Outputs and aggregation
 
-Each of the two attentions, MHA and Performer, has four main fits:
+Use `results/inm-v3` for full, separate pilot/debug directories for presets.
+Schema/source/environment identities prevent reusing previous-protocol results.
+Model records live in `artifacts/Axx_seed_s/MODELS/<model>/`. Each contains
+configuration, training history, selected `checkpoint.pt`, checksum/selection
+metadata and all validation/test metrics. A participant/seed calibration cache
+stores train-only normalization and factors. Splits, trial IDs, dataset source
+checksums, exclusions, settings, source hashes and package versions accompany
+the study. Do not edit a running study's inputs or source.
 
-| Representation | Full classifier training | Mixed classifier training |
-|---|---|---|
-| Baseline | Yes | Yes |
-| Tucker core | Yes | Yes |
+Rerunning a task skips complete provenance/checksum-verified runs. If training
+completed but evaluation was interrupted, restore the selected checkpoint and
+finish inference rather than train again. Failed models are recorded while the
+remaining declared models continue; errors and unfavorable outcomes are kept.
 
-MHA additionally has tensor completion, separable linear core and training-mean
-completion under both regimes: six controls. Total `(2 × 2 + 3) × 2 = 14` arms, or 378 classifier fits across 27 participant/seed tasks.
-There is no no-attention option. Model and attention choices remain separate.
+Balanced accuracy is primary; ordinary accuracy and macro-F1 are also reported.
+For each condition, average mask repeats, then seeds within each participant,
+then equally over configured participants. Full means require all declared
+participants/seeds; unfinished means stay blank. Completed individual runs remain
+visible. Subject SD describes participant variation, not independent seeds.
+Paired tensor gains require matching dataset, split, calibration and mask hashes.
+Robustness gives equal weight to 22/16/11/6 counts within a loss pattern. Bootstrap
+intervals resample participants after averaging paired seed differences; they are
+pointwise exploratory intervals with no multiple-comparison correction.
 
-The shared feature pretraining may favor MHA; disclose that choice. The linear
-control has two trainable maps with `G = Wc X Wfᵀ`. It controls supervised
-separable compression, not unrestricted dense compression. Its shapes match
-the Tucker core but its objective and trainable parameter count differ. Baseline
-missing placeholders and completion pooling also differ as documented in
-`model_adaptation.md`; controls are needed before attributing a gain solely to
-multilinear structure.
+Reports update after runs. Optional PNG/PDF plots of validation/test availability
+and paired robustness are rebuilt from saved tables through `--summarize-only
+--plots`. Plotting never runs checkpoints. See [README](../README.md) for commands.
 
-Attention uses dimension 32 and four heads. MHA uses standard scaled dot-product
-attention; Performer uses 64 fixed random features per head. Both are applied
-spatially within each window. Neither uses temporal attention or an output gate.
-This is a method comparison, not a claim that the approximation is faster or
-more accurate for these short token sequences.
+## Research limits
 
-All supervised fits use the declared shared CE/AdamW settings, maximum 250
-epochs, batch 32, initial target LR 0.001 with 10-epoch warmup/cosine scheduling,
-weight decay 0.0001, gradient clip 1, and early stopping after at least 75 epochs
-with patience 50. The highest **full-input validation balanced accuracy** wins;
-unweighted validation log loss breaks ties. Test scores never select an epoch.
-There is no augmentation unrelated to the declared availability masks and no
-arm-specific tuning. Deterministic PyTorch mode is requested; unsupported
-operations fail visibly instead of silently weakening that setting.
-
-## Availability and evaluation
-
-Full training observes all 22 channels. Mixed training samples 22, 16 or 6
-channels per trial/epoch; degraded samples use random static or random dynamic
-masks. Neither 11-channel inputs nor spatial-loss sampling is used for classifier
-training. Every model sees the same keyed training masks, trial order, splits
-and evaluation masks for its participant/seed/regime.
-
-Each selected head receives the full scenario and four patterns at 16, 11 and
-6 retained channels on validation and test. Patterns are static random, static
-spatial, dynamic random and dynamic spatial. Dynamic masks use an A–B–A schedule
-with exact retained counts in every window. There are five deterministic repeats
-per degraded condition; full input is scored once. Nonfull channel combinations
-are partition-disjoint; the full mask is the unavoidable shared exception.
-
-Thus each completed fit contains `2 × (1 + 12 × 5) = 122` metric rows. It is
-trained once and evaluated repeatedly, not trained 122 times. The full-only
-regime directly tests train/evaluation channel-count mismatch. Degraded validation
-scores are descriptive outputs after checkpoint selection, not extra selection
-criteria. After examining held-out test results, a later modified study should
-be described as exploratory rather than an untouched confirmatory evaluation.
-
-## Scores and uncertainty
-
-For four classes, balanced accuracy is
-
-\[
-\operatorname{BA}=\frac14\sum_{k=0}^{3}
- \frac{\#\{i:y_i=k,\widehat y_i=k\}}{\#\{i:y_i=k\}}.
-\]
-
-Primary: balanced accuracy. Secondary: accuracy, macro-F1, full-input degradation
-and hidden-feature reconstruction NRMSE. Raw records also preserve class supports,
-per-class metrics, confusion matrices and ROC-AUC when defined. Classifier
-parameter counts, selected epoch, fit duration, exact mask hashes and source
-identities are retained. Runtime metadata is descriptive, not a controlled
-attention-speed benchmark.
-
-First average mask repeats, then seeds within each participant, then the nine
-participant means equally. Do not pool trials across participants or treat masks
-and seeds as independent participants. Report subject SD separately from a
-confidence interval. Nine-subject means are left blank until all required
-participant/seed fits for that arm are complete.
-
-For each attention/regime, compute paired Tucker-core-minus-baseline differences
-with the same masks. Average seed differences within a participant, then bootstrap
-those participant means 2,000 times to obtain pointwise 95% percentile intervals.
-These intervals are exploratory, without multiple-comparison correction; the
-MHA secondary controls have score tables but no separate control-specific paired
-intervals in this first version.
-
-For each of the four outage patterns, robustness is the equally weighted mean
-of the full, 16-, 11- and 6-channel scores. It is a four-condition average, not
-a trapezoidal area under a continuous loss curve. Positive paired gains favor
-the tensor route; positive degradation is a drop from full-input performance.
-
-Reconstruction NRMSE is computed only over hidden, standardized feature entries:
-
-\[
-\operatorname{NRMSE}=\sqrt{
-\frac{\sum_{M=0}(\widehat X-X)^2}{\sum_{M=0}X^2}}.
-\]
-
-This is a dimensionless relative feature error, not raw-waveform recovery.
-Full-input NRMSE is undefined because nothing is hidden. A zero reference energy
-also yields a blank value. Reconstruction scores never fit factors or select
-classifiers. Lower reconstruction error need not improve classification.
-
-## Output layout
-
-```text
-results/inm-v2/
-  study.json                         exact config/source/environment identity
-  datasets.json                      one checked data identity per participant
-  report/                            download this folder
-    summary.md                       readable progress and main comparisons
-    accuracy_by_run.csv               completed fits, useful while jobs run
-    accuracy_by_subject.csv           seed means per participant/condition
-    accuracy_table.csv                complete all-participant means and SD
-    robustness_table.csv              equal-weight availability averages
-    paired_tensor_gain.csv            paired gains and subject intervals
-    progress.json                     missing fits, errors and invalid records
-    study_manifest.json              full settings, hashes, protocol
-    datasets.json                     remaining trials and exclusions
-    plots/                           optional PNG/PDF figures
-    plots_status.json                optional figure-completeness manifest
-  artifacts/                         keep on cluster for restart/audit
-    A01_seed_0/
-      dataset.json
-      split.json
-      splits/
-      calibration.pt                 frozen encoder/features/stats/factors
-      calibration.json               checksum, calibration/selection metadata
-      encoder_history.json
-      factor_history.json
-      task_status.json
-      ARMS/<attention>__<route>__<regime>/
-        config.json
-        history.json
-        result.json                  only published after all evaluations
-        error.json                   only if a fit failed
-```
-
-Selected classifier weights remain in memory through evaluation and are not
-saved as separate checkpoints. Shared calibration state is saved for deterministic
-restarts. An interrupted classifier fit restarts from its seeded initialization.
-Complete matching results are reused; config/source/data/split changes cannot
-silently reuse an old score. Concurrent array tasks use file locks and atomic
-publication; reports reject incomplete rows or inconsistent paired provenance.
-
-## Interpreting the result
-
-Read the full-input table first, then availability curves and paired gains. A
-beneficial robustness tradeoff may coexist with a full-input accuracy cost.
-If Tucker helps only a subset of attentions/participants, say so and retain the
-complete cohort in the primary table. Compare MHA controls to distinguish masked
-inference, completion and generic compression explanations. A null or negative
-result is evidence about the chosen ranks, features and protocol, not a reason
-to omit participants or change the held-out scoring rule.
+This is a within-session offline availability study, not competition T-to-E
+performance or unseen-participant generalization. Raw-window tensor completion
+may fail to recover task information, especially under severe or grouped loss. Full-channel pass-through does not assert accuracy or tensor benefit;
+these require experimental measurements. Hidden-sample NRMSE is secondary and is
+scored only after fitting, never used as a model input or tuning objective.

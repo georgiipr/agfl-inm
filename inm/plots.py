@@ -1,73 +1,39 @@
-"""Optional publication figures from saved summary tables, never model runs.
-
-Curves display subject-averaged means without uncertainty bands: the accuracy
-table contains subject SD, which is not a confidence interval. Only paired
-gain figures draw the reported subject-bootstrap 95% confidence intervals.
-"""
+"""Optional plots from complete saved summary tables; no model execution."""
 from __future__ import annotations
-
 import csv
 import fcntl
 import hashlib
 import io
 import json
 import math
-import os
 from pathlib import Path
-import tempfile
+from .availability import DEGRADED_PATTERNS
+from .reporting import _atomic_text
+from eeg_models.models import MODEL_LABELS
 
-
-ATTENTIONS = ('mha', 'performer')
-LABELS = {'mha': 'MHA', 'performer': 'Performer'}
-COLORS = {'mha': '#0072B2', 'performer': '#009E73'}
-PATTERNS = ('random_static', 'spatial_static', 'dynamic_random', 'dynamic_spatial')
-PATTERN_LABELS = {'random_static': 'Static random loss',
-                  'spatial_static': 'Static spatial loss',
-                  'dynamic_random': 'Changing random availability',
-                  'dynamic_spatial': 'Changing spatial availability'}
-REGIMES = ('full', 'mixed')
-REGIME_LABELS = {'full': 'Training with all channels',
-                 'mixed': 'Training with mixed availability'}
 COUNTS = (22, 16, 11, 6)
-REMOVED = tuple(100.0 * (22 - count) / 22 for count in COUNTS)
-CONTROL_LABELS = {'baseline': 'Baseline', 'tensor_core': 'Tensor core',
-                  'tensor_completion': 'Tensor completion',
-                  'linear_core': 'Linear core', 'mean_completion': 'Mean completion'}
-
-
-def _atomic_json(path, value):
-    descriptor, temporary = tempfile.mkstemp(prefix=f'.{path.name}.', dir=path.parent)
-    try:
-        with os.fdopen(descriptor, 'w', encoding='utf-8') as stream:
-            json.dump(value, stream, indent=2, sort_keys=True, allow_nan=False)
-            stream.write('\n')
-        os.replace(temporary, path)
-    finally:
-        if os.path.exists(temporary):
-            os.unlink(temporary)
+REMOVED = tuple(100 * (22 - count) / 22 for count in COUNTS)
+COLORS = {'eegnet': '#0072B2', 'signal_transformer': '#D55E00'}
+PATTERN_LABELS = {
+    'random_static': 'Static random loss', 'spatial_static': 'Static spatial loss',
+    'dynamic_random': 'Dynamic random loss', 'dynamic_spatial': 'Dynamic spatial loss',
+}
 
 
 def _number(row, field):
-    try:
-        value = float(row[field])
-    except (KeyError, TypeError, ValueError):
-        return None
-    return value if math.isfinite(value) else None
+    value = float(row[field])
+    if not math.isfinite(value):
+        raise ValueError(f'Nonfinite saved value: {field}')
+    return value
 
 
-def _complete(row, fields):
-    return (row is not None and str(row.get('complete', '')).lower() in ('true', '1')
-            and all(_number(row, field) is not None for field in fields))
-
-
-def _index(rows, fields, *, robust=False):
+def _index(rows, fields):
     indexed = {}
     for row in rows:
-        if row.get('partition') != 'test' or (robust and row.get('kind') != 'robustness'):
-            continue
-        key = tuple(row.get(field) for field in fields)
-        # A repeated identity is invalid, not an opportunity to choose a score.
-        indexed[key] = None if key in indexed else row
+        key = tuple(row[field] for field in fields)
+        if key in indexed:
+            raise ValueError(f'Duplicate summary row: {key}')
+        indexed[key] = row
     return indexed
 
 
@@ -75,206 +41,141 @@ def _scenario(pattern, count):
     return 'full_22' if count == 22 else f'{pattern}_{count}'
 
 
-def _curve_keys(regime, pairs):
-    return list(dict.fromkeys((attention, representation, regime, _scenario(pattern, count))
-                             for attention, representation in pairs
-                             for pattern in PATTERNS for count in COUNTS))
-
-
-def _group_status(name, indexed, keys, fields):
-    good = sum(_complete(indexed.get(key), fields) for key in keys)
-    ready = good == len(keys)
-    return {'name': name, 'status': 'ready' if ready else 'skipped',
-            'expected_rows': len(keys), 'complete_rows': good,
-            'reason': None if ready else
-            'Required complete test rows or finite summary values/intervals are missing; no figure generated.'}
-
-
-def _axis_style(axis, pattern, *, curves):
-    axis.set_title(PATTERN_LABELS[pattern], fontsize=11)
-    axis.grid(axis='y', alpha=.25, linewidth=.7)
-    axis.set_axisbelow(True)
-    axis.spines['top'].set_visible(False)
-    axis.spines['right'].set_visible(False)
-    if curves:
-        axis.set_xticks(REMOVED, ['0', '27.27', '50', '72.73'])
-        axis.set_xlabel('Channels removed (%)')
-        axis.set_ylabel('Test balanced accuracy (%)')
-        axis.set_ylim(0, 100)
-        axis.set_xlim(-2, 75)
-        axis.axhline(25, color='#666666', linestyle=':', linewidth=.8, alpha=.7)
-
-
 def _save(figure, folder, name):
-    outputs = []
+    files = []
     for extension in ('png', 'pdf'):
-        destination = folder / f'{name}.{extension}'
-        descriptor, temporary = tempfile.mkstemp(prefix=f'.{name}.', suffix=f'.{extension}', dir=folder)
-        os.close(descriptor)
-        try:
-            figure.savefig(temporary, dpi=180, bbox_inches='tight', format=extension)
-            os.replace(temporary, destination)
-        finally:
-            if os.path.exists(temporary):
-                os.unlink(temporary)
-        outputs.append(str(destination.relative_to(folder.parent)))
-    return outputs
+        path = folder / f'{name}.{extension}'
+        temporary = path.with_suffix(f'.{extension}.tmp')
+        figure.savefig(temporary, format=extension, dpi=180, bbox_inches='tight')
+        temporary.replace(path)
+        files.append(str(path.relative_to(folder.parent)))
+    return files
 
 
-def _primary_curves(plt, Line2D, indexed, regime):
-    figure, axes = plt.subplots(2, 2, figsize=(11.4, 8.2))
-    for axis, pattern in zip(axes.flat, PATTERNS):
-        for attention in ATTENTIONS:
-            for representation, style, marker in (('baseline', '--', 'o'), ('tensor_core', '-', 's')):
-                values = [_number(indexed[(attention, representation, regime, _scenario(pattern, count))],
-                                  'balanced_accuracy_mean_percent') for count in COUNTS]
-                axis.plot(REMOVED, values, color=COLORS[attention], linestyle=style,
-                          marker=marker, markersize=4, linewidth=1.7)
-        _axis_style(axis, pattern, curves=True)
-    handles = [Line2D([0], [0], color=COLORS[attention], linewidth=2, label=LABELS[attention])
-               for attention in ATTENTIONS]
-    handles.extend([Line2D([0], [0], color='#333333', linestyle='--', marker='o', label='Baseline'),
-                    Line2D([0], [0], color='#333333', linestyle='-', marker='s', label='Tensor core')])
-    figure.suptitle(f'EEGNet-derived spatial attention: {REGIME_LABELS[regime]}', fontsize=13)
-    figure.legend(handles=handles, loc='lower center', ncol=4, frameon=False,
-                  bbox_to_anchor=(.5, .018))
-    figure.text(.5, .005, 'Equal-weight subject means; seeds and mask repeats averaged within subjects. '
-                'Dotted horizontal line: 25% reference.', ha='center', fontsize=8)
-    figure.tight_layout(rect=(0, .105, 1, .95))
-    return figure
-
-
-def _control_curves(plt, indexed, regime):
-    figure, axes = plt.subplots(2, 2, figsize=(11.4, 8.2))
-    colors = ('#555555', '#D55E00', '#0072B2', '#009E73', '#CC79A7')
-    markers = ('o', 's', '^', 'D', 'v')
-    for axis, pattern in zip(axes.flat, PATTERNS):
-        for (representation, label), color, marker in zip(CONTROL_LABELS.items(), colors, markers):
-            values = [_number(indexed[('mha', representation, regime, _scenario(pattern, count))],
-                              'balanced_accuracy_mean_percent') for count in COUNTS]
-            axis.plot(REMOVED, values, color=color, marker=marker, markersize=4,
-                      linestyle='--' if representation == 'baseline' else '-', linewidth=1.7, label=label)
-        _axis_style(axis, pattern, curves=True)
-    handles, labels = axes.flat[0].get_legend_handles_labels()
-    figure.suptitle(f'MHA representation controls: {REGIME_LABELS[regime]}', fontsize=13)
-    figure.legend(handles, labels, loc='lower center', ncol=3, frameon=False,
-                  bbox_to_anchor=(.5, .018))
-    figure.text(.5, .005, 'Equal-weight subject means; no confidence intervals are inferred from subject SD.',
-                ha='center', fontsize=8)
-    figure.tight_layout(rect=(0, .105, 1, .95))
-    return figure
-
-
-def _paired_gains(plt, indexed, regime):
+def _curves(plt, indexed, partition, model_keys):
     figure, axes = plt.subplots(2, 2, figsize=(11.4, 8.2), sharey=True)
-    bounds = [0.]
-    for axis, pattern in zip(axes.flat, PATTERNS):
-        for position, attention in enumerate(ATTENTIONS):
-            row = indexed[(attention, regime, pattern)]
+    for axis, pattern in zip(axes.flat, DEGRADED_PATTERNS):
+        for key in model_keys:
+            values = [_number(indexed[(partition, key, _scenario(pattern, count))],
+                              'balanced_accuracy_mean_percent') for count in COUNTS]
+            tensor = key.endswith('_tensor')
+            axis.plot(REMOVED, values, color=COLORS[key.removesuffix('_tensor')],
+                      linestyle='-' if tensor else '--', marker='s' if tensor else 'o',
+                      linewidth=1.7, markersize=4, label=MODEL_LABELS[key])
+        axis.axhline(25, color='#888888', linestyle=':', linewidth=.8)
+        axis.set_title(PATTERN_LABELS[pattern])
+        axis.set_xticks(REMOVED, [f'{value:.1f}\n({count} retained)' for value, count in zip(REMOVED, COUNTS)])
+        axis.set_xlabel('Missing channels (%)')
+        axis.set_ylabel('Balanced accuracy (%)')
+        axis.set_ylim(0, 100)
+        axis.grid(alpha=.2)
+    handles, labels = axes.flat[0].get_legend_handles_labels()
+    figure.suptitle(f'{partition.capitalize()} availability: EEGNet / Signal Transformer with built-in MHA')
+    figure.legend(handles, labels, loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(.5, .018))
+    figure.text(.5, .005, 'Equal-weight participant means; seeds and repeats averaged within participants. '
+                'Dotted line: 25% reference.', ha='center', fontsize=8)
+    figure.tight_layout(rect=(0, .11, 1, .95))
+    return figure
+
+
+def _gains(plt, indexed, partition, backbones):
+    figure, axes = plt.subplots(2, 2, figsize=(11.4, 8.2))
+    for axis, pattern in zip(axes.flat, DEGRADED_PATTERNS):
+        for position, backbone in enumerate(backbones):
+            row = indexed[(partition, backbone, 'robustness', pattern)]
             value = _number(row, 'balanced_accuracy_gain_pp')
-            low = _number(row, 'balanced_accuracy_ci95_low_pp')
-            high = _number(row, 'balanced_accuracy_ci95_high_pp')
-            if low > high:
-                raise ValueError('A saved confidence interval has reversed bounds')
-            bounds.extend((value, low, high))
-            axis.bar(position, value, width=.65, color=COLORS[attention], alpha=.85, zorder=2)
-            # Draw absolute interval limits: unlike yerr, this remains valid if
-            # a percentile bootstrap interval does not contain the point mean.
-            axis.vlines(position, low, high, color='#222222', linewidth=1.2, zorder=3)
-            axis.hlines((low, high), position - .11, position + .11,
-                        color='#222222', linewidth=1.2, zorder=3)
-        _axis_style(axis, pattern, curves=False)
-        axis.axhline(0, color='#444444', linewidth=.9)
-        axis.set_xticks(range(len(ATTENTIONS)), [LABELS[key] for key in ATTENTIONS], rotation=15)
-        axis.set_ylabel('Tensor core − baseline\nbalanced accuracy (percentage points)')
-    padding = max(1., .12 * (max(bounds) - min(bounds)))
-    axes.flat[0].set_ylim(min(bounds) - padding, max(bounds) + padding)
-    figure.suptitle(f'Paired robustness gain: {REGIME_LABELS[regime]}', fontsize=13)
-    figure.text(.5, .024, 'Each score equally weights 22, 16, 11 and 6 retained channels. Positive favors tensor core.',
+            axis.bar(position, value, color=COLORS[backbone], width=.65)
+            if row['balanced_accuracy_ci95_low_pp'] and row['balanced_accuracy_ci95_high_pp']:
+                low = _number(row, 'balanced_accuracy_ci95_low_pp')
+                high = _number(row, 'balanced_accuracy_ci95_high_pp')
+                if low > high:
+                    raise ValueError('Reversed saved bootstrap interval')
+                axis.vlines(position, low, high, color='#222222')
+                axis.hlines((low, high), position - .1, position + .1, color='#222222')
+        axis.axhline(0, color='#444444', linewidth=.8)
+        axis.set_title(PATTERN_LABELS[pattern])
+        axis.set_xticks(range(len(backbones)), [MODEL_LABELS[key] for key in backbones])
+        axis.set_ylabel('Tensor − baseline balanced accuracy (pp)')
+        axis.grid(axis='y', alpha=.2)
+    figure.suptitle(f'{partition.capitalize()} paired tensor robustness gains')
+    figure.text(.5, .025, 'Equal weights for 22, 16, 11 and 6 channels. Positive favors tensor completion.',
                 ha='center', fontsize=8)
-    figure.text(.5, .007, 'Whiskers: pointwise 95% subject-bootstrap confidence intervals; no multiple-comparison correction.',
+    figure.text(.5, .007, 'Whiskers: pointwise 95% subject-bootstrap intervals; unavailable for one participant.',
                 ha='center', fontsize=8)
-    figure.tight_layout(rect=(0, .065, 1, .95))
+    figure.tight_layout(rect=(0, .07, 1, .95))
     return figure
 
 
 def plot_report(report: Path) -> dict:
-    """Plot only complete figure groups from accuracy/paired summary CSV files.
-
-    Return/save a manifest even when nothing is complete. This optional API
-    does not train, load checkpoints, import matplotlib until it is needed, or
-    install dependencies. The experiment runner never calls it automatically.
-    """
     report = Path(report)
     report.mkdir(parents=True, exist_ok=True)
+    status = {'schema_version': 3, 'status': 'incomplete', 'files': [], 'groups': [],
+              'primary_metric': 'balanced_accuracy', 'curves_uncertainty': 'means only',
+              'gain_uncertainty': 'pointwise 95% subject-bootstrap intervals where available'}
     filenames = ('accuracy_table.csv', 'paired_tensor_gain.csv')
-    status = {'schema_version': 1, 'primary_metric': 'test_balanced_accuracy',
-              'status': 'incomplete', 'files': [], 'groups': [],
-              'uncertainty': 'Paired-gain figures use saved 95% subject-bootstrap intervals; curves show means only.'}
-    with (report / '.summary.lock').open('a+') as lock:
-        fcntl.flock(lock.fileno(), fcntl.LOCK_SH)
-        missing = [name for name in filenames if not (report / name).is_file()]
-        if missing:
-            status['reason'] = f'Missing summary tables: {", ".join(missing)}'
-            _atomic_json(report / 'plots_status.json', status)
-            return status
-        contents = {name: (report / name).read_bytes() for name in filenames}
-    status['source_tables_sha256'] = {name: hashlib.sha256(data).hexdigest()
-                                      for name, data in contents.items()}
-    tables = {name: list(csv.DictReader(io.StringIO(data.decode('utf-8-sig'))))
-              for name, data in contents.items()}
-    status['table_rows'] = {name: len(rows) for name, rows in tables.items()}
-    accuracy = _index(tables['accuracy_table.csv'], ('attention', 'representation', 'regime', 'scenario'))
-    paired = _index(tables['paired_tensor_gain.csv'], ('attention', 'regime', 'pattern'), robust=True)
-    fields = ('balanced_accuracy_gain_pp', 'balanced_accuracy_ci95_low_pp', 'balanced_accuracy_ci95_high_pp')
-    for regime in REGIMES:
-        pairs = [(attention, representation) for attention in ATTENTIONS
-                 for representation in ('baseline', 'tensor_core')]
-        status['groups'].append(_group_status(f'primary_curves_{regime}', accuracy,
-                                _curve_keys(regime, pairs), ('balanced_accuracy_mean_percent',)))
-        pairs = [('mha', representation) for representation in CONTROL_LABELS]
-        status['groups'].append(_group_status(f'mha_controls_{regime}', accuracy,
-                                _curve_keys(regime, pairs), ('balanced_accuracy_mean_percent',)))
-        keys = [(attention, regime, pattern) for attention in ATTENTIONS for pattern in PATTERNS]
-        status['groups'].append(_group_status(f'paired_robustness_{regime}', paired, keys, fields))
-    ready = [group for group in status['groups'] if group['status'] == 'ready']
-    if not ready:
-        status['reason'] = 'No complete figure group yet. No blank charts were generated.'
-        _atomic_json(report / 'plots_status.json', status)
-        return status
-    try:
-        import matplotlib
-        matplotlib.use('Agg')
-        import matplotlib.pyplot as plt
-        from matplotlib.lines import Line2D
-    except ImportError as error:
-        status.update(status='dependency_unavailable',
-                      reason='Optional plotting requires matplotlib in the existing environment.')
-        _atomic_json(report / 'plots_status.json', status)
-        raise RuntimeError('Optional plots require matplotlib. Use the existing environment that '
-                           'generated AGFL plots, or omit --plots and use the CSV tables. '
-                           'No dependency was installed.') from error
-    folder = report / 'plots'
-    folder.mkdir(parents=True, exist_ok=True)
-    with plt.rc_context({'font.family': 'DejaVu Sans', 'font.size': 10,
-                         'pdf.fonttype': 42, 'ps.fonttype': 42}):
-        for group in ready:
-            name = group['name']
-            regime = name.rsplit('_', 1)[-1]
-            if name.startswith('primary_curves_'):
-                figure = _primary_curves(plt, Line2D, accuracy, regime)
-            elif name.startswith('mha_controls_'):
-                figure = _control_curves(plt, accuracy, regime)
-            else:
-                figure = _paired_gains(plt, paired, regime)
+    # Serialize plotting as well as table reading. This avoids simultaneous
+    # workers publishing two versions of the same PNG/PDF or status record.
+    with (report / '.plots.lock').open('a+') as plotting_lock:
+        fcntl.flock(plotting_lock, fcntl.LOCK_EX)
+        with (report / '.summary.lock').open('a+') as summary_lock:
+            fcntl.flock(summary_lock, fcntl.LOCK_SH)
+            missing = [name for name in filenames if not (report / name).is_file()]
+            if missing:
+                status['reason'] = f'Missing summary tables: {", ".join(missing)}'
+                _atomic_text(report / 'plots_status.json', json.dumps(status, indent=2) + '\n')
+                return status
+            contents = {name: (report / name).read_bytes() for name in filenames}
+        status['source_tables_sha256'] = {name: hashlib.sha256(value).hexdigest() for name, value in contents.items()}
+        tables = {name: list(csv.DictReader(io.StringIO(value.decode('utf-8-sig')))) for name, value in contents.items()}
+        accuracy = _index(tables['accuracy_table.csv'], ('partition', 'model', 'scenario'))
+        paired = _index(tables['paired_tensor_gain.csv'], ('partition', 'backbone', 'kind', 'pattern', 'scenario'))
+        paired_robust = {key[:4]: value for key, value in paired.items() if key[2] == 'robustness'}
+        model_keys = list(dict.fromkeys(row['model'] for row in tables['accuracy_table.csv']))
+        backbones = list(dict.fromkeys(row['backbone'] for row in tables['paired_tensor_gain.csv']))
+        ready = []
+        for partition in ('validation', 'test'):
+            for kind, indexed, keys, selected in (
+                ('availability', accuracy,
+                 [(partition, model, _scenario(pattern, count)) for model in model_keys
+                  for pattern in DEGRADED_PATTERNS for count in COUNTS], model_keys),
+                ('tensor_gain', paired_robust,
+                 [(partition, backbone, 'robustness', pattern) for backbone in backbones
+                  for pattern in DEGRADED_PATTERNS], backbones),
+            ):
+                missing_keys = [key for key in keys if key not in indexed or indexed[key]['complete'] != 'True']
+                group = {'name': f'{kind}_{partition}',
+                         'status': 'ready' if keys and not missing_keys else 'incomplete',
+                         'missing_cells': [list(key) for key in missing_keys]}
+                if not keys:
+                    group['reason'] = 'No configured baseline/tensor pairs' if kind == 'tensor_gain' else 'No saved model rows'
+                status['groups'].append(group)
+                if group['status'] == 'ready':
+                    ready.append((group, kind, indexed, partition, selected))
+        if ready:
             try:
-                generated = _save(figure, folder, name)
-                status['files'].extend(generated)
-                group.update(status='generated', files=generated)
-            finally:
-                plt.close(figure)
-    status['status'] = 'complete' if len(ready) == len(status['groups']) else 'partial'
-    status['reason'] = ('All requested figure groups are complete.' if status['status'] == 'complete'
-                        else 'Only complete figure groups were generated; see skipped groups.')
-    _atomic_json(report / 'plots_status.json', status)
-    return status
+                import matplotlib
+                matplotlib.use('Agg')
+                import matplotlib.pyplot as plt
+            except ImportError as error:
+                status.update(status='dependency_unavailable', reason='Optional plots require matplotlib in the active environment')
+                _atomic_text(report / 'plots_status.json', json.dumps(status, indent=2) + '\n')
+                raise RuntimeError(status['reason']) from error
+            folder = report / 'plots'
+            folder.mkdir(exist_ok=True)
+            with plt.rc_context({'font.family': 'DejaVu Sans', 'font.size': 10,
+                                 'pdf.fonttype': 42, 'ps.fonttype': 42}):
+                for group, kind, indexed, partition, selected in ready:
+                    figure = (_curves(plt, indexed, partition, selected) if kind == 'availability'
+                              else _gains(plt, indexed, partition, selected))
+                    try:
+                        files = _save(figure, folder, group['name'])
+                        status['files'].extend(files)
+                        group.update(status='generated', files=files)
+                    finally:
+                        plt.close(figure)
+        applicable = [group for group in status['groups'] if 'reason' not in group]
+        status['status'] = ('complete' if applicable and all(group['status'] == 'generated' for group in applicable)
+                            else 'partial' if status['files'] else 'incomplete')
+        status['reason'] = 'Only complete configured comparisons are plotted; see groups for pending or unconfigured pairs.'
+        _atomic_text(report / 'plots_status.json', json.dumps(status, indent=2) + '\n')
+        return status

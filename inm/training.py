@@ -7,8 +7,8 @@ import numpy as np
 import torch
 from torch import nn
 from tqdm import tqdm
-from agfl.optimization import ClassificationLoss, gradients_are_finite
-from agfl.metrics import classification_metrics
+from eeg_models.optimization import ClassificationLoss, gradients_are_finite
+from eeg_models.metrics import classification_metrics
 from .protocol import write_json
 
 
@@ -36,9 +36,11 @@ def predict(model, x, mask, batch_size, device):
     return np.concatenate(probabilities)
 
 
-def fit(model, train_x, train_y, val_x, val_y, train_masks, val_mask, options,
-        *, seed, device, history_path, description):
-    """train_masks(epoch) is independent of representation and attention identity."""
+def fit(model, train_x, train_y, val_x, val_y, options,
+        *, seed, device, windows, history_path, description):
+    """Fit the entire model on 22 channels; only full validation selects epochs."""
+    train_mask = torch.ones(len(train_x), 22, windows, dtype=torch.bool)
+    val_mask = torch.ones(len(val_x), 22, windows, dtype=torch.bool)
     model.to(device)
     counts = np.bincount(np.asarray(train_y), minlength=4)
     if np.any(counts == 0):
@@ -61,13 +63,12 @@ def fit(model, train_x, train_y, val_x, val_y, train_masks, val_mask, options,
               mininterval=5., disable=None) as progress:
         for epoch in progress:
             model.train()
-            mask = torch.as_tensor(train_masks(epoch), dtype=torch.bool)
             order = np.random.default_rng(seed + 100003 * epoch).permutation(len(train_x))
             loss_sum, correct = 0., 0
             for start in range(0, len(order), options['batch_size']):
                 indices = order[start:start + options['batch_size']]
                 x, y = train_x[indices].to(device), train_y[indices].to(device)
-                available = mask[indices].to(device)
+                available = train_mask[indices].to(device)
                 optimizer.zero_grad(set_to_none=True)
                 logits = model(x, available)
                 loss = criterion(logits, y)

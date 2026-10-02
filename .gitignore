@@ -9,7 +9,20 @@ results/
 /AGENTS.md
 .local-history/
 .DS_Store
-# Anchor recording directories to the root; agfl/datasets/ is source code.
+# Private research drafts and local tooling settings.
+/references/
+/.agents/
+/.codex/
+.env
+.env.*
+!.env.example
+# Generated training artifacts outside the default results directory.
+*.pt
+*.pth
+*.ckpt
+*.slurm
+slurm-*.out
+# Anchor recording directories to the root; eeg_models/datasets/ is source code.
 /data/
 /datasets/
 /ml/

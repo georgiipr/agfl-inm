@@ -1,10 +1,11 @@
-# Tucker-2 tensor attention: equations and implementation
+# Tucker-2 signal completion: equations and implementation
 
-The intervention is implemented in [`inm/tensor_attention.py`](../inm/tensor_attention.py).
-It uses only PyTorch, already required by the original codebase. “Tensor” and
-“hypermatrix” refer to the same higher-order array in this project. Merely storing
-signals in such an array is not the intervention: the fitted multilinear factors
-and inference from the available entries are the intervention.
+The intervention is implemented in
+[`eeg_models/models/_shared/tensor.py`](../eeg_models/models/_shared/tensor.py). It uses
+only PyTorch, already required by the original codebase. “Tensor” and
+“hypermatrix” refer to the same higher-order array in this project. Merely
+storing signals in such an array is not the intervention: the fitted multilinear
+factors and inference from the available entries are the intervention.
 
 ## Input and observation mask
 
@@ -16,21 +17,18 @@ M\in\{0,1\}^{C\times P}.
 \]
 
 There are \(C=22\) named EEG electrode positions, \(P\) disjoint temporal windows,
-and \(F\) fixed features per electrode/window. The known electrode universe is
+and \(F=250\) normalized time samples per electrode/window. The known electrode universe is
 retained when channels disappear. The mask is broadcast over features. Only
 \(M_{cp}=1\) entries are inputs; the other array positions may contain arbitrary
-placeholders, including NaN. Features for observed windows must be finite.
+placeholders, including NaN. Observed samples must be finite.
 
-**Explicit adaptation of the proposal:** the proposal suggests predetermined
-time–frequency features. This experiment instead uses \(F=32\) frozen features
-from a shared EEGNet-derived, channel-local window encoder, retaining \(P=4\)
-windows. The encoder is supervised-pretrained with a full-input MHA head on
-training trials, selected using validation, and then frozen before training-only
-feature standardization and factor fitting. Every comparison arm receives that
-same frozen extractor. The tensor equations concern its feature space, not raw
-waveforms or literal spectral coefficients. This evaluates the proposal's
-multilinear intervention integrated with an EEGNet-derived feature extractor;
-it is not an exact reproduction of the proposed fixed spectral transform.
+**Implemented representation:** normalize EEG using train-only channel
+statistics, then reshape each full trial to `[B,22,4,250]`. The feature-mode
+coordinate in the mathematics below is a within-window sample, not a frozen
+learned feature or spectral coefficient. Completion preserves the raw model
+interface `[B,22,1000]` after reshaping. EEGNet and Signal Transformer both
+train end to end with built-in MHA. The experiment tests multilinear signal
+completion within these classifiers.
 
 The API selects observed entries using `torch.where` **before arithmetic**.
 Multiplying hidden values by zero would be unsafe because `0 * NaN` is NaN.
@@ -48,9 +46,10 @@ G\in\mathbb R^{R_C\times P\times R_F},\quad
 \widehat X_p=UG_pV^\top.
 \]
 
-Columns of \(U\) and \(V\) have unit Euclidean norm. Typical channel ranks are
-4 and 8; the feature rank cannot exceed \(F\). Fixed ranks are declared in the
-experiment configuration, rather than selected on held-out test accuracy.
+Columns of \(U\) and \(V\) have unit Euclidean norm. The full preset uses
+channel rank 4 and sample-mode rank 16; neither rank can exceed its
+corresponding input dimension. Fixed ranks are declared in the experiment
+configuration, rather than selected on held-out test accuracy.
 
 For window \(p\), let \(O_p=\{c:M_{cp}=1\}\), \(n_p=|O_p|\), and
 \(D_p=n_pF\). For fixed factors, infer
@@ -92,17 +91,14 @@ input feature dtype.
 ## Fitting factors on training data only
 
 For the current subject and seed, use only that subject's designated training
-trials and training masks. The protocol trains nine subjects individually,
-using within-subject partitions rather than subject-disjoint folds.
-The supplied experiment fits one common factor pair from **full-channel training
-features** and reuses it for the full-availability and mixed-availability
-classifier-training regimes, and for the core and completion routes. This is
-a known-sensor calibration assumption: all 22 electrodes are observed during
-training calibration, while later inference can have missing inputs. It isolates
-classifier masking from changes to the fitted representation. It does not test
-fitting a representation when sensors are permanently absent from calibration.
-The low-level `fit` API nevertheless honors its input mask and supports that
-different design when every channel occurs somewhere in the training inputs.
+trials and training masks. The protocol trains nine subjects individually, using
+within-subject partitions rather than subject-disjoint folds. The supplied
+experiment fits one shared factor pair from **full-channel training signal
+windows** and uses it in both tensor backbones. No labels, validation or test
+samples enter factor fitting. All 22 sensors are observed during
+training/calibration; availability loss is evaluated afterward. Fitting factors
+does not freeze either supervised backbone. Non-tensor models share the same
+training-only normalization and use zero for missing normalized samples.
 
 Fit \(U,V\) by the constrained training-only objective
 
@@ -124,25 +120,17 @@ not enter initialization, these losses, or factor updates.
 The training mask participates in both the solves and the fitting loss. A
 channel never observed anywhere in the factor-fitting training inputs causes an
 explicit error: a free factor row for it is not identifiable from those data.
-Once fitted, factors are PyTorch **buffers**, not model parameters. Classifier
-optimizers therefore cannot silently fine-tune them. Fitted factors, fitted-state
-flag, fit-epoch count, and training observation counts are in the state dictionary;
-the surrounding experiment must also save the rank/ridge configuration.
+Once fitted, factors are PyTorch **buffers**, not model parameters. Supervised
+optimizers therefore cannot silently fine-tune them. Fitted factors, fitted-
+state flag, fit-epoch count, and training observation counts are in the state
+dictionary; the surrounding experiment must also save the rank/ridge
+configuration.
 
-## Representation routes
+## Completion in the four models
 
-The latent route uses `encode(X,M)` to obtain \(G\). The classifier token adapter
-receives the same availability information as its matched attention-only control;
-the tensor module itself does not choose an attention mechanism or classifier.
-Spatial EEG attention in this project connects electrode identities or
-channel-factor identities **separately within each temporal window**. Window
-readouts are then averaged; there is no attention over the temporal axis and no
-temporal-position embedding. Consequently, the classifier is invariant to a
-joint permutation of the feature and availability windows. This differs from
-the proposal's component-window token sequence with temporal-position tags.
-The tensor module itself retains every window and does not smooth through time.
-
-The separate feature-completion route uses `complete(X,M)`:
+`encode(X,M)` is the internal conditional core solve. `reconstruct(X,M)` returns
+the factor estimate everywhere. The model intervention uses only
+`complete(X,M)`:
 
 \[
 X^{\rm completed}_{cpf}=
@@ -152,28 +140,36 @@ X_{cpf},&M_{cp}=1,\\
 \end{cases}
 \]
 
-This branch preserves observed features exactly. The original mask must still
-reach the classifier so predictions remain distinguishable from measurements.
-`reconstruct` returns the factor estimate everywhere, whereas `complete` retains
-the observations. Both estimate **features**, not raw EEG waveforms.
+Measured samples are preserved exactly; estimates fill only missing windows.
+Completion occurs before the entire backbone and its built-in MHA. The original
+mask continues to control the attention keys, distinguishing available channels
+from entirely missing ones. The reconstructed signal keeps all sensor positions
+and ordered windows. There is no separate learned core projection, availability
+embedding, interchangeable attention head or window-averaged classifier.
 
-The module's direct API is:
+`SignalInput` bypasses the factor solve when every channel/window is observed.
+Thus the tensor intervention changes no signal sample in full-channel training
+or validation and adds no trainable classifier parameters. Matched
+initialization and batch order make full-input baseline/tensor behavior a
+controlled comparison. Whether tensor completion helps on lost channels must be
+measured experimentally.
+
+The mathematical API is:
 
 ```python
 tucker = Tucker2(
-    channels=22, features=F, rank_channels=4, rank_features=4,
+    channels=22, features=250, rank_channels=4, rank_features=16,
     ridge=1e-3, fit_epochs=30, fit_lr=1e-2, fit_batch_size=64,
 ).to(device)
-history = tucker.fit(training_features, training_mask)
-core = tucker.encode(available_features, availability_mask)
-estimated_features = tucker.reconstruct(available_features, availability_mask)
-completed_features = tucker.complete(available_features, availability_mask)
+history = tucker.fit(training_signal_windows, full_training_mask)
+completed = tucker.complete(observed_signal_windows, availability_mask)
 ```
 
-Shapes are `[B,C,P,F]` for features, `[B,C,P]` for boolean masks, and `[B,Rc,P,Rf]`
-for cores. Optional `epochs`, `lr`, and `batch_size` keyword arguments to `fit`
-override its constructor fitting defaults. Save and restore the state dictionary
-with the same constructor ranks/ridge settings.
+Signal windows have shape `[B,C,P,F]`, Boolean masks `[B,C,P]`, and internal
+cores `[B,Rc,P,Rf]`. Restore factors using the same constructor rank/ridge
+settings. Factor state, training observation counts, normalization, constructor
+options, selected classifier weights and source/split identities are archived
+together.
 
 ## Interpretation limits
 
@@ -184,9 +180,10 @@ factors. Tucker factors admit rotations/sign ambiguities; sharing frozen factors
 keeps component coordinates consistent between training and evaluation.
 
 Severe or spatially concentrated channel losses may remove information that no
-factor model can recover. Static 6-of-22 availability removes 72.73% of channels,
-the integer-channel approximation to 75% loss; the exact retained count must be
-reported. Balanced accuracy, macro-F1, paired robustness changes, and observed
-full-input degradation remain the decisive classification outcomes. Hidden-entry
-reconstruction error is secondary and must be computed from evaluation targets
-only after inference, never used as input or a fitting signal on held-out data.
+factor model can recover. Static 6-of-22 availability removes 72.73% of
+channels, the integer-channel approximation to 75% loss; the exact retained
+count must be reported. Balanced accuracy, macro-F1, paired robustness changes,
+and observed full-input degradation remain the decisive classification outcomes.
+Hidden-sample reconstruction error is secondary and must be computed from
+evaluation targets only after inference, never used as input or a fitting signal
+on held-out data.

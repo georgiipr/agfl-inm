@@ -1,14 +1,13 @@
-"""BCI2a loader with filtering restricted to each availability window.
+"""BCI2a loading with window-local filtering for explicit dynamic outages.
 
-Cue labels, artifact exclusion, subject identity and trial boundaries follow
-the preserved source snapshot. Filtering uses non-overlapping windows.
-This changes preprocessing from the earlier whole-trial AGFL experiments.
+Convolutional models still receive each entire four-second trial. Filter
+windows prevent hidden intervals from influencing observed intervals.
 """
 from bisect import bisect_right
 from pathlib import Path
 import numpy as np
-from agfl.datasets.base import SignalDataset, bandpass_finite_spans, normalize_samples, source_fingerprint
-from agfl.datasets.eeg import CHANNEL_NAMES
+from eeg_models.datasets.base import SignalDataset, bandpass_finite_spans, normalize_samples, source_fingerprint
+from .availability import CHANNEL_IDS
 
 
 def load_subject(config):
@@ -25,7 +24,7 @@ def load_subject(config):
     if config["artifact_policy"] not in {"include", "exclude"}:
         raise ValueError("artifact_policy must be include or exclude")
     if config["filter_scope"] != "window":
-        raise ValueError("AGFL-inm requires independent window filtering")
+        raise ValueError("This availability protocol requires independent window filtering")
     window = config["window"]
     if type(window) is not int or window < 1 or not np.isfinite(config['offset_seconds']) or config["offset_seconds"] < 0:
         raise ValueError("EEG window must be positive and offset_seconds nonnegative")
@@ -90,7 +89,7 @@ def load_subject(config):
                 epoch = continuous[:, start:stop]
                 chunk = int(config['filter_window_samples'])
                 if chunk < 128 or window % chunk:
-                    raise ValueError('Window length must be divisible into EEGNet windows of at least 128 samples')
+                    raise ValueError('Window length must be divisible into availability windows of at least 128 samples')
                 # Filtering cannot carry hidden-window data into observed windows.
                 pieces = [bandpass_finite_spans(epoch[:, left:left + chunk], fs,
                           config['lowcut'], config['highcut'], gdf_missing=True)[0]
@@ -112,7 +111,7 @@ def load_subject(config):
     x = normalize_samples(np.stack(signals), config["normalization"])
     return SignalDataset(x, np.asarray(labels), np.asarray(groups), ids, {
         "dataset": "eeg", "modality": "eeg", "num_classes": 4, "sampling_rate": fs_values.pop(),
-        "channel_names": CHANNEL_NAMES, "label_names": ["left_hand", "right_hand", "feet", "tongue"],
+        "channel_names": list(CHANNEL_IDS), "label_names": ["left_hand", "right_hand", "feet", "tongue"],
         "preprocessing": config, "sources": sources, "skipped": skipped,
         "artifact_trials_seen": artifact_count, "sample_sessions": sample_sessions,
         "sample_runs": sample_runs, "protocol_version": "bci2a-inm-window-v1",

@@ -1,0 +1,6 @@
+{
+  "extends": "study.json",
+  "name": "pilot_four_models_one_seed_v3",
+  "seeds": [0],
+  "output_dir": "results/inm-v3-pilot"
+}
