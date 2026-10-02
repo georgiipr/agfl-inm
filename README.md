@@ -1,5 +1,9 @@
 # AGFL-inm
 
+Research continues on `research/baseline-accuracy`. See the
+[branch and collaborator review](docs/baselines/branch-review.md) for the preserved
+baseline studies and ideas reviewed from George's separate `origin/main` redesign.
+
 EEG classification under changing channel availability, comparing spatial
 **MHA** and **Performer** with baseline features and training-fitted **Tucker-2**
 representations.

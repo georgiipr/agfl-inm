@@ -46,9 +46,10 @@ implement the proposal's subject-disjoint folds or Nyström attention.
 ## Practical checks
 
 Use `git ls-files` or `rg --files --no-ignore agfl/datasets` when reviewing the
-dataset helpers: the existing broad `datasets/` ignore pattern hides that tracked
-directory from ordinary ripgrep listings. Consult Git's tracked inventory before
-declaring any package absent.
+dataset helpers. The broad `datasets/` ignore pattern at the reviewed revision
+hid that tracked directory from ordinary ripgrep listings; the research branch
+now anchors recording-directory patterns to the root. Consult Git's tracked
+inventory before declaring any package absent.
 
 `python run.py --plan` is dependency-light and should print 27 tasks and 378
 classifier fits for the supplied configuration. Actual training requires the
@@ -58,8 +59,17 @@ launcher was found at the reviewed revision; choose checks appropriate to change
 
 Build the concept document with `make -C docs/concept`. Review the LaTeX log and
 render diagrams when modifying layout. This task added documentation only.
-Root `AGENTS.md` is locally ignored by the pre-existing `.gitignore`; explicitly
-include it when sharing the orientation package if desired.
+Root `AGENTS.md` is now tracked on the research branch, despite the historical
+ignore rule, so the orientation travels with its source snapshot.
+
+## Research branch
+
+Continue the baseline accuracy work on `research/baseline-accuracy`. Read
+`docs/baselines/branch-review.md` for the review of George's `origin/main` at
+`92b7fc2`. Its end-to-end raw-completion experiment is a separate design;
+merging it wholesale would change the protocol and break baseline imports.
+The small root-anchored ignore-rule fix was adopted separately. Keep completed
+study identities intact and review future contributions individually.
 
 ## Approved successor work
 

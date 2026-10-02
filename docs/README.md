@@ -15,6 +15,7 @@ or edit [its LaTeX source](concept/agfl_concept.tex).
 | [Temporal comparison results](baselines/temporal-results-review.md) | Completed paired head comparison and the legacy pilot prerequisite for session 12 |
 | [Legacy pilot review](baselines/legacy-pilot-review.md) | Validated encoder/head diagnostics and readiness for session 12 |
 | [Completed tensor comparison](baselines/tensor-results-review.md) | Verified 162-fit cohort, validation decision, and next accuracy investigation |
+| [Research branch and collaborator review](baselines/branch-review.md) | Branch ownership, adopted Git fix, and useful ideas from George's model redesign |
 | [Accuracy implementation sessions](../plans/accuracy/README.md) | Small sequential tasks and a resumable Codex Bash runner |
 | [Project overview](project_overview.md) | Research question and proposal mapping |
 | [Model adaptation](model_adaptation.md) | Encoder locality, representation routes, and pooling |
