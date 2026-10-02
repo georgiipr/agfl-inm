@@ -1,0 +1,60 @@
+{
+  "schema_name": "agfl-baselines-v1",
+  "name": "baseline_accuracy_within_session_v1",
+  "subjects": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "seeds": [0, 1, 2],
+  "data_dir": "../../ml",
+  "output_dir": "../results/baselines-v1",
+  "protocol": "within_session",
+  "split": {
+    "strategy": "stratified",
+    "train": 0.6,
+    "validation": 0.2,
+    "test": 0.2
+  },
+  "preprocessing": {
+    "sampling_rate": 250,
+    "trial_samples": 1000,
+    "channels": 22,
+    "windows": 4,
+    "window_samples": 250,
+    "filter_low_hz": 2.0,
+    "filter_high_hz": 30.0,
+    "filter_scope": "window",
+    "normalization": "train_channel"
+  },
+  "model": {
+    "classes": 4,
+    "temporal_kernel": 64,
+    "f1": 8,
+    "depth_multiplier": 2,
+    "f2": 16,
+    "spatial_kernel": [22, 1],
+    "pooling": [4, 8],
+    "separable_kernel": 16,
+    "dropout": 0.5
+  },
+  "training": {
+    "epochs": 250,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "warmup_epochs": 10,
+    "gradient_clip": 1.0,
+    "minimum_epochs": 75,
+    "patience": 50
+  },
+  "selection": {
+    "policy": "full",
+    "tie_breaker": "validation_log_loss"
+  },
+  "arms": [
+    {"model": "eegnet_reference", "regime": "full"},
+    {"model": "masked_eegnet", "regime": "full"},
+    {"model": "masked_eegnet", "regime": "mixed"},
+    {"model": "covariance", "regime": "full"}
+  ],
+  "mask_repeats": 5,
+  "bootstrap_repeats": 2000,
+  "external_labels_dir": null
+}

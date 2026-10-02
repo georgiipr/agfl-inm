@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "default_through": "10",
+  "sessions": [
+    {
+      "id": "01",
+      "title": "Audit results and environment",
+      "prompt": "sessions/01-audit.md",
+      "artifacts": [
+        "inm/baselines/__init__.py",
+        "inm/baselines/diagnostics.py",
+        "docs/baselines/audit.md",
+        "tests/baselines/test_diagnostics.py"
+      ],
+      "tests": [
+        "test_diagnostics.py"
+      ]
+    },
+    {
+      "id": "02",
+      "title": "Declare baseline config and CLI",
+      "prompt": "sessions/02-protocol.md",
+      "artifacts": [
+        "inm/baselines/protocol.py",
+        "inm/baselines/__main__.py",
+        "configs/baselines.json",
+        "configs/baselines-cross-session.json",
+        "tests/baselines/test_protocol.py"
+      ],
+      "tests": [
+        "test_diagnostics.py",
+        "test_protocol.py"
+      ]
+    },
+    {
+      "id": "03",
+      "title": "Prepare data and train-only normalization",
+      "prompt": "sessions/03-data.md",
+      "artifacts": [
+        "inm/baselines/data.py",
+        "tests/baselines/test_data.py"
+      ],
+      "tests": [
+        "test_protocol.py",
+        "test_data.py"
+      ]
+    },
+    {
+      "id": "04",
+      "title": "Implement EEGNet and raw masking",
+      "prompt": "sessions/04-eegnet.md",
+      "artifacts": [
+        "inm/baselines/eegnet.py",
+        "tests/baselines/test_eegnet.py"
+      ],
+      "tests": [
+        "test_data.py",
+        "test_eegnet.py"
+      ]
+    },
+    {
+      "id": "05",
+      "title": "Train and select reloadable classifiers",
+      "prompt": "sessions/05-training.md",
+      "artifacts": [
+        "inm/baselines/training.py",
+        "tests/baselines/test_training.py"
+      ],
+      "tests": [
+        "test_eegnet.py",
+        "test_training.py"
+      ]
+    },
+    {
+      "id": "06",
+      "title": "Wire one-task execution and synthetic smoke",
+      "prompt": "sessions/06-neural_runs.md",
+      "artifacts": [
+        "inm/baselines/study.py",
+        "tests/baselines/test_study.py"
+      ],
+      "tests": [
+        "test_training.py",
+        "test_study.py"
+      ]
+    },
+    {
+      "id": "07",
+      "title": "Add a low-cost classical reference",
+      "prompt": "sessions/07-covariance.md",
+      "artifacts": [
+        "inm/baselines/covariance.py",
+        "tests/baselines/test_covariance.py"
+      ],
+      "tests": [
+        "test_study.py",
+        "test_covariance.py"
+      ]
+    },
+    {
+      "id": "08",
+      "title": "Produce honest comparison reports",
+      "prompt": "sessions/08-reporting.md",
+      "artifacts": [
+        "inm/baselines/reporting.py",
+        "tests/baselines/test_reporting.py"
+      ],
+      "tests": [
+        "test_protocol.py",
+        "test_reporting.py"
+      ]
+    },
+    {
+      "id": "09",
+      "title": "Localize losses in the old pipeline",
+      "prompt": "sessions/09-legacy_diagnosis.md",
+      "artifacts": [
+        "docs/baselines/legacy-diagnosis.md",
+        "tests/baselines/test_legacy_diagnosis.py"
+      ],
+      "tests": [
+        "test_diagnostics.py",
+        "test_legacy_diagnosis.py"
+      ]
+    },
+    {
+      "id": "10",
+      "title": "Independent integration review and runbook",
+      "prompt": "sessions/10-integration.md",
+      "artifacts": [
+        "docs/baselines/runbook.md",
+        "docs/baselines/review.md",
+        "tests/baselines/test_integration.py"
+      ],
+      "tests": [
+        "test_*.py"
+      ]
+    },
+    {
+      "id": "11",
+      "title": "Evidence-gated temporal ablation",
+      "prompt": "sessions/11-temporal.md",
+      "artifacts": [
+        "docs/baselines/temporal-ablation.md",
+        "tests/baselines/test_temporal.py"
+      ],
+      "tests": [
+        "test_eegnet.py",
+        "test_training.py",
+        "test_temporal.py"
+      ]
+    },
+    {
+      "id": "12",
+      "title": "Evidence-gated small tensor comparison",
+      "prompt": "sessions/12-tensor_followup.md",
+      "artifacts": [
+        "docs/baselines/tensor-followup.md",
+        "tests/baselines/test_tensor_followup.py"
+      ],
+      "tests": [
+        "test_protocol.py",
+        "test_tensor_followup.py"
+      ]
+    }
+  ]
+}

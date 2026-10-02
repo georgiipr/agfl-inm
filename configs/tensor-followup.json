@@ -1,0 +1,28 @@
+{
+  "schema_name": "agfl-legacy-tensor-followup-v1",
+  "name": "legacy_frozen_features_mha_tensor_followup_v1",
+  "base_config": "study.json",
+  "subjects": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "seeds": [0, 1, 2],
+  "attention": "mha",
+  "representations": ["baseline", "tensor_completion", "tensor_core"],
+  "available_controls": ["mean_completion", "linear_core"],
+  "include_controls": false,
+  "regimes": ["full", "mixed"],
+  "tensor": {
+    "rank_channels": 4,
+    "rank_features": 4,
+    "ridge": 0.001,
+    "candidate_settings": [
+      {"rank_channels": 3, "rank_features": 3, "ridge": 0.001},
+      {"rank_channels": 4, "rank_features": 4, "ridge": 0.001},
+      {"rank_channels": 4, "rank_features": 4, "ridge": 0.01}
+    ]
+  },
+  "selection": {
+    "policy": "validation_robust_balanced_accuracy_then_log_loss",
+    "patterns": ["full_22", "random_static_16", "dynamic_random_16", "random_static_6", "dynamic_random_6"]
+  },
+  "output_dir": "../results/inm-tensor-followup-v1",
+  "controls_output_dir": "../results/inm-tensor-followup-controls-v1"
+}

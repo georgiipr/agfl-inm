@@ -13,3 +13,6 @@ data/
 datasets/
 ml/
 *.gdf
+
+# Local sequential coding-session prompts, event logs and completion receipts.
+/.session-runs/

@@ -37,6 +37,8 @@ in a virtual environment on the experiment machine:
 ```bash
 python3.12 -m venv .venv
 source .venv/bin/activate
+# Workstation CUDA build; choose a compatible build for other machines.
+python -m pip install 'torch==2.14.1+cu130' --index-url https://download.pytorch.org/whl/cu130
 python -m pip install -r requirements.txt
 export AGFL_INM_VENV="$PWD/.venv"
 ```
@@ -45,6 +47,20 @@ Use a PyTorch build compatible with the cluster's GPU drivers. Optional plots
 also require Matplotlib 3.8 or newer, below version 4. The external Slurm launcher installs
 nothing and does not require pytest. It activates `AGFL_INM_VENV`, falling back
 to `$HOME/.venv` if that variable is unset.
+
+For the baseline study, `bash scripts/run_baselines.sh --check-cuda` selects the
+project `.venv` (or `AGFL_PYTHON`) and verifies a GPU forward/backward computation.
+Run it from a terminal with GPU access; a sandbox's CUDA failure does not prove
+the host GPU is unavailable. Real baseline tasks default to CUDA:
+
+```bash
+bash scripts/run_baselines.sh --config configs/baselines.json --preflight
+bash scripts/run_baselines.sh --config configs/baselines.json --task-index 0
+```
+
+The coding-session runner also selects the project `.venv` by default. Its
+acceptance tests and baseline `--smoke` continue to use CPU. See the
+[baseline environment guide](docs/baselines/environment.md) for overrides.
 
 ## Dataset: BCI Competition IV, data set 2a
 
@@ -152,6 +168,13 @@ explicitly mark incomplete comparisons.
 
 ## Project map
 
+- [Accuracy improvement sessions](plans/accuracy/README.md): bounded implementation plans
+  and a sequential, resumable Codex runner for smaller models.
+- [Collaborator onboarding](docs/onboarding.md): guided reading and practical first steps.
+- [Concept PDF](docs/concept/agfl_concept.pdf): mathematical explanation and vector schematics;
+  [LaTeX and build instructions](docs/concept/README.md).
+- [Repository investigation](docs/investigation.md): reviewed evidence, readiness, and limitations.
+- [Documentation index](docs/README.md): all orientation and technical documents.
 - [Project overview](docs/project_overview.md): research question and implementation map.
 - [Model adaptation](docs/model_adaptation.md): encoder, representations and masking.
 - [Tensor mathematics](docs/tensor_math.md): Tucker-2 fitting and masked core inference.

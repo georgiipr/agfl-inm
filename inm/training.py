@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import math
 import time
+from collections import defaultdict
 import numpy as np
 import torch
 from torch import nn
@@ -37,7 +38,7 @@ def predict(model, x, mask, batch_size, device):
 
 
 def fit(model, train_x, train_y, val_x, val_y, train_masks, val_mask, options,
-        *, seed, device, history_path, description):
+        *, seed, device, history_path, description, validation_masks=None):
     """train_masks(epoch) is independent of representation and attention identity."""
     model.to(device)
     counts = np.bincount(np.asarray(train_y), minlength=4)
@@ -83,16 +84,29 @@ def fit(model, train_x, train_y, val_x, val_y, train_masks, val_mask, options,
                     model.clip_weights()
                 loss_sum += float(loss.detach()) * len(indices)
                 correct += int((logits.argmax(-1) == y).sum())
-            probabilities = predict(model, val_x, val_mask, options['batch_size'], device)
-            validation = metrics(np.asarray(val_y), probabilities)
-            # A consistent unweighted log-loss tie break, never a test score.
-            validation['log_loss'] = float(-np.log(np.clip(probabilities[np.arange(len(val_y)), val_y], 1e-12, 1)).mean())
+            banks = validation_masks or [('full', val_mask)]
+            grouped = defaultdict(list)
+            for bank_name, bank_mask in banks:
+                probabilities = predict(model, val_x, bank_mask, options['batch_size'], device)
+                bank_score = metrics(np.asarray(val_y), probabilities)
+                bank_score['log_loss'] = float(-np.log(np.clip(
+                    probabilities[np.arange(len(val_y)), val_y], 1e-12, 1)).mean())
+                grouped[bank_name].append(bank_score)
+            # Repeats are averaged within each declared mask condition, then
+            # conditions receive equal weight in the robustness score.
+            evidence = {name: {key: float(np.mean([row[key] for row in rows]))
+                               for key in ('balanced_accuracy', 'log_loss')}
+                        for name, rows in grouped.items()}
+            validation = (dict(evidence['full']) if len(evidence) == 1 else {
+                'balanced_accuracy': float(np.mean([row['balanced_accuracy'] for row in evidence.values()])),
+                'log_loss': float(np.mean([row['log_loss'] for row in evidence.values()]))})
             key = validation['balanced_accuracy'], -validation['log_loss']
             if best_key is None or key > best_key:
                 best_key, best_epoch = key, epoch + 1
                 best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
             history.append({'epoch': epoch + 1, 'train_loss': loss_sum / len(train_x),
                             'train_accuracy': correct / len(train_x), 'validation': validation,
+                            'validation_banks': evidence,
                             'learning_rate': optimizer.param_groups[0]['lr']})
             write_json(history_path, history)
             progress.set_postfix(loss=f'{loss_sum / len(train_x):.4f}', val_bacc=f"{validation['balanced_accuracy']:.1%}")
@@ -106,5 +120,6 @@ def fit(model, train_x, train_y, val_x, val_y, train_masks, val_mask, options,
     model.eval()
     return {'best_epoch': best_epoch, 'epochs_trained': len(history),
             'selected_validation': copy.deepcopy(history[best_epoch - 1]['validation']),
-            'selection': 'validation_balanced_accuracy_then_log_loss',
+            'selection': ('validation_balanced_accuracy_then_log_loss' if not validation_masks else
+                          'mean_validation_balanced_accuracy_then_mean_log_loss'),
             'elapsed_seconds': time.monotonic() - started}

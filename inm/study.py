@@ -205,7 +205,7 @@ def _valid_result(path, identity, arm, cfg):
             and all(all(np.isfinite(r[k]) for k in ('accuracy', 'balanced_accuracy', 'f1_macro')) for r in rows))
 
 
-def run_task(cfg, task_index, device='cuda'):
+def run_task(cfg, task_index, device='cuda', *, validation_mask_patterns=None):
     from .reporting import summarize
     if not 0 <= task_index < len(tasks(cfg)):
         raise ValueError(f'task-index must be in 0..{len(tasks(cfg)) - 1}')
@@ -230,11 +230,19 @@ def run_task(cfg, task_index, device='cuda'):
         identity = {**identity, 'calibration_sha256': checksum}
         tensor = Tucker2(channels=22, features=stage['feature_count'], **cfg['tensor'])
         tensor.load_state_dict(stage['tensor'])
+        windows = cfg['encoder']['windows']
         banks = _evaluation_banks(cfg, bundle, split, subject, seed)
+        selection_banks = [('full', _full(len(split['validation']), windows))]
+        if validation_mask_patterns:
+            selection_banks = []
+            for row, mask in banks:
+                if row['partition'] == 'validation' and row['scenario'] in validation_mask_patterns:
+                    selection_banks.append((row['scenario'], mask))
+            if not selection_banks or not any(name == 'full_22' for name, _ in selection_banks):
+                raise ValueError('Validation selection needs full_22 and at least one held-out loss pattern')
         # All fitted state is frozen before any degraded validation/test scoring.
         reconstruction = _reconstruction_scores(tensor, stage['train_feature_mean'], stage['features'],
                                                 split, banks, cfg['training']['classifier']['batch_size'], device)
-        windows = cfg['encoder']['windows']
         train, val = split['train'], split['validation']
         train_ids = [bundle.sample_ids[i] for i in train]
         failures = []
@@ -267,7 +275,8 @@ def run_task(cfg, task_index, device='cuda'):
                 selection = fit(model, stage['features'][train], bundle.y[train],
                                 stage['features'][val], bundle.y[val], train_masks, _full(len(val), windows),
                                 cfg['training']['classifier'], seed=seed, device=device,
-                                history_path=arm_dir / 'history.json', description=arm['name'])
+                                history_path=arm_dir / 'history.json', description=arm['name'],
+                                validation_masks=selection_banks)
                 rows = []
                 for row, mask in banks:
                     indices = split[row['partition']]
@@ -280,6 +289,10 @@ def run_task(cfg, task_index, device='cuda'):
                     rows.append({**row, **score, 'reconstruction_nrmse': rec[rec_name] if rec_name else None})
                 result = {'status': 'complete', 'study_id': study_id, 'identity': identity,
                           'subject': subject, 'seed': seed, 'arm': arm,
+                          'pairing': {'feature_sha256': _feature_digest(stage['features']),
+                                      'calibration_sha256': checksum,
+                                      'mask_sha256': {row['partition'] + ':' + row['scenario'] + ':' + str(row['mask_repeat']):
+                                                      row['mask_sha256'] for row, _ in banks}},
                           'selection': selection, 'metrics': rows,
                           'token_axis': model.token_axis, 'attention_tokens': model.num_tokens,
                           'classifier_trainable_parameters': sum(p.numel() for p in model.parameters() if p.requires_grad),
@@ -305,6 +318,15 @@ def run_task(cfg, task_index, device='cuda'):
         print(f'Report: {output / "report"}. Completed fits: {progress["completed_fits"]}/{progress["expected_fits"]}', flush=True)
         if failures:
             raise RuntimeError(f'{len(failures)} arms failed; resubmit this task after reviewing error.json.')
+
+
+def _feature_digest(features):
+    contiguous = features.detach().cpu().contiguous()
+    digest = hashlib.sha256()
+    digest.update(str(contiguous.dtype).encode())
+    digest.update(str(tuple(contiguous.shape)).encode())
+    digest.update(contiguous.numpy().tobytes())
+    return digest.hexdigest()
 
 
 def summarize_existing(cfg):
