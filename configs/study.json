@@ -1,6 +1,6 @@
 {
-  "schema_version": 3,
-  "name": "four_models_channel_availability_v3",
+  "schema_version": 5,
+  "name": "four_models_channel_availability_v5",
   "subjects": [1, 2, 3, 4, 5, 6, 7, 8, 9],
   "seeds": [0, 1, 2],
   "models": ["eegnet", "eegnet_tensor", "signal_transformer", "signal_transformer_tensor"],
@@ -8,29 +8,31 @@
     "data_dir": "../ml",
     "sessions": ["T"],
     "labels_dir": null,
-    "artifact_policy": "exclude",
+    "artifact_policy": "include",
     "normalization": "train_channel",
-    "filter_scope": "window",
-    "filter_window_samples": 250,
+    "filter_scope": "run",
     "window": 1000,
     "offset_seconds": 0.0,
     "lowcut": 2.0,
     "highcut": 30.0
   },
+  "availability": {"window_samples": 250},
   "split": {"protocol": "stratified", "train": 0.6, "validation": 0.2, "test": 0.2},
   "model_options": {"eegnet": {}, "signal_transformer": {}},
   "training": {
-    "epochs": 250,
-    "batch_size": 32,
+    "epochs": 500,
+    "batch_size": 64,
     "learning_rate": 0.001,
-    "weight_decay": 0.0001,
+    "weight_decay": 0.001,
     "loss": "cross_entropy",
     "focal_gamma": 2.0,
-    "class_weights": false,
+    "class_weights": true,
+    "checkpoint_criterion": "loss",
+    "checkpoint_tiebreaker": "none",
     "warmup_epochs": 10,
-    "gradient_clip": 1.0,
-    "patience": 50,
-    "minimum_epochs": 75
+    "gradient_clip": null,
+    "patience": 0,
+    "minimum_epochs": 0
   },
   "tensor": {
     "rank_channels": 4,
@@ -42,5 +44,5 @@
   },
   "mask_repeats": 5,
   "bootstrap_repeats": 2000,
-  "output_dir": "results/inm-v3"
+  "output_dir": "results/inm-v5"
 }

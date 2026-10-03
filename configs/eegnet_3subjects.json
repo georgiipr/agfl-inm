@@ -1,0 +1,8 @@
+{
+  "extends": "study.json",
+  "name": "eegnet_tensor_a03_a04_a09_restored_v5",
+  "subjects": [3, 4, 9],
+  "seeds": [0],
+  "models": ["eegnet", "eegnet_tensor"],
+  "output_dir": "results/eegnet-a03-a04-a09-restored-v5"
+}

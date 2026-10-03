@@ -18,7 +18,7 @@ import tempfile
 import numpy as np
 
 from .availability import DEGRADED_PATTERNS, evaluation_scenarios
-from .protocol import models, task_name, tasks
+from .protocol import CHECKPOINT_SELECTION, SCHEMA_VERSION, models, task_name, tasks
 
 
 METRICS = ("balanced_accuracy", "accuracy", "f1_macro")
@@ -96,7 +96,7 @@ def _validated_result(
 ) -> dict[tuple, dict]:
     if not isinstance(value, dict):
         raise ValueError("result must be a JSON object")
-    if (value.get("schema_version") != 3 or value.get("status") != "complete"
+    if (value.get("schema_version") != SCHEMA_VERSION or value.get("status") != "complete"
             or value.get("study_id") != study_id):
         raise ValueError("result status or study identity does not match")
     if value.get("subject") != subject or value.get("seed") != seed:
@@ -117,9 +117,19 @@ def _validated_result(
         raise ValueError('result lacks a selected-checkpoint checksum')
     selection = value.get('selection')
     if (not isinstance(selection, dict)
-            or selection.get('selection') != 'validation_balanced_accuracy_then_log_loss'
-            or type(selection.get('best_epoch')) is not int or selection['best_epoch'] < 1):
+            or selection.get('selection') != CHECKPOINT_SELECTION
+            or selection.get('criterion') != 'loss' or selection.get('tiebreaker') != 'none'
+            or type(selection.get('best_epoch')) is not int or selection['best_epoch'] < 1
+            or type(selection.get('epochs_trained')) is not int
+            or selection['best_epoch'] > selection['epochs_trained']):
         raise ValueError('result lacks full-channel validation checkpoint-selection metadata')
+    selected_validation = selection.get('selected_validation')
+    if not isinstance(selected_validation, dict):
+        raise ValueError('Selected checkpoint needs full-channel validation metrics')
+    validation_loss = selected_validation.get('loss')
+    if (isinstance(validation_loss, bool) or not isinstance(validation_loss, (int, float))
+            or not math.isfinite(validation_loss) or validation_loss < 0):
+        raise ValueError('Selected checkpoint needs a finite full-channel validation loss')
     rows = value.get("metrics")
     if not isinstance(rows, list) or len(rows) != len(expected):
         raise ValueError(f"result must contain exactly {len(expected)} metric rows")
@@ -139,6 +149,8 @@ def _validated_result(
         mask_hash = row.get("mask_sha256")
         if not _is_sha256(mask_hash):
             raise ValueError("missing or malformed mask SHA256")
+        if not _is_sha256(row.get('input_sha256')):
+            raise ValueError('missing or malformed preprocessed-input SHA256')
         for metric in METRICS:
             score = row.get(metric)
             if (isinstance(score, bool) or not isinstance(score, (int, float))
@@ -190,6 +202,7 @@ def _run_table(records: dict, payloads: dict) -> list[dict]:
                     "elapsed_seconds": payload.get("elapsed_seconds"),
                     **{name: payload["identity"][name] for name in IDENTITY_HASHES},
                     "mask_sha256": ";".join(cell["mask_sha256"] for cell in cells),
+                    "input_sha256": ";".join(cell["input_sha256"] for cell in cells),
                 }
                 for metric in METRICS:
                     row[f"{metric}_percent"] = 100.0 * scores[metric]
@@ -327,11 +340,12 @@ def _paired_tables(records: dict, cfg: dict, study_id: str) -> tuple[list[dict],
             tensor = records.get((subject, seed, tensor_name))
             if base is None or tensor is None:
                 continue
-            mismatched = [key for key in base if base[key]["mask_sha256"] != tensor[key]["mask_sha256"]]
+            mismatched = [key for key in base if any(base[key][field] != tensor[key][field]
+                          for field in ('mask_sha256', 'input_sha256'))]
             if mismatched:
                 issues.append({
                     "subject": subject, "seed": seed, "backbone": backbone,
-                    "reason": "baseline/tensor masks differ; pair excluded from all paired tables",
+                    "reason": "baseline/tensor masks or preprocessed inputs differ; pair excluded from all paired tables",
                     "mismatched_cells": [list(key) for key in mismatched],
                 })
                 continue
@@ -396,6 +410,8 @@ def _summary_text(progress: dict, overall: list[dict], paired: list[dict]) -> st
         'Each model is trained end to end once on 22 channels. Full-channel validation alone selects '
         'the checkpoint. Both validation and held-out test availability sweeps happen after selection; '
         'degraded or test scores never fit factors, select epochs or change the protocol.', '',
+        f"Checkpoint rule: {progress['checkpoint_selection']}. Reported balanced accuracy is "
+        'the primary evaluation metric, not the checkpoint criterion.', '',
         'Means average mask repeats, then seeds within each participant, then equally over all '
         'configured participants. Subject SD is across participant means. Incomplete averages remain '
         'blank, never zero. Individual completed runs remain available in accuracy_by_run.csv.', '',
@@ -490,22 +506,23 @@ def summarize(output: Path, cfg: dict, study_id: str) -> dict:
             identities = {tuple(payloads[key]["identity"][name] for name in IDENTITY_HASHES)
                           for key in task_keys}
             mismatched_cells = [cell for cell in expected
-                                if len({records[key][cell]['mask_sha256'] for key in task_keys}) > 1]
+                                if len({(records[key][cell]['mask_sha256'], records[key][cell]['input_sha256'])
+                                        for key in task_keys}) > 1]
             if len(identities) <= 1 and not mismatched_cells:
                 continue
             # Neither the first model encountered nor the majority identifies the
             # correct provenance. Exclude the whole conflicting task explicitly.
             identity_conflicts.append({
                 "subject": subject, "seed": seed,
-                "reason": "models disagree on dataset/split/calibration identity or masks; entire task excluded",
-                "mismatched_mask_cells": [list(cell) for cell in mismatched_cells],
+                "reason": "models disagree on dataset/split/calibration, masks or inputs; entire task excluded",
+                "mismatched_observation_cells": [list(cell) for cell in mismatched_cells],
                 "models": [{"model": key[2], **{name: payloads[key]["identity"][name]
                                            for name in IDENTITY_HASHES}} for key in task_keys],
             })
             for key in task_keys:
                 invalid.append({"subject": subject, "seed": seed, "model": key[2],
                                 "file": str(paths[key].relative_to(output)),
-                                "reason": "dataset/split/calibration/mask mismatch across models in this task"})
+                                "reason": "dataset/split/calibration/mask/input mismatch across models in this task"})
                 valid_paths.discard(paths[key].parent)
                 del records[key]
                 del payloads[key]
@@ -540,7 +557,7 @@ def summarize(output: Path, cfg: dict, study_id: str) -> dict:
             "pairing_issues": pairing_issues, "identity_conflicts": identity_conflicts,
             "aggregation": "mean repeats, then seeds within each subject, then equally over all subjects",
             "primary_metric": "balanced_accuracy", "bootstrap_unit": "subject mean paired difference",
-            "checkpoint_selection": "full-input validation only",
+            "checkpoint_selection": "lowest full-input validation loss using training class weights; ties keep the earlier epoch",
         }
         _write_csv(report / "accuracy_by_run.csv", by_run)
         _write_csv(report / "accuracy_by_subject.csv", by_subject)

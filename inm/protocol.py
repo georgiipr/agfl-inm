@@ -9,6 +9,8 @@ from eeg_models.models import MODEL_KEYS, model_definition
 from eeg_models.config import merge
 
 ROOT = Path(__file__).resolve().parents[1]
+SCHEMA_VERSION = 5
+CHECKPOINT_SELECTION = 'validation_loss'
 
 
 def read_json(path):
@@ -31,6 +33,7 @@ def source_identity():
     import importlib.metadata
     import os
     import platform
+    import torch
     files = sorted([*ROOT.glob('*.py'), *(ROOT / 'eeg_models').rglob('*.py'),
                     *(ROOT / 'inm').rglob('*.py'), *(ROOT / 'configs').rglob('*.json')])
     hashes = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
@@ -43,7 +46,15 @@ def source_identity():
         launcher_record = {'name': path.name, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
                            'content': path.read_text()}
     return {'source_sha256': digest(hashes), 'files_sha256': hashes,
-            'packages': versions, 'python': platform.python_version(), 'launcher': launcher_record}
+            'packages': versions, 'python': platform.python_version(), 'launcher': launcher_record,
+            'runtime': {'cuda': torch.version.cuda, 'cudnn': torch.backends.cudnn.version(),
+                        'gpu_names': [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())],
+                        'cpu_threads': torch.get_num_threads(),
+                        'deterministic_algorithms': torch.are_deterministic_algorithms_enabled(),
+                        'cudnn_benchmark': torch.backends.cudnn.benchmark,
+                        'cudnn_deterministic': torch.backends.cudnn.deterministic,
+                        'matmul_tf32': torch.backends.cuda.matmul.allow_tf32,
+                        'cudnn_tf32': torch.backends.cudnn.allow_tf32}}
 
 
 def _read_preset(path, seen=None):
@@ -81,8 +92,8 @@ def _number(value, name, *, minimum=0, strict=False):
 def load_config(path):
     cfg, sources = _read_preset(path)
     required = {'schema_version', 'name', 'subjects', 'seeds', 'data', 'split', 'models',
-                'model_options', 'training', 'tensor', 'mask_repeats', 'bootstrap_repeats', 'output_dir'}
-    if set(cfg) != required or cfg['schema_version'] != 3:
+                'model_options', 'training', 'tensor', 'availability', 'mask_repeats', 'bootstrap_repeats', 'output_dir'}
+    if set(cfg) != required or cfg['schema_version'] != SCHEMA_VERSION:
         raise ValueError('Use the four-model schema in configs/study.json; older studies need a separate output directory.')
     if (not cfg['subjects'] or len(set(cfg['subjects'])) != len(cfg['subjects'])
             or any(type(s) is not int or not 1 <= s <= 9 for s in cfg['subjects'])):
@@ -95,12 +106,15 @@ def load_config(path):
     if set(cfg['model_options']) != {'eegnet', 'signal_transformer'}:
         raise ValueError('model_options must describe the two backbones, shared by their tensor variants')
     data = cfg['data']
-    if (data['filter_scope'] != 'window' or data['sessions'] != ['T']
+    if (data['filter_scope'] != 'run' or data['sessions'] != ['T']
             or data['normalization'] != 'train_channel'):
-        raise ValueError('This protocol uses window-local filtering and train-only channel normalization of T sessions')
+        raise ValueError('This protocol uses original run filtering and train-only channel normalization of T sessions')
     _positive(data['window'], 'data.window')
-    _positive(data['filter_window_samples'], 'data.filter_window_samples')
-    if data['filter_window_samples'] < 128 or data['window'] % data['filter_window_samples'] or n_windows(cfg) < 3:
+    if set(cfg['availability']) != {'window_samples'}:
+        raise ValueError('availability must declare window_samples')
+    window_samples = cfg['availability']['window_samples']
+    _positive(window_samples, 'availability.window_samples')
+    if window_samples < 128 or data['window'] % window_samples or n_windows(cfg) < 3:
         raise ValueError('Trials must contain at least three availability windows of at least 128 samples')
     if data['artifact_policy'] not in ('include', 'exclude'):
         raise ValueError('Invalid artifact policy')
@@ -114,19 +128,21 @@ def load_config(path):
     tensor = cfg['tensor']
     for key in ('rank_channels', 'rank_features', 'fit_epochs', 'fit_batch_size'):
         _positive(tensor[key], f'tensor.{key}')
-    if tensor['rank_channels'] > 22 or tensor['rank_features'] > data['filter_window_samples']:
+    if tensor['rank_channels'] > 22 or tensor['rank_features'] > window_samples:
         raise ValueError('Tensor ranks exceed the signal dimensions')
     for key in ('ridge', 'fit_lr'):
         _number(tensor[key], f'tensor.{key}', strict=True)
     options = cfg['training']
-    for key in ('epochs', 'batch_size', 'minimum_epochs'):
+    for key in ('epochs', 'batch_size'):
         _positive(options[key], f'training.{key}')
-    for key in ('warmup_epochs', 'patience'):
+    for key in ('warmup_epochs', 'patience', 'minimum_epochs'):
         _positive(options[key], f'training.{key}', zero=True)
     if options['warmup_epochs'] >= options['epochs'] or options['minimum_epochs'] > options['epochs']:
         raise ValueError('Warmup/minimum epochs must fit within the training budget')
     if options['loss'] not in ('cross_entropy', 'focal') or type(options['class_weights']) is not bool:
         raise ValueError('Invalid supervised loss settings')
+    if options['checkpoint_criterion'] != 'loss' or options['checkpoint_tiebreaker'] != 'none':
+        raise ValueError('Select checkpoints by full-channel validation loss; ties keep the earlier epoch')
     for key in ('learning_rate', 'focal_gamma'):
         _number(options[key], f'training.{key}', strict=True)
     _number(options['weight_decay'], 'training.weight_decay')
@@ -143,7 +159,7 @@ def load_config(path):
 
 
 def n_windows(cfg):
-    return cfg['data']['window'] // cfg['data']['filter_window_samples']
+    return cfg['data']['window'] // cfg['availability']['window_samples']
 
 
 def tasks(cfg):

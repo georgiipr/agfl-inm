@@ -5,6 +5,11 @@ The concrete classes are `EEGNet`, `EEGNetTensor`, `SignalTransformer` and
 metadata, model_options, window_samples=250, tensor_options=...)` to construct
 one of these models. There is no attention argument, attention registry or
 attention factory. MHA uses four heads directly in each backbone.
+The fixed implementation in `_shared/layers.py` uses the original separate
+linear Q/K/V and output projections, explicit scaled softmax scores, and an
+independent seeded CPU RNG stream per attention layer. Constructing attention
+does not advance the surrounding backbone's RNG. EEGNet retains the original
+convolution/attention/classifier construction order.
 
 ## EEGNet
 
@@ -55,10 +60,14 @@ through queries, residual paths and the backbone's spatial readout. There is no
 extra availability embedding or trainable representation adapter. Existing
 sensor identities inside the architectures are retained.
 
-Filtering is independent in each availability window before masking, so an
-observed interval cannot contain filtered hidden-interval information. Temporal
-convolutions run across the entire masked/completed trial; their neighbors are
-observations, zero placeholders or estimates, never hidden reference samples.
-Train-only channel normalization is shared by both backbones and variants.
+Full-channel filtering uses the original recording-run bandpass before cutting
+trials. Full EEGNet inputs take the original unmasked MHA route, including the
+original checkpoint parameter names. For degraded inputs, raw missing intervals
+are removed before filtering observed spans independently per electrode.
+Outside-trial recording context remains observed. No filter crosses an outage,
+native gap or run boundary. Temporal convolutions run across the entire
+masked/completed trial; their neighbors are observations, zero placeholders or
+estimates, never hidden reference samples. Train-only channel normalization is
+shared by both backbones and variants.
 
 See [tensor mathematics](tensor_math.md) and [experiment protocol](experiment.md).

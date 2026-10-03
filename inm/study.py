@@ -2,7 +2,6 @@
 from __future__ import annotations
 import fcntl
 import hashlib
-import os
 from pathlib import Path
 import time
 import traceback
@@ -15,7 +14,7 @@ from eeg_models.storage import run_directory
 from .availability import (CHANNEL_IDS, availability_metadata, evaluation_scenarios,
                            make_mask_bank, mask_bank_digest)
 from .data import load_subject
-from .protocol import digest, models, n_windows, read_json, source_identity, task_name, tasks, write_json
+from .protocol import SCHEMA_VERSION, digest, models, n_windows, read_json, source_identity, task_name, tasks, write_json
 from eeg_models.models._shared.tensor import Tucker2
 from .training import fit, metrics, predict
 
@@ -47,7 +46,8 @@ def initialize(cfg):
                 raise RuntimeError('Source, environment or configuration changed. Use a NEW output_dir; old results will not be reused.')
         else:
             write_json(path, {**identity, 'study_id': study_id, 'tasks': tasks(cfg),
-                             'models': models(cfg), 'availability': availability_metadata()})
+                             'models': models(cfg),
+                             'availability': availability_metadata(cfg['availability']['window_samples'])})
         report = output / 'report'
         report.mkdir(exist_ok=True)
         write_json(report / 'study_manifest.json', read_json(path))
@@ -55,7 +55,8 @@ def initialize(cfg):
 
 
 def _seed(seed):
-    seed_everything(seed, deterministic=True, threads=int(os.environ.get('SLURM_CPUS_PER_TASK', '4')))
+    # The saved working baseline used one CPU thread, independent of allocation.
+    seed_everything(seed, deterministic=True, threads=1)
 
 
 def _register_dataset(output, subject, bundle):
@@ -96,14 +97,15 @@ def _calibrate(cfg, bundle, split, directory, identity, seed, device):
                                 stage['raw_std'].numpy()).astype(np.float32))
         return raw, stage, previous['cache_sha256']
     train = split['train']
-    mean = bundle.x[train].mean(axis=(0, 2), keepdims=True, dtype=np.float64)
-    std = np.maximum(bundle.x[train].std(axis=(0, 2), keepdims=True, dtype=np.float64), 1e-12)
+    # Match the baseline's float32 normalization after float64 statistic fitting.
+    mean = bundle.x[train].mean(axis=(0, 2), keepdims=True, dtype=np.float64).astype(np.float32)
+    std = np.maximum(bundle.x[train].std(axis=(0, 2), keepdims=True, dtype=np.float64), 1e-8).astype(np.float32)
     raw = torch.from_numpy(((bundle.x - mean) / std).astype(np.float32))
     stage = {'identity': identity, 'raw_mean': torch.from_numpy(mean),
              'raw_std': torch.from_numpy(std), 'tensor': None}
     if any(model['tensor'] for model in models(cfg)):
         _seed(seed)
-        tensor = Tucker2(channels=22, features=cfg['data']['filter_window_samples'], **cfg['tensor']).to(device)
+        tensor = Tucker2(channels=22, features=cfg['availability']['window_samples'], **cfg['tensor']).to(device)
         train_windows = raw[train].reshape(len(train), 22, n_windows(cfg), -1).to(device)
         print(f'{directory.name}: fitting train-only Tucker signal factors', flush=True)
         history = tensor.fit(train_windows, _full(len(train), n_windows(cfg)).to(device))
@@ -116,7 +118,7 @@ def _calibrate(cfg, bundle, split, directory, identity, seed, device):
                        'calibration': 'training-only channel statistics and raw-window Tucker factors; no frozen encoder',
                        'raw_mean': mean.tolist(), 'raw_std': std.tolist(),
                        'tensor_fitted': stage['tensor'] is not None,
-                       'tensor_input': [22, n_windows(cfg), cfg['data']['filter_window_samples']]})
+                       'tensor_input': [22, n_windows(cfg), cfg['availability']['window_samples']]})
     return raw, stage, checksum
 
 
@@ -137,7 +139,7 @@ def _evaluation_banks(cfg, bundle, split, subject, seed):
 
 
 @torch.no_grad()
-def _reconstruction_scores(tensor, raw, split, banks, cfg, device):
+def _reconstruction_scores(tensor, raw, bundle, split, banks, stage, cfg, device):
     """Hidden reference samples are targets ONLY for post-fit scoring."""
     scores = {}
     tensor.to(device)
@@ -147,13 +149,14 @@ def _reconstruction_scores(tensor, raw, split, banks, cfg, device):
             scores[key] = None
             continue
         indices = split[row['partition']]
+        observed_input = _observed_input(bundle, indices, mask, stage, cfg, raw)
         numerator, denominator = 0., 0.
         batch_size = cfg['training']['batch_size']
         for start in range(0, len(indices), batch_size):
             truth = raw[indices[start:start + batch_size]].to(device).reshape(-1, 22, n_windows(cfg),
-                                                                            cfg['data']['filter_window_samples'])
+                                                                            cfg['availability']['window_samples'])
             available = mask[start:start + batch_size].to(device)
-            observed = torch.where(available[..., None], truth, torch.zeros_like(truth))
+            observed = observed_input[start:start + batch_size].to(device).reshape_as(truth)
             estimate = tensor.reconstruct(observed, available)
             hidden = ~available[..., None]
             denominator += float(torch.where(hidden, truth.double().square(), 0.).sum())
@@ -161,6 +164,18 @@ def _reconstruction_scores(tensor, raw, split, banks, cfg, device):
         scores[key] = (numerator / denominator) ** .5 if denominator > 0 else None
     tensor.cpu()
     return scores
+
+
+def _observed_input(bundle, indices, mask, stage, cfg, full_input):
+    """One shared, raw-mask-aware preprocessing route for all model variants."""
+    if bool(mask.all()):
+        return full_input[indices]
+    window_samples = cfg['availability']['window_samples']
+    observed = bundle.observed_signals(indices, mask.numpy(), window_samples)
+    sample_mask = np.repeat(mask.numpy(), window_samples, axis=2)
+    normalized = np.where(sample_mask,
+                          (observed - stage['raw_mean'].numpy()) / stage['raw_std'].numpy(), 0.).astype(np.float32)
+    return torch.from_numpy(normalized)
 
 
 def _valid_result(path, identity, model, cfg):
@@ -198,12 +213,12 @@ def _train_or_restore(model, directory, identity, definition, cfg, raw, bundle, 
         return payload['selection'], saved['checkpoint_sha256']
     train, val = split['train'], split['validation']
     selection = fit(model, raw[train], bundle.y[train], raw[val], bundle.y[val], cfg['training'],
-                    seed=seed, device=device, windows=n_windows(cfg),
+                    seed=seed, device=device,
                     history_path=directory / 'history.json', description=definition['name'])
     payload = {'identity': identity, 'model': definition, 'selection': selection,
                'state_dict': {key: value.detach().cpu().clone() for key, value in model.state_dict().items()},
                'model_options': cfg['model_options'][definition['backbone']], 'tensor_options': cfg['tensor'],
-               'window_samples': cfg['data']['filter_window_samples'], 'metadata': bundle.metadata,
+               'window_samples': cfg['availability']['window_samples'], 'metadata': bundle.metadata,
                'raw_mean': stage['raw_mean'], 'raw_std': stage['raw_std']}
     save_torch(checkpoint, payload)
     checksum = file_sha256(checkpoint)
@@ -248,7 +263,7 @@ def _run_models(cfg, output, study_id, directory, subject, seed, device):
             write_json(model_dir / 'config.json', {'identity': identity, 'model': definition, 'config': cfg})
             model = build_model(definition['name'], bundle.metadata,
                                 cfg['model_options'][definition['backbone']],
-                                window_samples=cfg['data']['filter_window_samples'], tensor_options=cfg['tensor'])
+                                window_samples=cfg['availability']['window_samples'], tensor_options=cfg['tensor'])
             if definition['tensor']:
                 model.signal_input.completion.load_state_dict(stage['tensor'])
             selection, checkpoint_hash = _train_or_restore(model, model_dir, identity, definition, cfg, raw,
@@ -256,20 +271,22 @@ def _run_models(cfg, output, study_id, directory, subject, seed, device):
             # Everything is fitted/selected before the degraded sweep. Test
             # labels are read only by metrics, never by training or factor fitting.
             if definition['tensor'] and reconstruction is None:
-                tensor = Tucker2(channels=22, features=cfg['data']['filter_window_samples'], **cfg['tensor'])
+                tensor = Tucker2(channels=22, features=cfg['availability']['window_samples'], **cfg['tensor'])
                 tensor.load_state_dict(stage['tensor'])
-                reconstruction = _reconstruction_scores(tensor, raw, split, banks, cfg, device)
+                reconstruction = _reconstruction_scores(tensor, raw, bundle, split, banks, stage, cfg, device)
                 del tensor
             rows = []
             for row, mask in banks:
                 indices = split[row['partition']]
-                probabilities = predict(model, raw[indices], mask, cfg['training']['batch_size'], device)
+                observed = _observed_input(bundle, indices, mask, stage, cfg, raw)
+                probabilities = predict(model, observed, mask, cfg['training']['batch_size'], device)
                 key = (row['partition'], row['scenario'], row['mask_repeat'])
-                rows.append({**row, **metrics(bundle.y[indices], probabilities),
+                input_hash = hashlib.sha256(memoryview(observed.numpy()).cast('B')).hexdigest()
+                rows.append({**row, 'input_sha256': input_hash, **metrics(bundle.y[indices], probabilities),
                              'reconstruction_nrmse': reconstruction[key] if definition['tensor'] else None})
             if digest({'config': cfg, 'source': source_identity()}) != study_id:
                 raise RuntimeError('Source/environment changed during this model run; no complete result published.')
-            result = {'schema_version': 3, 'status': 'complete', 'study_id': study_id, 'identity': identity,
+            result = {'schema_version': SCHEMA_VERSION, 'status': 'complete', 'study_id': study_id, 'identity': identity,
                       'subject': subject, 'seed': seed, 'model': definition, 'selection': selection,
                       'metrics': rows, 'checkpoint_sha256': checkpoint_hash,
                       'token_axis': model.token_axis, 'attention_tokens': model.num_tokens,
@@ -299,9 +316,9 @@ def run_task(cfg, task_index, device='cuda'):
         raise ValueError(f'task-index must be in 0..{len(tasks(cfg)) - 1}')
     if device == 'cuda' and not torch.cuda.is_available():
         raise RuntimeError('The study needs the allocated GPU; CUDA is unavailable.')
-    output, study_id = initialize(cfg)
     subject, seed = tasks(cfg)[task_index]
     _seed(seed)
+    output, study_id = initialize(cfg)
     directory = output / 'artifacts' / task_name(subject, seed)
     with run_directory(directory):
         try:

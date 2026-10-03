@@ -1,7 +1,7 @@
 {
   "extends": "debug.json",
-  "name": "smoke_four_models_one_subject_v3",
+  "name": "smoke_four_models_one_subject_v5",
   "subjects": [1],
   "models": ["eegnet", "eegnet_tensor", "signal_transformer", "signal_transformer_tensor"],
-  "output_dir": "results/inm-v3-smoke"
+  "output_dir": "results/inm-v5-smoke"
 }

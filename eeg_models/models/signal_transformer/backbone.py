@@ -2,7 +2,7 @@
 import torch
 from torch import nn
 from .._shared.input import SignalInput
-from .._shared.layers import ElectrodeReadout, positive_options
+from .._shared.layers import ElectrodeReadout, MultiHeadAttention, positive_options
 
 
 def validate_common(options):
@@ -12,11 +12,11 @@ def validate_common(options):
 
 
 class TransformerBlock(nn.Module):
-    def __init__(self, options):
+    def __init__(self, options, layer_index):
         super().__init__()
         dim = options['dim']
         self.norm1 = nn.LayerNorm(dim)
-        self.attention = nn.MultiheadAttention(dim, 4, dropout=0.0, batch_first=True)
+        self.mixer = MultiHeadAttention(dim, layer_index=layer_index)
         self.dropout = nn.Dropout(options['dropout'])
         self.norm2 = nn.LayerNorm(dim)
         hidden = max(1, int(dim * options['mlp_ratio']))
@@ -26,8 +26,7 @@ class TransformerBlock(nn.Module):
 
     def forward(self, x, padding):
         normalized = self.norm1(x)
-        mixed, _ = self.attention(normalized, normalized, normalized,
-                                  key_padding_mask=padding, need_weights=False)
+        mixed = self.mixer(normalized, padding)
         x = x + self.dropout(mixed)
         return x + self.ff(self.norm2(x))
 
@@ -43,7 +42,7 @@ class SignalBackbone(nn.Module):
         self.num_tokens = metadata['channels']
         self.position = nn.Parameter(torch.empty(1, self.num_tokens, options['dim']))
         nn.init.normal_(self.position, std=0.02)
-        self.blocks = nn.ModuleList([TransformerBlock(options) for _ in range(options['depth'])])
+        self.blocks = nn.ModuleList([TransformerBlock(options, index) for index in range(options['depth'])])
         self.norm = nn.LayerNorm(options['dim'])
         self.classifier = nn.Linear(options['dim'], metadata['num_classes'])
         self.spatial_readout = ElectrodeReadout(self.num_tokens, options['dim'])
@@ -54,7 +53,7 @@ class SignalBackbone(nn.Module):
         # A token summarizes the full trial of one electrode. A channel with
         # any observed window is a key; an entirely absent channel is not.
         # The same rule applies to measured and tensor-completed inputs.
-        padding = ~mask.any(dim=2)
+        padding = None if mask is None else ~mask.any(dim=2)
         for block in self.blocks:
             tokens = block(tokens, padding)
         return self.classifier(self.spatial_readout(self.norm(tokens)))

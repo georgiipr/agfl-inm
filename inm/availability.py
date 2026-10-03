@@ -220,7 +220,7 @@ def mask_bank_digest(mask: np.ndarray) -> str:
     return digest.hexdigest()
 
 
-def availability_metadata() -> dict[str, object]:
+def availability_metadata(window_samples: int = 250) -> dict[str, object]:
     return {
         "protocol": MASK_PROTOCOL_VERSION,
         "channel_ids": list(CHANNEL_IDS),
@@ -230,6 +230,15 @@ def availability_metadata() -> dict[str, object]:
         "missing_percent": {str(k): 100.0 * (22 - k) / 22 for k in RETAINED_COUNTS},
         "training_retained_counts": [22],
         "training_patterns": ["full"],
+        "window_samples": window_samples,
+        "preprocessing": {
+            "protocol": "run-outage-v1",
+            "full_input": "original bci2a-v2 run-level bandpass before trial extraction",
+            "degraded_input": "remove missing raw intervals, filter each observed electrode span, then extract trial",
+            "outage_extent": "cue-aligned trial only; outside-trial recording context is observed",
+            "native_gaps": "fixed GDF/run boundaries from original loading; never crossed by filtering",
+            "filter_mode": "offline zero-phase, not causal inference",
+        },
         "evaluation_only": {"retained_counts": [16, 11, 6], "patterns": list(DEGRADED_PATTERNS)},
         "dynamic_schedule": "A for [0,P//3), B for [P//3,2*P//3), A thereafter",
         "dynamic_count": "exactly k observed electrodes in every window",

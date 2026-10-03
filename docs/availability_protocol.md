@@ -14,8 +14,15 @@ electrode keeps its original index and identity; surviving channels are never
 renumbered. Only observed samples may enter tensor inference or prediction;
 fitting uses full-channel training samples only. Hidden signal samples are
 accessed separately as post-fit reconstruction scoring targets. No operation
-should filter across a window boundary into an unavailable window or present
-hidden values to the model before masking them.
+should filter across an unavailable interval or present hidden values to the
+model before masking them. Full-input preprocessing uses the original run-level
+bandpass before trial extraction. For degraded input, remove raw missing
+intervals first and filter contiguous observed spans per electrode. An observed
+window boundary is not itself a filter boundary. Native gaps and run boundaries
+remain filter boundaries. Outages apply inside the cue-aligned trial; raw
+recording context outside it remains observed. This is offline zero-phase
+preprocessing, not causal streaming. Preprocessed-input hashes accompany mask
+hashes to verify that all model variants receive identical observations.
 
 The retained counts are **22, 16, 11 and 6**. They correspond to 0%, 27.27%, 50%
 and 72.73% missing channels. Removing exactly 75% of 22 channels is impossible:

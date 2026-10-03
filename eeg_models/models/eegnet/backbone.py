@@ -3,7 +3,7 @@ import math
 import torch
 from torch import nn
 from .._shared.input import SignalInput
-from .._shared.layers import ElectrodeIdentity, positive_options
+from .._shared.layers import ElectrodeIdentity, MultiHeadAttention, positive_options
 
 
 class EEGNetBackbone(nn.Module):
@@ -28,8 +28,6 @@ class EEGNetBackbone(nn.Module):
             return nn.BatchNorm2d(features, momentum=momentum, eps=eps)
         self.block1 = nn.Sequential(
             nn.Conv2d(1, f1, (1, options['temp_kernel']), padding='same', bias=False), bn(f1))
-        self.electrode_position = ElectrodeIdentity(f1, self.num_tokens)
-        self.attention = nn.MultiheadAttention(f1, 4, dropout=0.0, batch_first=True)
         self.block2 = nn.Sequential(
             nn.Conv2d(f1, expanded, (self.num_tokens, 1), groups=f1, bias=False),
             bn(expanded), nn.ELU(), nn.AvgPool2d((1, options['pk1'])),
@@ -41,6 +39,12 @@ class EEGNetBackbone(nn.Module):
         steps = metadata['samples'] // options['pk1'] // options['pk2']
         if steps < 1:
             raise ValueError('EEGNet pooling leaves no temporal samples')
+        # Preserve the original convolution -> attention -> classifier
+        # construction order and independent attention initialization stream.
+        self.electrode_position = ElectrodeIdentity(f1, self.num_tokens)
+        self.attn_blocks = nn.ModuleList([MultiHeadAttention(f1)])
+        self.attention_dropout = nn.Dropout(0.0)
+        self.flatten = nn.Flatten()
         self.fc = nn.Linear(f2 * steps, metadata['num_classes'])
         self.clip_weights()
 
@@ -54,13 +58,14 @@ class EEGNetBackbone(nn.Module):
         temporal = self.block1(raw.unsqueeze(1))  # B,F1,C,T: whole-trial temporal encoding
         tokens = temporal.permute(0, 3, 2, 1).reshape(batch * samples, channels, -1)
         positioned = self.electrode_position(tokens)
-        observed = mask.repeat_interleave(self.signal_input.window_samples, dim=2)
-        padding = ~observed.transpose(1, 2).reshape(batch * samples, channels)
-        mixed, _ = self.attention(positioned, positioned, positioned,
-                                  key_padding_mask=padding, need_weights=False)
+        padding = None
+        if mask is not None:
+            observed = mask.repeat_interleave(self.signal_input.window_samples, dim=2)
+            padding = ~observed.transpose(1, 2).reshape(batch * samples, channels)
+        mixed = self.attention_dropout(self.attn_blocks[0](positioned, padding))
         mixed = mixed.reshape(batch, samples, channels, -1).permute(0, 3, 2, 1)
         signal = temporal + mixed
-        return self.fc(self.block3(self.block2(signal)).flatten(1))
+        return self.fc(self.flatten(self.block3(self.block2(signal))))
 
     @torch.no_grad()
     def clip_weights(self):
