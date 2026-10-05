@@ -1,0 +1,93 @@
+{
+  "output_dir": "/tmp/task-driven-completion-worker04-final-20261005T074155Z",
+  "commands": [
+    {
+      "name": "plan",
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion",
+        "--config",
+        "configs/task-driven-completion.json",
+        "--plan"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "name": "preflight",
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion",
+        "--config",
+        "configs/task-driven-completion.json",
+        "--preflight"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "name": "smoke",
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion",
+        "--config",
+        "configs/task-driven-completion.json",
+        "--smoke",
+        "--output-dir",
+        "/tmp/task-driven-completion-worker04-final-20261005T074155Z"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "name": "resume",
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion",
+        "--config",
+        "configs/task-driven-completion.json",
+        "--smoke",
+        "--output-dir",
+        "/tmp/task-driven-completion-worker04-final-20261005T074155Z",
+        "--resume-smoke"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "name": "audit",
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion.audit",
+        "--config",
+        "configs/task-driven-completion.json",
+        "--synthetic-smoke",
+        "--output-dir",
+        "/tmp/task-driven-completion-worker04-final-20261005T074155Z"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "name": "changed-identity",
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion",
+        "--config",
+        "/tmp/task-driven-completion-worker04-final-20261005T074155Z-changed-config.json",
+        "--smoke",
+        "--output-dir",
+        "/tmp/task-driven-completion-worker04-final-20261005T074155Z",
+        "--resume-smoke"
+      ],
+      "exit_code": 2,
+      "expected_exit_code": 2
+    }
+  ]
+}

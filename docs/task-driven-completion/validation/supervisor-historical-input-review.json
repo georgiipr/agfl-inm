@@ -1,0 +1,196 @@
+{
+  "status": "verified",
+  "tasks": [
+    {
+      "subject": 1,
+      "seed": 0,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "ad5503de7c09ad7979987e567f2a287b6a1b083a1c89af4a5a7e2dd6d6a24618",
+      "split_id": "45b40a60ab33a5410f166db56e491a2e7e2a08c7e365a50dbfe3acac280daab1"
+    },
+    {
+      "subject": 1,
+      "seed": 1,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "f1edac3541661859755ca681607e681f42aed34bb1c55c5a1da69057aa15ff8f",
+      "split_id": "bfbaed49d09784338c0de7b6325c84b1822c3c0b0ed3e6b691e1202d62f9b600"
+    },
+    {
+      "subject": 1,
+      "seed": 2,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "bc9c6fb4e36645399718f730dd9853857c5995c469384a3aadc4ac58e74dae39",
+      "split_id": "b33b875d5f9d0efee67664fdbb229821953339265453a668321eefb955dc3818"
+    },
+    {
+      "subject": 2,
+      "seed": 0,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "c7c781742eb157bffba43f77eb90235242dedfba6f95f41542be94eca16e463d",
+      "split_id": "a0b0e7b64df83155160bfde715498a785456aaaa98820ece75853b35ee772e51"
+    },
+    {
+      "subject": 2,
+      "seed": 1,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "1a6985bbf2d01993f8750e9628c711ed9b12c919c8f3588d85455104665d5976",
+      "split_id": "31669e1aa2167d52ea42ef2a649d748659cad2e84e5baee79ecd4cdb38a88b7f"
+    },
+    {
+      "subject": 2,
+      "seed": 2,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "32f8cc743a61a57c8078ee9dbd28e426a05cfc270c7e3fb43a95494ce7765ed4",
+      "split_id": "508b3b80fa6d2ef4de76a9d503ccad988ac305c2fdebb207f9b32c6919385bd7"
+    },
+    {
+      "subject": 3,
+      "seed": 0,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "5c0ea688ffe433cf92c740f50c68968b7e9f1085f755ef20d9d2c7a32b523f23",
+      "split_id": "76dfa3fa23b9681450d28542493939899c3eedcc902559fbb2f2a6fdb09d1064"
+    },
+    {
+      "subject": 3,
+      "seed": 1,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "8f154ca3ef69f2f0ab51cfeaab7d400c71729d50aa2ff983fe11b01eb0f38112",
+      "split_id": "c87a85de1a0b1d6d4a903ccbe62417ba505ba81d7cc48763cbb587fb4cb570a0"
+    },
+    {
+      "subject": 3,
+      "seed": 2,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "7bb2f1130f0f3d092f0c9d72287fe1a22fde814234d35ad22f7a524e6a6e3ad1",
+      "split_id": "d8c1cc5d024e305ba759ba5519ec00158d928df3467872cf121c77e3390b4df4"
+    },
+    {
+      "subject": 4,
+      "seed": 0,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "7d5ca1e60340797481d11ed8c79c5d61d37f95656ea54cef7b1611f40551f2d4",
+      "split_id": "607361324617a240af013e0a1fb7ed28342be820030646f32ee2f5825b5676d3"
+    },
+    {
+      "subject": 4,
+      "seed": 1,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "085d9b628c4d2c4feb3a0d5ce7d0e9ffa824493a8df6d2ac5d22082425388123",
+      "split_id": "4d53f3c3471f6756cb54ad8af672357827eb72625048efddb1597c28cfceccce"
+    },
+    {
+      "subject": 4,
+      "seed": 2,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "bb047042307847d9fa9d960b99be7b34820a6cd9dc4e8cb2e4c57e5e1e68cf39",
+      "split_id": "eaee004b1cad87022fa4e345f5c84e36858ff4bd2447759a546f9994eecea4c6"
+    },
+    {
+      "subject": 5,
+      "seed": 0,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "c23c03cca4b119fb2ff18875c16d440b08e72486ceb2a1656760704fe3bdbfd6",
+      "split_id": "8c64c836ae36e1f69184888a957fc7afe2e0bf007d816d3484f7c7e825274810"
+    },
+    {
+      "subject": 5,
+      "seed": 1,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "de975158c0dd13a98726069f65d4da187b9cc998a952a832637f4c0d578445e0",
+      "split_id": "5e4f70f6f0f2afbe8d7c5e8756a50ce89f40499ce12ed23090a18e8b6b133939"
+    },
+    {
+      "subject": 5,
+      "seed": 2,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "18e995d94300b41bd85128f34955b3049589edd626646cfa00e9903fa066010c",
+      "split_id": "4f0e0ca0001199bb1dd8e7546e3f33767c71f6c31093048824c7f2ddb9f38156"
+    },
+    {
+      "subject": 6,
+      "seed": 0,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "56b8f7366455b88cc2a623cdc54ea7f27265dd5797b81bc3f0f18f3a68a33dd6",
+      "split_id": "8aab4e5671cd78dace4eb910134801c5de21ae5e865e79782b863c3641fd2dd9"
+    },
+    {
+      "subject": 6,
+      "seed": 1,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "99e38a852e29cad829eff2fa56d0a495148ea38db8d7bceedf7dd21fb5591a1b",
+      "split_id": "d749fd7c52fbecbd0b1d5fecdfa585fe2cf970ba6cb154d8fffd528daca75eeb"
+    },
+    {
+      "subject": 6,
+      "seed": 2,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "6f368da691e13b9db0beb0672c4403623d9d8e1b6d9f7957f51ce04d74290567",
+      "split_id": "b32ae7c298d8cce914f70b96c41726c30348d98073efb1fb161bd55725e9569d"
+    },
+    {
+      "subject": 7,
+      "seed": 0,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "ca495c9a85dc8484e34a9adf451e4842d8a22858f0804dffdcdaef2f183835ef",
+      "split_id": "3d2544caad29987ec3d748931b1dc46a6f4e98f6e423cbae540ac74168a26be5"
+    },
+    {
+      "subject": 7,
+      "seed": 1,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "be2857f7e1bbd24f4cf84a3d6a3a62d06320c18b9463528b14af08bbfd220cf2",
+      "split_id": "d0b68c6dfb23bd44e3ce94acfc56d9ee8d24b19b29098ae53a65667781eaa006"
+    },
+    {
+      "subject": 7,
+      "seed": 2,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "3dd66dede801a7d9938032c79e2f23780a16a9490d8b08d45b870b8fa16cb0cd",
+      "split_id": "d007fdc0188ea4269383f0115eb36f0022414d4b6445e14c5535a61519cd704d"
+    },
+    {
+      "subject": 8,
+      "seed": 0,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "4aba6ca90db372b43b180c806804ca991541ae3188e1c892716b8da8866defd6",
+      "split_id": "533cbebccc133bb55649fca00f0f66a7a93ee7b265908aad55d25d6060e69a45"
+    },
+    {
+      "subject": 8,
+      "seed": 1,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "72e3646112c6f864e71c0b63827605478d36d504bab48114cd0f13ae2d77f98d",
+      "split_id": "3b20bbf2a28972df950399b233118bc7b641e0f5ca66ac4bf4699dc88bf8eccf"
+    },
+    {
+      "subject": 8,
+      "seed": 2,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "e3f47834696c64a5db09d275a10d26aa693438a66db87c04379eb6b92fe0d221",
+      "split_id": "e5d2eaa440facf48c6cf5ed3d29c0d2aa75d2f8f1dd3f80b9e769344483ec3b2"
+    },
+    {
+      "subject": 9,
+      "seed": 0,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "f851d4c813bef5ac808ad574292c4f829fe44ee52eba172633722138ef4393b1",
+      "split_id": "f72293f8d89e8dde47c263fc28647d6820f9c2b813661bbd2b8cea7b9c5a91c1"
+    },
+    {
+      "subject": 9,
+      "seed": 1,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "9f109e003cc5fd9b3d96002f1cb02b39844baa6846bd1ff193215b8f61bfd183",
+      "split_id": "780b7233bc0796b78ac737c76078cc6a3952ba1ce0ba68a06fb5ae3001180cc9"
+    },
+    {
+      "subject": 9,
+      "seed": 2,
+      "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+      "data_id": "a13d9e357631dd9caf4652bfb74307158e774a79ed8cecbfd4a657d90a31fed8",
+      "split_id": "8d6bb1281c13321c659ab8f9c08b9072855ade9418cc409d852ef521fe5a0ba9"
+    }
+  ],
+  "new_fitting": false,
+  "new_predictions": false
+}

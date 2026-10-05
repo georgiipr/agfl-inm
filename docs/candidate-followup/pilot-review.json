@@ -1,0 +1,20 @@
+{
+  "blockers": [],
+  "checks": {
+    "all_five_artifact_hashes": true,
+    "all_five_checkpoint_rng_and_device_metadata": true,
+    "all_five_clean_prediction_replay": true,
+    "all_five_selected_epoch_rule": true,
+    "current_identity_matches_readiness_and_task": true,
+    "local_probe_convergence_and_pairing": true,
+    "mask_pairing_across_arms": true,
+    "normalization_and_split_recomputed": true,
+    "real_task_complete_and_non_synthetic": true,
+    "saved_provenance_recomputed_exactly": true
+  },
+  "decision": "proceed",
+  "device": "cpu",
+  "pilot_sha256": "a0129e80fd54b4469b4986ffeb18ce089c81558f383c29987fad6bf05d2979ed",
+  "study_id": "b72da29fe20c355bed86810c5a865595678e2b476f0f91f7083437da163246dc",
+  "summary": "The complete real A01/seed0 pilot matches the frozen study identity. All five fit artifacts and metadata verify, selected validation checkpoints reproduce the saved clean predictions exactly, masks are paired across arms, and both local probe pairs converged. Operationally valid to continue to the cohort; scores remain descriptive for one participant and one seed."
+}

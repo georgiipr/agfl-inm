@@ -1,6 +1,8 @@
 __pycache__/
 *.pyc
 .venv/
+.review-venv/
+/configs/*.local.json
 results/
 *.log
 *.sbatch

@@ -1,0 +1,8 @@
+{
+  "status": "complete",
+  "synthetic": true,
+  "output_dir": "/tmp/agfl-completion-transformer-session05-smoke-20261005",
+  "cells": 126,
+  "report_status": "partial",
+  "synthetic_excluded": 1
+}

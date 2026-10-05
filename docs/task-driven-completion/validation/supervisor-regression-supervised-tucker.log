@@ -1,0 +1,53 @@
+test_both_arms_start_identical_to_legacy_calibration_and_head (test_models.SupervisedTuckerTests.test_both_arms_start_identical_to_legacy_calibration_and_head) ... ok
+test_calibration_statistics_immutable_and_rng_preserved (test_models.SupervisedTuckerTests.test_calibration_statistics_immutable_and_rng_preserved) ... ok
+test_frozen_buffers_and_supervised_gradient_reachability (test_models.SupervisedTuckerTests.test_frozen_buffers_and_supervised_gradient_reachability) ... ok
+test_hidden_nan_forward_and_gradients_match_zero_placeholders (test_models.SupervisedTuckerTests.test_hidden_nan_forward_and_gradients_match_zero_placeholders) ... ok
+test_invalid_masks_observed_nans_and_uncalibrated_models_rejected (test_models.SupervisedTuckerTests.test_invalid_masks_observed_nans_and_uncalibrated_models_rejected) ... ok
+test_optimization_and_post_update_checkpoint (test_models.SupervisedTuckerTests.test_optimization_and_post_update_checkpoint) ... ok
+test_optimizer_and_clipping_leave_frozen_factors_unchanged (test_models.SupervisedTuckerTests.test_optimizer_and_clipping_leave_frozen_factors_unchanged) ... ok
+test_partially_observed_solve_passes_gradcheck (test_models.SupervisedTuckerTests.test_partially_observed_solve_passes_gradcheck) ... ok
+test_rank_deficient_factors_and_single_electrode_remain_differentiable (test_models.SupervisedTuckerTests.test_rank_deficient_factors_and_single_electrode_remain_differentiable) ... ok
+test_solve_matches_explicit_design_and_legacy (test_models.SupervisedTuckerTests.test_solve_matches_explicit_design_and_legacy) ... ok
+test_aggregation_averages_repetitions_before_participant_bootstrap (test_study.StudyAcceptanceTests.test_aggregation_averages_repetitions_before_participant_bootstrap) ... ok
+test_both_arms_finish_and_reuse_without_rewriting (test_study.StudyAcceptanceTests.test_both_arms_finish_and_reuse_without_rewriting) ... A01 spectral_tucker_frozen epoch 1: validation BA=0.5000
+A01 spectral_tucker_supervised epoch 1: validation BA=0.5000
+ok
+test_changed_config_cannot_resume_study_identity (test_study.StudyAcceptanceTests.test_changed_config_cannot_resume_study_identity) ... ok
+test_changed_data_identity_is_not_reused (test_study.StudyAcceptanceTests.test_changed_data_identity_is_not_reused) ... A01 spectral_tucker_frozen epoch 1: validation BA=0.5000
+ok
+test_corrupt_selected_checkpoint_is_rejected_without_repair (test_study.StudyAcceptanceTests.test_corrupt_selected_checkpoint_is_rejected_without_repair) ... A01 spectral_tucker_frozen epoch 1: validation BA=0.5000
+ok
+test_missing_seed_suppresses_real_report_aggregates (test_study.StudyAcceptanceTests.test_missing_seed_suppresses_real_report_aggregates) ... A01 seed 0: spectral_tucker_frozen
+A01 spectral_tucker_frozen epoch 1: validation BA=0.2500
+A01 seed 0: spectral_tucker_supervised
+A01 spectral_tucker_supervised epoch 1: validation BA=0.2500
+ok
+test_overlapping_train_validation_ids_fail_before_artifacts (test_study.StudyAcceptanceTests.test_overlapping_train_validation_ids_fail_before_artifacts) ... ok
+test_pair_calibration_frozen_factor_and_pilot_replay (test_study.StudyAcceptanceTests.test_pair_calibration_frozen_factor_and_pilot_replay) ... A01 seed 0: spectral_tucker_frozen
+A01 spectral_tucker_frozen epoch 1: validation BA=0.2500
+A01 seed 0: spectral_tucker_supervised
+A01 spectral_tucker_supervised epoch 1: validation BA=0.2500
+ok
+test_partial_fit_cannot_resume_or_overwrite (test_study.StudyAcceptanceTests.test_partial_fit_cannot_resume_or_overwrite) ... ok
+test_partial_report_has_no_cohort_mean_and_completed_masks_are_paired (test_study.StudyAcceptanceTests.test_partial_report_has_no_cohort_mean_and_completed_masks_are_paired) ... A01 seed 0: spectral_tucker_frozen
+A01 spectral_tucker_frozen epoch 1: validation BA=0.2500
+A01 seed 0: spectral_tucker_supervised
+A01 spectral_tucker_supervised epoch 1: validation BA=0.2500
+A02 seed 0: spectral_tucker_frozen
+A02 spectral_tucker_frozen epoch 1: validation BA=0.2500
+A02 seed 0: spectral_tucker_supervised
+A02 spectral_tucker_supervised epoch 1: validation BA=0.2500
+ok
+test_real_config_rejects_shortened_training_budget (test_study.StudyAcceptanceTests.test_real_config_rejects_shortened_training_budget) ... ok
+test_real_config_requires_three_seeds_and_unknown_keys_fail (test_study.StudyAcceptanceTests.test_real_config_requires_three_seeds_and_unknown_keys_fail) ... ok
+test_selection_prioritizes_accuracy_then_loss_then_earliest_epoch (test_study.StudyAcceptanceTests.test_selection_prioritizes_accuracy_then_loss_then_earliest_epoch) ... A01 spectral_tucker_frozen epoch 1: validation BA=0.5000
+ok
+test_two_fits_are_identical_despite_external_random_draws (test_study.StudyAcceptanceTests.test_two_fits_are_identical_despite_external_random_draws) ... A01 spectral_tucker_supervised epoch 1: validation BA=0.5000
+A01 spectral_tucker_supervised epoch 1: validation BA=0.5000
+ok
+test_unrecognized_output_is_not_overwritten (test_study.StudyAcceptanceTests.test_unrecognized_output_is_not_overwritten) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 6.290s
+
+OK

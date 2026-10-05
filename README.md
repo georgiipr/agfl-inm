@@ -4,6 +4,12 @@ Research continues on `research/baseline-accuracy`. See the
 [branch and collaborator review](docs/baselines/branch-review.md) for the preserved
 baseline studies and ideas reviewed from George's separate `origin/main` redesign.
 
+For the completed **learned covariance / task-driven completion** study, use the
+[verification and reproduction guide](docs/task-driven-completion-cuda/reproduce.md).
+It includes the shared numerical evidence, CPU-only score verification, and Bash
+commands for a fresh CUDA pilot/cohort. The [method PDF](docs/concept/learned_covariance.pdf)
+explains the formulas, diagrams and validation limitations.
+
 EEG classification under changing channel availability, comparing spatial
 **MHA** and **Performer** with baseline features and training-fitted **Tucker-2**
 representations.

@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "default_through": "02",
+  "sessions": [
+    {
+      "id": "01",
+      "title": "Repair and prove training reproducibility",
+      "prompt": "sessions/01-rng.md",
+      "artifacts": [
+        "inm/encoder_candidates/training.py",
+        "tests/encoder_candidates/test_reproducibility.py",
+        "docs/candidate-followup/reproducibility.md"
+      ],
+      "tests": [
+        "test_reproducibility.py",
+        "test_training.py",
+        "test_local.py",
+        "test_spatial.py",
+        "test_transformer.py"
+      ]
+    },
+    {
+      "id": "02",
+      "title": "Verify CLI execution and freeze readiness",
+      "prompt": "sessions/02-readiness.md",
+      "artifacts": [
+        "inm/encoder_candidates/protocol.py",
+        "inm/encoder_candidates/__main__.py",
+        "tests/encoder_candidates/test_execution.py",
+        "configs/encoder-candidates-reproducible.json",
+        "docs/candidate-followup/readiness.json",
+        "docs/candidate-followup/execution.md"
+      ],
+      "tests": [
+        "test_*.py"
+      ],
+      "baseline_regression": true
+    },
+    {
+      "id": "03",
+      "title": "Review the real pilot before cohort execution",
+      "prompt": "sessions/03-pilot.md",
+      "artifacts": [
+        "docs/candidate-followup/pilot-review.md",
+        "docs/candidate-followup/pilot-review.json"
+      ],
+      "tests": [
+        "test_*.py"
+      ],
+      "evidence": "results/encoder-candidates-reproducible-v1/report/evidence.json",
+      "pilot": true
+    },
+    {
+      "id": "04",
+      "title": "Analyse the completed cohort and issue verdicts",
+      "prompt": "sessions/04-findings.md",
+      "artifacts": [
+        "docs/candidate-followup/findings.md",
+        "docs/candidate-followup/decision.md"
+      ],
+      "tests": [
+        "test_*.py"
+      ],
+      "evidence": "results/encoder-candidates-reproducible-v1/report/evidence.json"
+    }
+  ]
+}

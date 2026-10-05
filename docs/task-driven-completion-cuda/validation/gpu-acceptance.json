@@ -1,0 +1,14 @@
+{
+  "attribution": "Supervisor /root; independent escalated GPU acceptance",
+  "source_log": ".session-runs/task-driven-completion-cuda/gpu-acceptance-attempt1.log",
+  "retained_log": "supervisor-gpu-acceptance-attempt1.log",
+  "sha256": "bdbe37e0898f7514d8f96c07f73666f165228078a2fe0f14503a98256d3f1b0a",
+  "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python -m unittest discover -s tests/task_driven_completion_cuda -p test_gpu.py -v",
+  "device": "NVIDIA GeForce RTX 3060 Laptop GPU",
+  "passed": 5,
+  "skipped": 0,
+  "elapsed_seconds": 23.009,
+  "attempt": 1,
+  "synthetic_only": true,
+  "real_fits": 0
+}

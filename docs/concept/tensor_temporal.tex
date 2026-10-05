@@ -1,0 +1,224 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,booktabs,tabularx,array}
+\usepackage[margin=22mm]{geometry}
+\usepackage{xcolor,tikz,hyperref}
+\usetikzlibrary{positioning,arrows.meta}
+\definecolor{navy}{HTML}{193B54}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=navy,
+pdftitle={Tensor temporal encoders: architectures and exploratory screen}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\code}[1]{{\small\nolinkurl{#1}}}
+\begin{document}
+{\LARGE\bfseries\color{navy} Tensor temporal encoders}\par
+{\large Returning to the tensor proposal without an EEGNet front end}\par
+Research branch: \code{research/baseline-accuracy}. Study designed 4 October 2026.
+
+\section{Question and evidence boundary}
+Can a tensor representation extract useful temporal features directly from EEG,
+instead of relying on EEGNet's temporal and spatial convolutions? We implement
+three tensor alternatives and two controls. All new encoders retain ordered
+time patches and feed a compact temporal Transformer. The original proposal's
+fixed time--frequency representation motivates the first option; the other two
+learn multilinear projections from classification loss.
+
+The previous study's compact EEGNet--Transformer achieved 64.87\% mean
+validation balanced accuracy over nine participants and three seeds. That result
+motivates retaining it as a reference, but this new screen reruns its seed-0
+fits alongside the candidates. Only scores from the same new comparison should
+be used to rank the new encoders.
+
+\textbf{Friend's branch.} Revision \code{3c9a170} reports 56.15\% held-out
+within-T-session test accuracy over nine participants and seed 0. Its README
+explicitly excludes Signal Transformer from those results: the backbone is
+EEGNet with electrode attention. Tucker completion is bypassed for full inputs,
+so both completion and baseline variants have the same full-input predictions.
+The branch reports completion gains of 3.10, 1.70 and $-0.06$ percentage points
+at 16, 11 and 6 channels. These are collaborator-reported measurements;
+underlying predictions and checkpoints are unavailable in the branch.
+Its artifact inclusion, filtering context, 500-epoch training and validation-loss
+selection differ from our protocol. Its test score and our validation score do
+not establish a model ranking. See the
+\href{https://github.com/georgiipr/agfl-inm/blob/3c9a170/README.md}{pinned branch README}.
+
+\section{Shared inputs and temporal head}
+Each participant is trained separately on BCI IV 2a: 22 EEG channels at 250 Hz,
+four motor-imagery classes, four cue-aligned seconds per trial. We reuse the
+verified historical approximately 60/20/20 T-session split and expose only
+training and validation arrays to model fitting and scoring. Artifact-marked
+trials are excluded. Filtering is 2--30 Hz within each one-second channel/window;
+channel normalization uses training samples only.
+
+The input is $X\in\mathbb{R}^{B\times22\times4\times250}$ with a Boolean
+mask $M\in\{0,1\}^{B\times22\times4}$. Missing samples are selected to zero
+with \code{torch.where} before arithmetic. Every window must contain an observed
+electrode. Hidden NaNs must have exactly the same predictions as hidden zeros.
+
+\begin{center}
+\begin{tikzpicture}[node distance=4mm,
+box/.style={draw=navy,rounded corners,align=center,text width=33mm,
+minimum height=15mm,font=\small},arr/.style={-{Latex},thick}]
+\node[box] (x) {Masked EEG\\22 channels, 4 windows};
+\node[box,right=of x] (p) {Local 100-sample patches\\4 per window};
+\node[box,right=of p] (e) {Spectral or learned\\tensor representation};
+\node[box,right=of e] (a) {16 ordered tokens\\temporal attention};
+\draw[arr] (x)--(p);\draw[arr] (p)--(e);\draw[arr] (e)--(a);
+\end{tikzpicture}
+\end{center}
+
+Patches begin at samples 0, 50, 100 and 150 of each 250-sample window. They cover
+the whole window, overlap by 50 samples, and never cross a mask boundary.
+There are 16 ordered patches per trial. The four new arms project their patch
+representations to 32 features, add fixed sinusoidal time positions and a
+learned projection of the 22 availability bits at that patch, and apply one
+pre-LayerNorm Transformer layer: four heads, feed-forward width 64, GELU and
+dropout 0.1. Final LayerNorm and mean temporal pooling produce 32 values;
+appending the original 88 mask flags gives a linear four-class readout.
+
+Latent channel components are feature coordinates inside each time token, not
+separate attention tokens. This is a deliberate temporal-head adaptation of
+the original component-by-window proposal. The reference retains its original
+31 EEGNet-derived tokens and original mask-conditioned head.
+Comparisons against that reference therefore test the complete architecture:
+token count, preprocessing inside the encoder and mask conditioning also differ.
+The raw tensor pair provides the narrower temporal-factorization comparison.
+
+\section{Three tensor architecture options}
+\subsection{A: spectral features and frozen Tucker inference}
+\code{fixed_spectral_tucker} computes a periodic Hann-windowed FFT of each local
+100-sample patch. With frequency spacing 2.5 Hz, bins 1--12 cover 2.5--30 Hz.
+For each coefficient $z$, use
+\[
+ f=\log\!\left(\frac{|z|^2}{\sum_s h_s^2}+10^{-6}\right).
+\]
+Each channel/frequency feature is standardized with its training-only population
+mean and standard deviation (floor $10^{-6}$). This gives
+$F\in\mathbb{R}^{B\times22\times16\times12}$.
+
+Training-only alternating reconstruction fitting learns factors
+$U\in\mathbb{R}^{22\times4}$ and $V\in\mathbb{R}^{12\times4}$ for 30 epochs.
+Both become frozen buffers. At every time patch, infer the core from observed
+channels $O_t$:
+\[
+ G_t^*=\arg\min_G
+ \frac{\|F_{O_t,t,:}-U_{O_t,:}GV^\top\|_F^2}{|O_t|\,12}
+ +10^{-3}\|G\|_F^2.
+\]
+The inherited exact ridge solver uses float64; the ridge normal-equation scale
+is $|O_t|\,12\,10^{-3}$. Flattening each $4\times4$ core gives 16 features per
+time token before projection to 32. Classification trains the temporal head,
+not the spectral transform or Tucker factors. This is the closest option to
+the original proposal. Low reconstruction loss does not imply high accuracy.
+
+\textbf{Matched-feature control:} \code{spectral_dense} uses the same spectral
+features and standardization, but flattens 22 channels $\times$ 12 frequencies
+and learns a dense $264\to16$ map before the same head. This compares complete
+representations. Frozen versus supervised fitting and different parameter counts
+mean that a score difference cannot be attributed solely to tensor structure.
+
+\subsection{B: learned channel--time projection}
+\code{dense_temporal_patch} learns a spatial factor
+$U\in\mathbb{R}^{22\times4}$ and temporal basis $V\in\mathbb{R}^{100\times8}$:
+\[
+ H_{btrf}=\sum_{c,s}X^{\rm patch}_{bcts}U_{cr}V_{sf}.
+\]
+The $4\times8$ core is transformed elementwise by
+$\log(H^2+10^{-6})$ to retain an energy-sensitive nonlinearity, then flattened
+into 32 features per patch. All factors and the head learn from classification
+loss. This is a supervised separable tensor projection, not reconstruction-fitted
+Tucker inference. Missing channels are zero-filled and identified to the head;
+there is no observed-entry inverse solve or guaranteed completion.
+
+\subsection{C: factorized temporal-patch projection}
+\code{learned_tensor_patch} reshapes a 100-sample patch into $10\times10$ and
+constrains the temporal basis to factors $A\in\mathbb{R}^{10\times2}$ and
+$D\in\mathbb{R}^{10\times4}$:
+\[
+ H_{btrij}=\sum_{c,a,z}X^{\rm patch}_{bctaz}U_{cr}A_{ai}D_{zj}.
+\]
+This again yields 32 core coordinates and uses the same energy nonlinearity
+and temporal head as B. The $10\times10$ reshape is a parameter-sharing prior
+on consecutive temporal samples, not a physical two-dimensional EEG geometry.
+It replaces 800 temporal weights by 60, reducing temporal flexibility.
+Factors have unit column norms after optimizer steps.
+
+These learned operators replace the EEGNet stack, but are mathematically
+separable linear filters on temporal patches followed by a power nonlinearity.
+The tensor factorization specifies parameter sharing; the attention rule remains
+standard multi-head attention.
+
+B is the temporal-unfactorized control for C; it still has a factorized spatial
+projection. Both start from the same spatial factor, temporal operator and head:
+$V_{(a,z),(i,j)}=A_{ai}D_{zj}$. Thereafter B can leave that restricted temporal
+family. This makes the comparison more informative than unrelated random starts,
+although parameterization and optimization geometry necessarily differ.
+
+\section{Loss, screening protocol and reproducibility}
+All classifier arms use unweighted four-class cross-entropy:
+\[
+ \mathcal{L}_{\rm cls}=-\frac1N\sum_n
+ \log\operatorname{softmax}(\ell_n)_{y_n}.
+\]
+AdamW uses learning rate $10^{-3}$, weight decay $10^{-4}$, batch size 32,
+gradient norm clipping at 1, 10 warm-up epochs then cosine decay, and at most
+250 epochs. Early stopping starts after 75 epochs with patience 50.
+Selection uses full-input validation balanced accuracy, then lower validation
+log loss, then the earlier epoch. There is no reconstruction term in classifier
+training; architecture A has its separate training-only reconstruction stage.
+
+The bounded screen has nine participants, seed 0 and five arms: 45 fits.
+Training uses full inputs only. Secondary validation evaluation covers full
+22 channels and static/dynamic random retention of 16 or 6 channels, with five
+matched repeats for each degraded condition. Means average mask repeats before
+participants equally. No test score is used for architecture or epoch selection.
+
+The primary architecture contrast is C minus B. Secondary contrasts include
+A minus the spectral dense control and each new arm minus the EEGNet--Transformer
+reference. The prespecified exploratory screen requires at least two percentage
+points mean balanced-accuracy gain and positive differences in at least six of
+nine participants. Participant bootstrap intervals use 2,000 resamples and seed
+20261004. One seed does not measure training-seed stability; repeated use of
+validation for epoch and architecture selection makes these exploratory scores.
+Independent session/dataset confirmation is required before strong generalization
+claims. Multiple unadjusted comparisons do not establish statistical superiority.
+
+Initialization, fitting randomness and data-order randomness are controlled.
+Calibration sees training arrays only. Each selected checkpoint is reloaded and
+its predictions verified. Saved source/configuration/package identities and
+artifact checksums prevent incompatible reuse. New study outputs are isolated
+from every completed study. Actual run coverage and measurements follow.
+
+\textbf{CPU-thread audit.} This screen fixes one PyTorch CPU thread per fit.
+The older real-data candidate runner used the environment default. A bounded
+one-epoch diagnostic reproduced the new A01 reference exactly with one thread
+and the historical reference exactly with eight threads. After full fitting,
+A01 selected the same epoch and class predictions, with small probability
+differences. Historical cross-thread bitwise equality is therefore not a
+requirement; exact checkpoint replay within the new study is required.
+
+\section{Measured results and verdict}
+\IfFileExists{tensor_temporal_results.tex}{\input{tensor_temporal_results.tex}}{
+The real-data screen has not yet been completed. No accuracy is asserted here.}
+
+\section{Originality and reproducible use}
+Tucker decompositions and learned tensor-contraction layers are established
+methods, not inventions of this study. The new code tests their integration
+with local EEG patches, known availability and a temporal attention head.
+An exact configuration being new to this repository is not evidence of
+architectural novelty or state-of-the-art performance. Relevant primary sources
+are \href{https://www.kolda.net/publication/koba09/}{Kolda and Bader (2009)},
+\href{https://openaccess.thecvf.com/content_cvpr_2017_workshops/w29/html/Kossaifi_Tensor_Contraction_Layers_CVPR_2017_paper.html}{Kossaifi et al., Tensor Contraction Layers (2017)},
+and \href{https://arxiv.org/abs/1706.03762}{Vaswani et al. (2017)}.
+
+Implementation: \code{inm/tensor_temporal/models.py} and
+\code{inm/tensor_temporal/study.py}. Declaration:
+\code{configs/tensor-temporal-screen.json}. Launcher:
+\code{scripts/run_tensor_temporal_experiments.sh}. The launcher separates
+\code{--pilot}, \code{--cohort} and \code{--summarize}; \code{--dry-run} prints
+commands. Existing complete compatible fits are verified, never silently
+overwritten. Partial or incompatible artifacts must remain available for audit.
+
+Build this guide with \verb|make -C docs/concept tensor_temporal.pdf|.
+\end{document}

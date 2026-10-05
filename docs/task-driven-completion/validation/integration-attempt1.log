@@ -1,0 +1,14 @@
+test_audit_never_calls_calibration_or_fitting (test_integration.IntegrationTests.test_audit_never_calls_calibration_or_fitting) ... /home/kalexu97/Projects/AGFL/.venv/lib/python3.13/site-packages/torch/nn/modules/conv.py:560: UserWarning: Using padding='same' with even kernel lengths and odd dilation may require a zero-padded copy of the input be created (Triggered internally at /__w/pytorch/pytorch/aten/src/ATen/native/Convolution.cpp:1104.)
+  return F.conv2d(
+ok
+test_independent_metrics_use_equal_class_weight_with_unequal_counts (test_integration.IntegrationTests.test_independent_metrics_use_equal_class_weight_with_unequal_counts) ... ok
+test_public_changed_config_identity_rejected_without_mutation (test_integration.IntegrationTests.test_public_changed_config_identity_rejected_without_mutation) ... ok
+test_public_fresh_resume_audit_in_distinct_processes (test_integration.IntegrationTests.test_public_fresh_resume_audit_in_distinct_processes) ... ok
+test_rehashed_backbone_tampering_rejected_against_source (test_integration.IntegrationTests.test_rehashed_backbone_tampering_rejected_against_source) ... ok
+test_rehashed_selected_state_tampering_fails_actual_replay (test_integration.IntegrationTests.test_rehashed_selected_state_tampering_fails_actual_replay) ... ok
+test_unequal_trial_counts_negative_effects_and_incomplete_cohort (test_integration.IntegrationTests.test_unequal_trial_counts_negative_effects_and_incomplete_cohort) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 16.124s
+
+OK

@@ -1,0 +1,24 @@
+test_classification_gradient_and_frozen_backbone (test_gpu.GPUChecks.test_classification_gradient_and_frozen_backbone) ... /home/kalexu97/Projects/AGFL/.venv/lib/python3.13/site-packages/torch/nn/modules/conv.py:560: UserWarning: Using padding='same' with even kernel lengths and odd dilation may require a zero-padded copy of the input be created (Triggered internally at /__w/pytorch/pytorch/aten/src/ATen/native/Convolution.cpp:1104.)
+  return F.conv2d(
+In file included from /home/kalexu97/miniconda3/include/python3.13/Python.h:14,
+                 from /home/kalexu97/Projects/AGFL/.venv/lib/python3.13/site-packages/triton/backends/nvidia/driver.c:9:
+/home/kalexu97/miniconda3/include/python3.13/pyconfig.h:1964:9: warning: ‘_POSIX_C_SOURCE’ redefined
+ 1964 | #define _POSIX_C_SOURCE 200809L
+      |         ^~~~~~~~~~~~~~~
+In file included from /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:33,
+                 from /usr/include/stdlib.h:26,
+                 from /home/kalexu97/Projects/AGFL/.venv/lib/python3.13/site-packages/triton/backends/nvidia/include/cuda.h:56,
+                 from /home/kalexu97/Projects/AGFL/.venv/lib/python3.13/site-packages/triton/backends/nvidia/driver.c:1:
+/usr/include/features.h:319:10: note: this is the location of the previous definition
+  319 | # define _POSIX_C_SOURCE        202405L
+      |          ^~~~~~~~~~~~~~~
+ok
+test_cpu_gpu_outputs_gradients_hidden_values_and_observation_identity (test_gpu.GPUChecks.test_cpu_gpu_outputs_gradients_hidden_values_and_observation_identity) ... ok
+test_public_fresh_smoke_resume_independent_audit_and_identity_refusal (test_gpu.GPUChecks.test_public_fresh_smoke_resume_independent_audit_and_identity_refusal) ... ok
+test_repeated_fits_changed_rng_arm_order_and_masks (test_gpu.GPUChecks.test_repeated_fits_changed_rng_arm_order_and_masks) ... ok
+test_scope_restores_all_state_success_exception_and_missing_gpu (test_gpu.GPUChecks.test_scope_restores_all_state_success_exception_and_missing_gpu) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 23.009s
+
+OK

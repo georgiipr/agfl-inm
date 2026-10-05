@@ -1,0 +1,2 @@
+# Preserve the implementation's actual acceptance and audit evidence.
+!*.log

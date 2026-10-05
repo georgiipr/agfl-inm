@@ -1,0 +1,240 @@
+{
+  "a01_original_replay": {
+    "backbones": {
+      "spatial_eegnet": {
+        "max_abs_probability_error": 1.4901161193847656e-08,
+        "n_validation": 55,
+        "prediction_sha256": "0a72e33fdf55339b4d3b89bd679cbc00d31bb554c34c1b21534aa481ffaa21b1"
+      },
+      "spatial_transformer": {
+        "max_abs_probability_error": 2.3283064365386963e-10,
+        "n_validation": 55,
+        "prediction_sha256": "6763480f87ae731219831b8f854f8c2f50c9987a4b6fe1019a7ff1db797a1554"
+      }
+    },
+    "completion_fitted": false,
+    "data_id": "ad5503de7c09ad7979987e567f2a287b6a1b083a1c89af4a5a7e2dd6d6a24618",
+    "degraded_evaluation_run": false,
+    "seed": 0,
+    "split_id": "45b40a60ab33a5410f166db56e491a2e7e2a08c7e365a50dbfe3acac280daab1",
+    "status": "original_validation_prediction_replay_passed",
+    "subject": 1,
+    "train_trials": 163,
+    "validation_trials": 55
+  },
+  "commands": [
+    {
+      "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python -m unittest discover -s tests/completion_transformer -v",
+      "exit_code": 0,
+      "log": "validation/session05-unittest.txt",
+      "result": "36 tests passed"
+    },
+    {
+      "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python -m compileall -q inm/completion_transformer tests/completion_transformer",
+      "exit_code": 0,
+      "log": "validation/compileall.txt"
+    },
+    {
+      "command": "git diff --check -- inm/completion_transformer tests/completion_transformer docs/completion-transformer configs/completion-transformer.json",
+      "exit_code": 0,
+      "log": "validation/diff-check.txt"
+    },
+    {
+      "command": ".venv/bin/python -m inm.completion_transformer --config configs/completion-transformer.json --plan",
+      "exit_code": 0,
+      "log": "validation/cli-plan.json",
+      "tasks": 27
+    },
+    {
+      "command": ".venv/bin/python -m inm.completion_transformer --config configs/completion-transformer.json --preflight",
+      "exit_code": 0,
+      "log": "validation/real-preflight.json",
+      "status": "inventory_complete"
+    },
+    {
+      "asserted": true,
+      "command": "synthetic fixture: public --preflight via unittest subprocess",
+      "expected_exit_code": 2,
+      "log": "validation/session05-unittest.txt"
+    },
+    {
+      "command": ".venv/bin/python -m inm.completion_transformer --config configs/completion-transformer.json --smoke --output-dir /tmp/agfl-completion-transformer-session05-smoke-20261005",
+      "exit_code": 0,
+      "log": "validation/synthetic-cli-smoke.json",
+      "synthetic_rows": 126
+    },
+    {
+      "command": "historical verifier for all subject/seed pairs plus current recording SHA-256 comparisons",
+      "exit_code": 0,
+      "log": "validation/historical-readiness.json",
+      "recordings_compared": 9,
+      "verified_tasks": 27
+    },
+    {
+      "command": "prepare A01/seed0 train-validation split and replay original full-input predictions",
+      "exit_code": 0,
+      "log": "validation/a01-original-replay.json"
+    }
+  ],
+  "created": "2026-10-05",
+  "identity": {
+    "config_sha256": "2b5ac72321717beb7269b8c4748df2e9ef3b76efd9d42ff2f4de0cc34174e219",
+    "historical_manifest_sha256": {
+      "candidate": {
+        "results/encoder-candidates-reproducible-v1/report/evidence.json": "055fdff855df2c269037599142aa5bf7dbdd8d70759345694df3491a93d35b39"
+      },
+      "split_source": {
+        "results/baselines-reproducible-v1/study.json": "bbffbdc8717b7d9ba7db52a2a9702b57b797611383798798f57142e30dd12bba"
+      }
+    },
+    "packages": {
+      "mne": "1.13.2",
+      "numpy": "2.5.3",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "torch": "2.14.1+cu130"
+    },
+    "python": "3.13.13",
+    "resolved_config_sha256": "bb2f01526daae3ee7a331e51d0aa5796c5bda324d92fe5b0a22158dafef31f69",
+    "schema_name": "agfl-completion-transformer-v1",
+    "source_files_sha256": {
+      "agfl/__init__.py": "4432a18cd44a181062bda30a408521f974f452a57b79320ed5a5615fb16fa9f4",
+      "agfl/attention/__init__.py": "3e96c35195589b33a3586698717921fdea5e56d6010a4f9edec383b3d3c035a2",
+      "agfl/attention/mha/__init__.py": "af4a1af3d153abdea4d2c98798ddb6564f1d8695b50a2f27b1597fc1172a7858",
+      "agfl/attention/mha/config.py": "55498ae78f6e629c74e0b4a0425e5afb5335bf5f5cdbd1b2ac9eea8b98672a10",
+      "agfl/attention/mha/layer.py": "bc442ba74b1f74068d4fa532cf5313b62ab522477c5d6f27e9eab8b4ac945489",
+      "agfl/attention/performer/__init__.py": "b2abe1ef0b26b5aa1d41f6c13bb7a0b27e31df4a68b3b1d21be2905c00053c2a",
+      "agfl/attention/performer/config.py": "9eb0132cc3c64c9db23b615ae9258ee13c765c32e8390f086a3a370f5947b168",
+      "agfl/attention/performer/layer.py": "12077d5ed52b5c6fe13b91b9d5bfd9df851f4e3062282e1376476eb51def555e",
+      "agfl/attention/projections.py": "b6cf5b3b58f691e8d81dbfbb0967b52bb82248963d9d4e6daa0fc92ee638c238",
+      "agfl/config.py": "4e92725932853b337a38b3175913901d0a1268c2ae4592d8c7a59bebaa1dc53b",
+      "agfl/datasets/__init__.py": "0dd2b5e006186012c5f7c0d92e72b0435c2ba1bcdffce2d71b565528e92df61b",
+      "agfl/datasets/base.py": "7e550529a26c608913f0245d50c03bf280fdc4a37ae6af3cfe6904f392be9075",
+      "agfl/datasets/eeg.py": "4dc75af7f28c54cc51423e4ce471496ebcebeb43ee381b821cd1edf5166124d4",
+      "agfl/datasets/splits.py": "0a54bffd0aa41598682a36b23c9bd0730c14ec9da99287c05aec468b0b147f65",
+      "agfl/metrics.py": "e4823e3d6252840ea43e53c01aad360b8d3b3b29bdf7aeafe6a6d66a7de08902",
+      "agfl/models/__init__.py": "09443e58f9f486d18924e0243bb36ad152cd09c62690f5e9e111a4d17994b166",
+      "agfl/models/_shared/__init__.py": "4b94c8b368933119a44d613c054648293113ac82e88edba88fcda8be53374ff7",
+      "agfl/models/_shared/experiment.py": "d6672eb6d87ef01658f1a8fc93c30c3cf106ab920020e48dfd2f611b97436a74",
+      "agfl/models/_shared/layers.py": "45f0ce8f9bade756da9e7f166834ff2db0c071e2b598b36a253fca4d6a515a2e",
+      "agfl/models/_shared/modality.py": "4cdfe3f5093f94307c8009c822951d181a36ffb4bcc4dc2f3e2d79f77adb4dca",
+      "agfl/models/_shared/pooling.py": "4abaa58af0760ebeb1d3d40fb7bac153059e162749ae5bf235e44a8406d27aa7",
+      "agfl/models/eegnet/__init__.py": "ffaea708cd14f7180ac2414759d4f785b68d412d51c3591836ceb6abfe9a26d8",
+      "agfl/models/eegnet/backbone.py": "4b60a0899f2c174ea16bc7233f3802afa0e048973679ec8d7970ad2bec0a481f",
+      "agfl/models/eegnet/config.py": "0427badbd48a097bac3dc8105e97efba86d428e36a13e3263ec098fd6974d3f0",
+      "agfl/models/eegnet/eeg.py": "5e5f7fe4fadb9639f17220ca877003082276932530a806cab2280916f9d42a6f",
+      "agfl/models/signal_transformer/__init__.py": "274dd60047708adb41ab312509a3756b4b03e1815717b23fc64466411db1afe8",
+      "agfl/models/signal_transformer/backbone.py": "8765413823ce75a5ea3e8b1b4d88d87864340fa80343e25b17c387812e248f71",
+      "agfl/models/signal_transformer/config.py": "03424c411458f2cbb745e108897d96edde5701df971abbe2b0527a8f50c44a41",
+      "agfl/models/signal_transformer/eeg.py": "f8d67df51fbf5f0552961c4ce3369acc0b3226ec23099b7d0222a8eb49ef87a0",
+      "agfl/optimization.py": "f8e14f67e894399c5a8b4c500ebe1a923cac7168c73feec59aa32d6ef05a549e",
+      "agfl/reproducibility.py": "2f2c5c07fd25c692b4807b659a77b067fab021e57bb76eb1de1a62a6c7b45425",
+      "agfl/storage.py": "26cc8d23eb1aed651e2b6b48858da6cf43ea5b606ea346cb5caa30128ccc0c0c",
+      "inm/__init__.py": "f2a4bf219513908db6f43ab94f01d46857ab8296af36ec6a50d8ffaa7b25fec4",
+      "inm/availability.py": "c9673e154cb3599f3ac8f0a10a3448d02192761c080efed300d633f10d36a72c",
+      "inm/baselines/__init__.py": "e9d3002c2d427c67e9ce6bfde1416498129744ea550c0af213b37fdeec913b2d",
+      "inm/baselines/__main__.py": "04270f910463c74874ca59303c9be9abe534168b325bdc0042d92b41165a6193",
+      "inm/baselines/covariance.py": "c5c961c628435c213e87b53fa9187ede734277f46617f6e04e5cd3e8afef10ee",
+      "inm/baselines/data.py": "2828f72d6ddbe82d72692b40bf7ec69d6d4e59945f9c6a2b3f6b8302980c7b83",
+      "inm/baselines/diagnostics.py": "c3f4149547169ba29da8445a052620b74b14aa7a09b417fc7a0920b4590a17d7",
+      "inm/baselines/eegnet.py": "25bc03b71bba2893b2b9ce384480cd7bcc71811cdd8e0dc6f43b42e11d4fc455",
+      "inm/baselines/protocol.py": "a3377ba0f96f176968ae5072acae7189af3bc76c31459d4432c95faad0634b87",
+      "inm/baselines/reporting.py": "d3956dd4426208b8153f7d8b7d499d6883c2eae3079b2aa6c1022f2a61025ce0",
+      "inm/baselines/study.py": "330ef306e27dc920f6bb3106cae5d7e118924aef8269c182b7f798d4115e3ea8",
+      "inm/baselines/training.py": "4fa3f0e311a21051eb6d1d2b04bad3ece41d36da510c6ec64c9b2186f517336a",
+      "inm/completion_transformer/__init__.py": "780243351f8b32dce869629e48d03612af5ca962754231e84e1d26d9be3c6672",
+      "inm/completion_transformer/__main__.py": "26496f18fc9bd621727474f5dafa748fb81161530f95dcbcc24e7f3acbca6d5b",
+      "inm/completion_transformer/adapters.py": "c22b063f911da9adfb73918ea06bd1dc94cdb3f4230b2afc7e048fb3f1d88868",
+      "inm/completion_transformer/completion.py": "82330866dbfb47bf3ef08e6d8b838eb7878f2bb757c7258e7c836f010b7ced8e",
+      "inm/completion_transformer/protocol.py": "61ec079d37d7c6dc722f9617c2c88514b04bf1bfca30fbd2d22650b3795c6e47",
+      "inm/completion_transformer/replay.py": "e5bb851cf76630def6be8ccce8bbe20994feb30ad88b93bbdd7a94f1d6dcf040",
+      "inm/completion_transformer/reporting.py": "9f4db02dd38645dd33803c473199c6bae5ba7dda443166b7d88d532be9e5563e",
+      "inm/completion_transformer/study.py": "3c38a980181b71531c88334867d2f726835aeac2fdccb48fc48a7146342b83dc",
+      "inm/data.py": "5fabd3394ee504c158343b513ddff7f383508e5bb4195174aec7b4b600dead3d",
+      "inm/encoder_audit/__init__.py": "ece9fdaeabb6af289e82309eb9f1dff42fc945a310f1be96d71384154cb22b17",
+      "inm/encoder_audit/__main__.py": "51c6ecdbf71f0e94038c971e40829a8da792bd7ad5bbcd2808591be7b0e4e47e",
+      "inm/encoder_audit/alignment.py": "562d07e944dd4b564549d41800f1f70ba440037310dc2ce80d7ff4400d66459a",
+      "inm/encoder_audit/artifacts.py": "20d22c186c439a2183dc6242c2f0832727b804f9e08b2e14d421e99e66cb4dee",
+      "inm/encoder_audit/checkpoints.py": "491dd2ed87ad888bcc40cf643d32f8adfdba8026148a87e4e26f5c160beca525",
+      "inm/encoder_audit/inventory.py": "954b57f452ad5cd636d6a406b2a51ee76c918c9629d5fce65ad9415f257b7ce0",
+      "inm/encoder_audit/probes.py": "31ddfd07c22868c9c76cc86ca98a0348e5b27d70d2f2239f69c1de2814177626",
+      "inm/encoder_audit/protocol.py": "44504bcd1cdd4a448f08edd665530104eedd535e60b93ecdb65240f15b6a8242",
+      "inm/encoder_audit/reconstruction.py": "c0781db14a82142b018012eaa5968fd0867407fd3655f6dfbd81d3504b4987db",
+      "inm/encoder_audit/reporting.py": "97c9b49a7da9cf9253dfc00f70db22f1836615e689aa4248d48dc1383feeb586",
+      "inm/encoder_audit/study.py": "7ca5ff1155dec5d2dea0ea8ab7c1079eddb74866439af865e9d8344d68611da3",
+      "inm/encoder_candidates/__init__.py": "3a2e835b9465c95d570fa91ffac31f9e23cc0b5f714eb47d4cdd83009af4228d",
+      "inm/encoder_candidates/__main__.py": "5cab13e80e21f8a5a7c1441b5df706e4c19a2022935f8c17a1049afaab9d7ed6",
+      "inm/encoder_candidates/data.py": "5f75b2169f3084588b9765b84245bd7c0b6c1562bbfa8ee08450f0c5b97a19e5",
+      "inm/encoder_candidates/diagnostics.py": "65221135eb2c4e6f44affcf0bb59b8e7b727d679d7165cb16a7e87ad5bd1b23d",
+      "inm/encoder_candidates/local.py": "c5f068b937ca8fa6c0c874069d762016941d4e012c58a698c453edddb39519d4",
+      "inm/encoder_candidates/models.py": "496a4a5d545bcae5ebf17cf12838840abe1f15acc70b542dd9b1db730f14171e",
+      "inm/encoder_candidates/protocol.py": "95d6540e4e0dcfbe60efd3ea98d133dd907a8eb18a668f8841c9475ae9a184b1",
+      "inm/encoder_candidates/reporting.py": "0916c519d784888aebe71f5e5bfd0f3a2fa4b6fd1f6938604a0756949284345f",
+      "inm/encoder_candidates/spatial.py": "452cde0f07c86dee499d871d57a196cbe1b495e1543ba749acb60ed4df453b94",
+      "inm/encoder_candidates/study.py": "ccc9390cf7980352066d8a0cd48a671509815e3c91b502c0900d0c510be6df9e",
+      "inm/encoder_candidates/training.py": "719d9b42ee33252a6050d4ca38fcfaca2f78ee07d0a5273e070d7bc193a930d2",
+      "inm/encoder_candidates/transformer.py": "0c426f8fce5cb1317722bd0b74b22f29419c18f8ed0dc60897833e6147296c6a",
+      "inm/model.py": "ece73e3dd69c5dfb80176287102ac0b0e703dafea6c3429f9f0cee5898302875",
+      "inm/plots.py": "16210dd81be918c7c65888cfdb3a654ba8b3ce5d461f6c40483f1358a29cec0f",
+      "inm/protocol.py": "b2727e45e4c7503c8ed4cf608572d782b29759175634fc5c300189551af3f6cb",
+      "inm/reporting.py": "1c652ba80bc8e7fbacda169b9bae1590e1d7a0d8fb175b51a3fcd03929104726",
+      "inm/study.py": "54d98c611367211d921d31655317a8ee024deaf8fe8215807b9fc4a990ef3897",
+      "inm/supervised_tucker/__init__.py": "3dbb6b2f3d9282bd2c4ffa206c9ef01fc7cf304745a61c2194797a3d6da8ad14",
+      "inm/supervised_tucker/__main__.py": "8498949eae3320cb53ca6c7487d126172884ad02baf19bf4afadf9b7c88c8914",
+      "inm/supervised_tucker/models.py": "8ceb55fbda3507da880e9e74cccb0a4c39606cee3097b5d0642add8ca75160ba",
+      "inm/supervised_tucker/study.py": "8764096da7a9583671a6cc1a3cece4071c943eec0828f9916b575e3455104bf8",
+      "inm/tensor_attention.py": "d0afd2dedcba5d53c9ec40dbc6e887f3821d7ff103a5628e8f6d255d7c952bf0",
+      "inm/tensor_followup.py": "3d201b58d36cc29b57d94a276f531dbc9ea2e798dbc3f2b74e0f9100db7b1415",
+      "inm/tensor_temporal/__init__.py": "017a35a3f20a76f9d7f43b599d95391041d432e9da9306510a230b1c96511d4b",
+      "inm/tensor_temporal/__main__.py": "24c30442f0dbc9d9f5b915fea59dcee02e788a5735cbbb8f9407251a0c29fd68",
+      "inm/tensor_temporal/models.py": "5bd122111ff2cbe9039ef4e3be4459f35ca892c47fd8f3855ebf3fb3aa303c91",
+      "inm/tensor_temporal/study.py": "8457b688d8df04d7b3ab16eda04243cb5bec9c8eb93fb654a9006021d96bd44b",
+      "inm/training.py": "1e1395a942668d4ac8f8f7e02d4d97dae106bc3d371fc7579c80f8fc3da8ad5e",
+      "run.py": "15e445ad76aa9aa53c34ab0b32405599c5b29c4436ee01062a8bd0bc46d600b0"
+    },
+    "source_sha256": "81b996e584657d020ddb9a1f1f25d7c956da846226026a04c1c08cbb17b3ffec",
+    "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df"
+  },
+  "input_readiness": {
+    "candidate_task_count": 27,
+    "candidate_tasks_with_all_inventory_artifacts": 27,
+    "current_recording_hashes_match_historical_records": true,
+    "historical_task_metadata_records_expected": 27,
+    "inventory_status": "inventory_complete",
+    "missing_packages": [],
+    "recording_count": 9,
+    "recordings_available": 9,
+    "split_metadata_task_count": 27,
+    "split_metadata_tasks_complete": 27,
+    "verified_historical_task_metadata_records": 27
+  },
+  "limitations": [
+    "No covariance or Tucker completion factors were fitted on real EEG in this session.",
+    "No degraded real validation condition was evaluated and no new real accuracy result exists.",
+    "A01 replay only reconstructed original full-input validation probabilities; it is not a completion result.",
+    "CUDA was not used or assessed.",
+    "Real pilot execution follows operational review; cohort execution remains a separate later operation."
+  ],
+  "real_new_measurements": [],
+  "schema_name": "agfl-completion-transformer-session05-readiness-v1",
+  "scope": "software and read-only input readiness; no new completion fit or degraded real evaluation",
+  "status": "software_ready_for_pilot_operational_review",
+  "synthetic_smoke": {
+    "cells": 126,
+    "output_dir": "/tmp/agfl-completion-transformer-session05-smoke-20261005",
+    "report_status": "partial",
+    "status": "complete",
+    "synthetic": true,
+    "synthetic_excluded": 1
+  },
+  "validation_artifact_sha256": {
+    "a01-original-replay.json": "4a04b2ed15f9c3539a098302240239e54b2ff8ae0d2dd63f894cc8aab78c4a36",
+    "cli-plan.json": "bcffad106c53ce1ebf77610d235dc0d2fe562d409019da78c9a4f22b435a9d82",
+    "compileall.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "diff-check.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "historical-readiness.json": "1cf1e9452013168f7b8c3e25fc067cb83de86cce4ceb2a2223315f84af350dac",
+    "real-preflight.json": "2d7025aba529feb8b8bacb767a9e357882b04d0615879dcf030cc65b3c3e7638",
+    "session05-unittest.txt": "cee9e8a5d6d5ba4856acd0e5f75f2d5232db57d634f7c5ce9a999200c17a0714",
+    "synthetic-cli-smoke.json": "4a88d83418d078b5f4a783f2c754c7aa6959734d0511f585673295266bc1b719"
+  }
+}

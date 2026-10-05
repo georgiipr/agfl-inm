@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "default_through": "07",
+  "sessions": [
+    {
+      "id": "01",
+      "title": "Declare protocol and inventory inputs",
+      "prompt": "sessions/01-protocol.md",
+      "artifacts": [
+        "inm/encoder_audit/__init__.py",
+        "inm/encoder_audit/__main__.py",
+        "inm/encoder_audit/protocol.py",
+        "inm/encoder_audit/inventory.py",
+        "configs/encoder-audit.json",
+        "docs/encoder-audit/inventory.md",
+        "tests/encoder_audit/test_protocol.py"
+      ],
+      "tests": [
+        "test_protocol.py"
+      ]
+    },
+    {
+      "id": "02",
+      "title": "Read verified train and validation artifacts",
+      "prompt": "sessions/02-artifacts.md",
+      "artifacts": [
+        "inm/encoder_audit/artifacts.py",
+        "tests/encoder_audit/test_protocol.py",
+        "tests/encoder_audit/test_artifacts.py"
+      ],
+      "tests": [
+        "test_protocol.py",
+        "test_artifacts.py"
+      ]
+    },
+    {
+      "id": "03",
+      "title": "Audit trial alignment and frozen feature replay",
+      "prompt": "sessions/03-alignment.md",
+      "artifacts": [
+        "inm/encoder_audit/alignment.py",
+        "tests/encoder_audit/test_artifacts.py",
+        "tests/encoder_audit/test_alignment.py"
+      ],
+      "tests": [
+        "test_artifacts.py",
+        "test_alignment.py"
+      ]
+    },
+    {
+      "id": "04",
+      "title": "Audit clean selected checkpoint performance",
+      "prompt": "sessions/04-checkpoints.md",
+      "artifacts": [
+        "inm/encoder_audit/checkpoints.py",
+        "docs/encoder-audit/checkpoints.md",
+        "tests/encoder_audit/test_alignment.py",
+        "tests/encoder_audit/test_checkpoints.py"
+      ],
+      "tests": [
+        "test_alignment.py",
+        "test_checkpoints.py"
+      ]
+    },
+    {
+      "id": "05",
+      "title": "Fit fixed probes of class information",
+      "prompt": "sessions/05-probes.md",
+      "artifacts": [
+        "inm/encoder_audit/probes.py",
+        "docs/encoder-audit/probes.md",
+        "tests/encoder_audit/test_artifacts.py",
+        "tests/encoder_audit/test_probes.py"
+      ],
+      "tests": [
+        "test_artifacts.py",
+        "test_probes.py"
+      ]
+    },
+    {
+      "id": "06",
+      "title": "Relate reconstruction to classifier behavior",
+      "prompt": "sessions/06-reconstruction.md",
+      "artifacts": [
+        "inm/encoder_audit/reconstruction.py",
+        "docs/encoder-audit/reconstruction.md",
+        "tests/encoder_audit/test_probes.py",
+        "tests/encoder_audit/test_reconstruction.py"
+      ],
+      "tests": [
+        "test_probes.py",
+        "test_reconstruction.py"
+      ]
+    },
+    {
+      "id": "07",
+      "title": "Integrate audit reports and execution runbook",
+      "prompt": "sessions/07-integration.md",
+      "artifacts": [
+        "inm/encoder_audit/study.py",
+        "inm/encoder_audit/reporting.py",
+        "docs/encoder-audit/runbook.md",
+        "docs/encoder-audit/review.md",
+        "tests/encoder_audit/test_integration.py"
+      ],
+      "tests": [
+        "test_*.py"
+      ],
+      "baseline_regression": true
+    },
+    {
+      "id": "08",
+      "title": "Review real evidence and predeclare one next question",
+      "prompt": "sessions/08-evidence.md",
+      "artifacts": [
+        "docs/encoder-audit/findings.md",
+        "docs/encoder-audit/next-experiment.md",
+        "tests/encoder_audit/test_findings.py"
+      ],
+      "tests": [
+        "test_*.py"
+      ],
+      "evidence": "results/encoder-audit-v1/report/evidence.json"
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "schema_name": "agfl-encoder-audit-v1",
+  "protocol": "within_session",
+  "partitions": [
+    "train",
+    "validation"
+  ],
+  "preprocessing": {
+    "sessions": [
+      "T"
+    ],
+    "channels": 22,
+    "sampling_rate": 250,
+    "windows": 4,
+    "window_samples": 250,
+    "trial_samples": 1000,
+    "offset_seconds": 0.0,
+    "filter_low_hz": 2.0,
+    "filter_high_hz": 30.0,
+    "filter_scope": "window",
+    "artifact_policy": "exclude"
+  },
+  "normalization": {
+    "baseline_raw_epsilon": 1e-08,
+    "legacy_raw_epsilon": 1e-12,
+    "legacy_feature_epsilon": 1e-06
+  },
+  "budgets": {
+    "cpu_probe_fits_per_task": 4,
+    "neural_refits": 0
+  },
+  "probes": {
+    "views": [
+      "features_ordered",
+      "features_window_mean",
+      "core_ordered"
+    ],
+    "negative_control": "features_ordered_shuffled",
+    "shuffle_seed_offset": 700001,
+    "scaler": "StandardScaler_train_only",
+    "penalty": "l2",
+    "C": 1.0,
+    "solver": "lbfgs",
+    "max_iter": 1000,
+    "tol": 0.0001,
+    "random_state": 0,
+    "class_weight": null,
+    "multiclass": "multinomial",
+    "search": false
+  },
+  "conditions": [
+    {
+      "name": "full_22",
+      "pattern": "full",
+      "retained": 22,
+      "repeats": 1
+    },
+    {
+      "name": "random_static_16",
+      "pattern": "random_static",
+      "retained": 16,
+      "repeats": 5
+    },
+    {
+      "name": "dynamic_random_16",
+      "pattern": "dynamic_random",
+      "retained": 16,
+      "repeats": 5
+    },
+    {
+      "name": "random_static_6",
+      "pattern": "random_static",
+      "retained": 6,
+      "repeats": 5
+    },
+    {
+      "name": "dynamic_random_6",
+      "pattern": "dynamic_random",
+      "retained": 6,
+      "repeats": 5
+    }
+  ],
+  "tolerances": {
+    "features": {
+      "rtol": 0.0001,
+      "atol": 1e-05
+    },
+    "probabilities": {
+      "rtol": 0.0001,
+      "atol": 1e-05
+    },
+    "normalization": {
+      "rtol": 1e-06,
+      "atol": 1e-08
+    }
+  },
+  "name": "encoder_class_information_audit_v1",
+  "subjects": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "data_dir": "../../ml",
+  "baseline_dir": "../results/baselines-reproducible-v1",
+  "legacy_dir": "../results/inm-tensor-followup-v1",
+  "output_dir": "../results/encoder-audit-v1"
+}

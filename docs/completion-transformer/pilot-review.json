@@ -1,0 +1,48 @@
+{
+  "decision": "proceed",
+  "basis": "Operational validity, not accuracy selection",
+  "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+  "pilot_task_sha256": "9cc6d144a22a082d711261521b31606881fbb0b3ca24dfb0fcb528773019a54c",
+  "verified_rows": 126,
+  "epochs": 30,
+  "full_input_unchanged": true,
+  "independent_metrics_match": true,
+  "protected_files_unchanged": true,
+  "new_settings_selected": false,
+  "scores": {
+    "spatial_eegnet": {
+      "zero": {
+        "full_ba": 0.853021978021978,
+        "degraded_ba": 0.4458791208791209,
+        "degraded_log_loss": 1.54876615082311
+      },
+      "covariance": {
+        "full_ba": 0.853021978021978,
+        "degraded_ba": 0.6574862637362637,
+        "degraded_log_loss": 0.8525367368355392
+      },
+      "tucker": {
+        "full_ba": 0.853021978021978,
+        "degraded_ba": 0.47135989010989005,
+        "degraded_log_loss": 1.3321564152510583
+      }
+    },
+    "spatial_transformer": {
+      "zero": {
+        "full_ba": 0.8365384615384616,
+        "degraded_ba": 0.34896978021978026,
+        "degraded_log_loss": 2.6699730978323264
+      },
+      "covariance": {
+        "full_ba": 0.8365384615384616,
+        "degraded_ba": 0.6344093406593406,
+        "degraded_log_loss": 1.2519351046628768
+      },
+      "tucker": {
+        "full_ba": 0.8365384615384616,
+        "degraded_ba": 0.4034340659340659,
+        "degraded_log_loss": 2.3583348515840976
+      }
+    }
+  }
+}

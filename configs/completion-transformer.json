@@ -1,0 +1,75 @@
+{
+  "schema_name": "agfl-completion-transformer-v1",
+  "name": "raw_completion_spatial_eegnet_transformer_replay_v1",
+  "subjects": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "seeds": [0, 1, 2],
+  "data_dir": "../../ml",
+  "candidate_source_dir": "../results/encoder-candidates-reproducible-v1",
+  "split_source_dir": "../results/baselines-reproducible-v1",
+  "output_dir": "../results/completion-transformer-v1",
+  "synthetic": false,
+  "protocol": {
+    "partitions": ["train", "validation"],
+    "sessions": ["T"],
+    "channels": 22,
+    "channel_order": "canonical_22",
+    "windows": 4,
+    "window_samples": 250,
+    "trial_samples": 1000,
+    "sampling_rate": 250,
+    "filter_hz": [2.0, 30.0],
+    "normalization": "historical_training_channel_mean_population_std_floor_1e-8",
+    "backbones": ["spatial_eegnet", "spatial_transformer"],
+    "strategies": ["zero", "covariance", "tucker"],
+    "conditions": [
+      {"name": "full_22", "pattern": "full", "retained": 22, "repeats": 1},
+      {"name": "random_static_16", "pattern": "random_static", "retained": 16, "repeats": 5},
+      {"name": "dynamic_random_16", "pattern": "dynamic_random", "retained": 16, "repeats": 5},
+      {"name": "random_static_6", "pattern": "random_static", "retained": 6, "repeats": 5},
+      {"name": "dynamic_random_6", "pattern": "dynamic_random", "retained": 6, "repeats": 5}
+    ],
+    "covariance": {
+      "estimator": "training_channel_second_moment",
+      "ridge_scale": 0.001,
+      "ridge_multiplier": "mean_diagonal",
+      "mask_tuning": false
+    },
+    "tucker": {
+      "implementation": "inm.tensor_attention.Tucker2",
+      "fit_partitions": ["train"],
+      "rank_channels": 4,
+      "rank_features": 16,
+      "ridge": 0.001,
+      "epochs": 30,
+      "learning_rate": 0.01,
+      "batch_size": 64,
+      "seed_offset": 810001,
+      "restore_ambient_rng": true
+    },
+    "selection": {
+      "checkpoints": "historical_full_input_validation_selected",
+      "reselect": false,
+      "test_data": false
+    },
+    "mask_policy": {
+      "preserve_original_boolean_flags": true,
+      "observed_values_selected_before_arithmetic": true,
+      "all_missing_window": false,
+      "full_input_bypasses_completion": true
+    },
+    "evaluation": {
+      "metrics": ["balanced_accuracy", "log_loss"],
+      "repeat_then_seed_then_participant_equal_averaging": true,
+      "primary": "mean_degraded_tucker_minus_zero_spatial_transformer",
+      "secondary": [
+        "mean_degraded_tucker_minus_zero_spatial_eegnet",
+        "mean_degraded_tucker_minus_covariance_spatial_transformer",
+        "difference_in_differences_tucker_benefit_transformer_minus_eegnet"
+      ],
+      "screening_mean_gain": 0.02,
+      "screening_positive_participants": 6,
+      "bootstrap_repeats": 2000,
+      "bootstrap_seed": 20261005
+    }
+  }
+}

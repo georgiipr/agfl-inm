@@ -1,0 +1,7 @@
+test_fixed_declaration_plan_and_config_relative_paths (legacy_protocol_tests.ProtocolTests.test_fixed_declaration_plan_and_config_relative_paths) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK
+PASS with byte-identical declaration in fresh temporary config/output fixture; original failure retained

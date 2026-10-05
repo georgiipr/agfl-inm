@@ -1,0 +1,63 @@
+{
+  "workflow": "completion-transformer",
+  "model": "gpt-6-luna",
+  "effort": "high",
+  "timeout_seconds": 1200,
+  "sessions": [
+    {
+      "id": "01",
+      "plan": "sessions/01-protocol.md",
+      "tests": [
+        "test_protocol.py"
+      ],
+      "handoff": "docs/completion-transformer/session-01-handoff.md"
+    },
+    {
+      "id": "02",
+      "plan": "sessions/02-completion.md",
+      "tests": [
+        "test_protocol.py",
+        "test_completion.py",
+        "test_adapters.py"
+      ],
+      "handoff": "docs/completion-transformer/session-02-handoff.md"
+    },
+    {
+      "id": "03",
+      "plan": "sessions/03-replay.md",
+      "tests": [
+        "test_protocol.py",
+        "test_completion.py",
+        "test_adapters.py",
+        "test_replay.py"
+      ],
+      "handoff": "docs/completion-transformer/session-03-handoff.md"
+    },
+    {
+      "id": "04",
+      "plan": "sessions/04-evaluation.md",
+      "tests": [
+        "test_protocol.py",
+        "test_completion.py",
+        "test_adapters.py",
+        "test_replay.py",
+        "test_study.py",
+        "test_reporting.py"
+      ],
+      "handoff": "docs/completion-transformer/session-04-handoff.md"
+    },
+    {
+      "id": "05",
+      "plan": "sessions/05-integration.md",
+      "tests": [
+        "test_protocol.py",
+        "test_completion.py",
+        "test_adapters.py",
+        "test_replay.py",
+        "test_study.py",
+        "test_reporting.py"
+      ],
+      "handoff": "docs/completion-transformer/session-05-handoff.md"
+    }
+  ]
+}

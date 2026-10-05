@@ -1,0 +1,154 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,booktabs,tabularx,array}
+\usepackage[margin=22mm]{geometry}
+\usepackage{xcolor,hyperref}
+\definecolor{navy}{HTML}{193B54}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=navy,
+pdftitle={Supervised spectral Tucker: matched factor fine-tuning experiment}}
+\setlength{\parindent}{0pt}\setlength{\parskip}{6pt}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\code}[1]{{\small\nolinkurl{#1}}}
+\begin{document}
+{\LARGE\bfseries\color{navy} Supervised spectral Tucker}\par
+{\large A matched test of classification-driven factor learning}\par
+Successor to the tensor temporal screen; designed 4 October 2026.
+
+\section{Hypothesis and controlled intervention}
+The previous single-seed screen found that frozen spectral Tucker retained some
+classification performance under severe electrode loss, but its full-input
+validation balanced accuracy was 45.47\%, below the spectral dense control's
+50.97\% and the EEGNet--Transformer reference's 63.71\%. These results motivate
+one bounded hypothesis: updating Tucker factors for classification, while
+preserving observed-entry ridge inference, may improve discriminative features.
+
+This study compares two otherwise identical spectral Tucker models. Both start
+with the same reconstruction-fitted factors and the same randomly initialized
+temporal classifier. The supervised arm allows cross-entropy gradients to update
+the factors; the frozen arm retains them as buffers. We use the same direct
+ridge-solve implementation in both arms, so a change of numerical solver is
+not confounded with supervision. This is factor learning during classifier
+training, not fine-tuning an already selected classifier checkpoint.
+
+\begin{tabularx}{\linewidth}{@{}lYY@{}}\toprule
+Property & Frozen control & Supervised factors \\ \midrule
+Spectral features and normalization & Fixed; training-calibrated & Identical \\
+Initial Tucker factors & Training reconstruction fit & Identical fit and seed \\
+Initial head and data order & Paired & Paired \\
+Core inference & Observed-entry ridge solve & Same solve, differentiable \\
+Factors during classification & Frozen buffers & Trainable $U,V$ \\
+Factor constraint & Initial unit columns retained & Unit columns after updates \\
+Classification loss & Cross-entropy & Same cross-entropy \\
+Training availability & Full 22 channels & Full 22 channels \\ \bottomrule
+\end{tabularx}
+
+All comparisons in this report concern these two new fits. The previous
+EEGNet--Transformer score is historical context, not a newly matched arm in
+this experiment. A gain would support task-informed factor adaptation under
+the tested settings, rather than proving a universal advantage of tensor models.
+
+\section{Pipeline and differentiable core}
+BCI IV 2a supplies four motor-imagery classes and 22 EEG electrodes at 250 Hz.
+We retain the verified participant-specific T-session splits and the previous
+artifact exclusions, cue alignment, 2--30 Hz window-local filtering and
+training-only channel normalization. Each trial has four 250-sample windows.
+Four overlapping 100-sample patches per window (stride 50) give 16 ordered time
+positions without crossing window or availability boundaries.
+
+A periodic Hann window and FFT yield 12 log-power features at 2.5--30 Hz.
+The feature mean and population standard deviation are fitted on training trials
+only, separately for each channel/frequency. With patch index $t$, standardized
+features have shape $F[B,22,16,12]$. Boolean availability $M[B,22,4]$ expands
+to the 16 patch positions. Hidden values are selected away before arithmetic,
+and every original window must retain at least one observed channel.
+
+Reconstruction fitting initializes $U\in\mathbb R^{22\times4}$ and
+$V\in\mathbb R^{12\times4}$ for 30 epochs, using training data only. For a patch,
+the inferred core solves
+\[
+ G^*=\arg\min_G\frac{\|F_O-U_OGV^\top\|_F^2}{12|O|}
+             +\lambda\|G\|_F^2,\qquad \lambda=10^{-3}.
+\]
+Let $A=U_O^\top U_O$, $B=V^\top V$, $C=U_O^\top F_OV$ and
+$\rho=12|O|\lambda$. Then
+\[
+ AG B+\rho G=C.
+\]
+Using row-major vectorization, the $16\times16$ system is
+\[
+ H_{(r,s),(r',s')}=A_{rr'}B_{ss'}+
+       \rho\,\delta_{rr'}\delta_{ss'},\qquad
+ g=H^{-1}c.
+\]
+Implementation uses \code{torch.linalg.solve} in float64, without explicitly
+forming an inverse. Positive ridge makes $H$ positive definite even when fewer
+than four electrodes are observed or factor columns correlate. Differentiating
+the solve propagates
+\[
+ dg=H^{-1}(dc-dH\,g)
+\]
+to both factors. There is no detached core and no differentiation through an
+eigendecomposition. The frozen and supervised forward functions agree at matched
+initialization; the frozen result is also checked against the original solver.
+
+Each $4\times4$ core is flattened to 16 values and projected to 32 features.
+Fixed sinusoidal positions and projected availability bits enter a one-layer
+temporal Transformer: four heads, feed-forward width 64, pre-LayerNorm, GELU
+and dropout 0.1. Final normalization, mean pooling and 88 original mask flags
+feed the four-class linear output. Spectral normalization remains fixed in both
+arms; the learned factors are the only added trainable quantities.
+
+Unit column norms are maintained by projection after supervised optimizer
+updates. This is a norm constraint, not orthogonality. Reconstruction fitting
+remains an initialization stage; classifier training adds no reconstruction loss.
+
+\section{Training, evaluation and decision rule}
+The loss is unweighted four-class cross-entropy. Both arms use AdamW with
+learning rate $10^{-3}$, weight decay $10^{-4}$, batch size 32 and gradient norm
+clipping at 1. The same learning rate applies to the head and supervised factors.
+Ten warm-up epochs precede cosine decay. Fits run for at most 250 epochs;
+early stopping is permitted after 75 epochs with patience 50. Full-input
+validation balanced accuracy selects the checkpoint, breaking ties by lower
+log loss and then earlier epoch.
+
+There are nine participants and three paired split/training seeds (0, 1, 2):
+27 paired tasks and 54 fits. Each seed changes both the historical split and
+training randomness; these are not three restarts of one fixed split. No test
+predictions or scores enter fitting, checkpoint selection or this analysis.
+
+Validation includes full availability and static/dynamic random retention of
+16 or 6 electrodes. Each degraded condition has five paired repeats. Aggregation
+averages repeats, then seeds within participant, then participants equally.
+The primary contrast is supervised minus frozen full-input balanced accuracy.
+The exploratory screen requires at least two percentage points mean improvement
+and improvement in at least six of nine participant means. Participant bootstrap
+intervals use 2,000 resamples and seed 20261004. Seed-level findings, log loss,
+train--validation gaps and degraded conditions are secondary evidence.
+
+Three seeds improve the assessment of split/training variation, but do not make
+validation independent of earlier research. An independent session or dataset
+would be needed for confirmation. Condition-specific intervals are exploratory
+and do not correct for multiple comparisons. All arms use full-input training;
+mixed-availability training remains a separate hypothesis.
+
+Source/configuration/package/input hashes identify the new study. Calibration
+and initial-state hashes check pair matching, selected checkpoints are reloaded,
+and artifacts are verified before reuse. The previous studies' source files,
+configurations and scientific artifacts are preserved.
+
+\section{Results and verdict}
+\input{supervised_tucker_results.tex}
+
+\section{Reproduction}
+Declaration: \code{configs/supervised-tucker.json}.
+
+Implementation: \code{inm/supervised_tucker/}.
+
+Launcher: \code{scripts/run_supervised_tucker_experiments.sh}.
+
+Use separate \code{--pilot}, \code{--cohort}, \code{--summarize} and
+\code{--dry-run} modes.
+Outputs belong to \code{results/supervised-tucker-v1/}.
+
+Build this report with \verb|make -C docs/concept supervised_tucker.pdf|.
+\end{document}

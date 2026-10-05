@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "default_through": "09",
+  "sessions": [
+    {
+      "id": "01",
+      "title": "Declare protocol and dependency-light CLI",
+      "prompt": "sessions/01-protocol.md",
+      "artifacts": [
+        "inm/encoder_candidates/__init__.py",
+        "inm/encoder_candidates/__main__.py",
+        "inm/encoder_candidates/protocol.py",
+        "configs/encoder-candidates.json",
+        "docs/encoder-candidates/protocol.md",
+        "tests/encoder_candidates/test_protocol.py"
+      ],
+      "tests": [
+        "test_protocol.py"
+      ]
+    },
+    {
+      "id": "02",
+      "title": "Load paired train and validation data",
+      "prompt": "sessions/02-data.md",
+      "artifacts": [
+        "inm/encoder_candidates/data.py",
+        "tests/encoder_candidates/test_data.py"
+      ],
+      "tests": [
+        "test_protocol.py",
+        "test_data.py"
+      ]
+    },
+    {
+      "id": "03",
+      "title": "Implement matched local encoders",
+      "prompt": "sessions/03-local.md",
+      "artifacts": [
+        "inm/encoder_candidates/local.py",
+        "inm/encoder_candidates/models.py",
+        "tests/encoder_candidates/test_local.py"
+      ],
+      "tests": [
+        "test_local.py"
+      ]
+    },
+    {
+      "id": "04",
+      "title": "Implement spatial reference and filter bank",
+      "prompt": "sessions/04-spatial.md",
+      "artifacts": [
+        "inm/encoder_candidates/spatial.py",
+        "inm/encoder_candidates/models.py",
+        "tests/encoder_candidates/test_spatial.py",
+        "docs/encoder-candidates/architectures.md"
+      ],
+      "tests": [
+        "test_local.py",
+        "test_spatial.py"
+      ]
+    },
+    {
+      "id": "05",
+      "title": "Implement compact spatial Transformer",
+      "prompt": "sessions/05-transformer.md",
+      "artifacts": [
+        "inm/encoder_candidates/transformer.py",
+        "inm/encoder_candidates/models.py",
+        "tests/encoder_candidates/test_transformer.py",
+        "docs/encoder-candidates/architectures.md"
+      ],
+      "tests": [
+        "test_spatial.py",
+        "test_transformer.py"
+      ]
+    },
+    {
+      "id": "06",
+      "title": "Train and reload selected classifiers",
+      "prompt": "sessions/06-training.md",
+      "artifacts": [
+        "inm/encoder_candidates/training.py",
+        "tests/encoder_candidates/test_training.py"
+      ],
+      "tests": [
+        "test_local.py",
+        "test_spatial.py",
+        "test_transformer.py",
+        "test_training.py"
+      ]
+    },
+    {
+      "id": "07",
+      "title": "Add probes and paired robustness diagnostics",
+      "prompt": "sessions/07-diagnostics.md",
+      "artifacts": [
+        "inm/encoder_candidates/diagnostics.py",
+        "tests/encoder_candidates/test_diagnostics.py"
+      ],
+      "tests": [
+        "test_training.py",
+        "test_diagnostics.py"
+      ]
+    },
+    {
+      "id": "08",
+      "title": "Integrate tasks and provenance-safe resume",
+      "prompt": "sessions/08-study.md",
+      "artifacts": [
+        "inm/encoder_candidates/study.py",
+        "inm/encoder_candidates/__main__.py",
+        "tests/encoder_candidates/test_study.py"
+      ],
+      "tests": [
+        "test_*.py"
+      ]
+    },
+    {
+      "id": "09",
+      "title": "Report comparisons and document real execution",
+      "prompt": "sessions/09-reporting.md",
+      "artifacts": [
+        "inm/encoder_candidates/reporting.py",
+        "inm/encoder_candidates/study.py",
+        "inm/encoder_candidates/__main__.py",
+        "tests/encoder_candidates/test_reporting.py",
+        "docs/encoder-candidates/runbook.md",
+        "docs/encoder-candidates/review.md"
+      ],
+      "tests": [
+        "test_*.py"
+      ],
+      "baseline_regression": true
+    },
+    {
+      "id": "10",
+      "title": "Review real evidence and decide the next step",
+      "prompt": "sessions/10-evidence.md",
+      "artifacts": [
+        "docs/encoder-candidates/findings.md",
+        "docs/encoder-candidates/decision.md",
+        "tests/encoder_candidates/test_findings.py"
+      ],
+      "tests": [
+        "test_*.py"
+      ],
+      "evidence": "results/encoder-candidates-v1/report/evidence.json"
+    }
+  ]
+}

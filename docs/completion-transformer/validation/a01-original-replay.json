@@ -1,0 +1,23 @@
+{
+  "backbones": {
+    "spatial_eegnet": {
+      "max_abs_probability_error": 1.4901161193847656e-08,
+      "n_validation": 55,
+      "prediction_sha256": "0a72e33fdf55339b4d3b89bd679cbc00d31bb554c34c1b21534aa481ffaa21b1"
+    },
+    "spatial_transformer": {
+      "max_abs_probability_error": 2.3283064365386963e-10,
+      "n_validation": 55,
+      "prediction_sha256": "6763480f87ae731219831b8f854f8c2f50c9987a4b6fe1019a7ff1db797a1554"
+    }
+  },
+  "completion_fitted": false,
+  "data_id": "ad5503de7c09ad7979987e567f2a287b6a1b083a1c89af4a5a7e2dd6d6a24618",
+  "degraded_evaluation_run": false,
+  "seed": 0,
+  "split_id": "45b40a60ab33a5410f166db56e491a2e7e2a08c7e365a50dbfe3acac280daab1",
+  "status": "original_validation_prediction_replay_passed",
+  "subject": 1,
+  "train_trials": 163,
+  "validation_trials": 55
+}

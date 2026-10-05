@@ -1,0 +1,30 @@
+{
+  "status": "cuda_verified_ready_for_authorized_pilot",
+  "study_id": "f2fcd2303bbf2dc641ef36f6ae6fc2188812f8f5f4ada59f6608d58b84519524",
+  "source_sha256": "8b39cc2b29757432308fb9dffbc03d12ab871462e3da87552dbc79741083735b",
+  "device": "cuda:0",
+  "gpu_name": "NVIDIA GeForce RTX 3060 Laptop GPU",
+  "calibration_device": "cpu",
+  "cpu_structural_tests": 3,
+  "gpu_test_groups": 5,
+  "cpu_regression_tests": 60,
+  "skipped_tests": 0,
+  "protected_files_unchanged": 7767,
+  "new_real_measurements": false,
+  "pilot_then_review_then_cohort_authorized": true,
+  "source_frozen": true,
+  "logs": {
+    "protocol-acceptance.log": {
+      "path": ".session-runs/task-driven-completion-cuda/protocol-acceptance.log",
+      "sha256": "60020732bbf552586db6f5c3754de89d15c352ca0c886d18aac8035340b142df"
+    },
+    "gpu-acceptance-attempt1.log": {
+      "path": ".session-runs/task-driven-completion-cuda/gpu-acceptance-attempt1.log",
+      "sha256": "bdbe37e0898f7514d8f96c07f73666f165228078a2fe0f14503a98256d3f1b0a"
+    },
+    "cpu-regression.log": {
+      "path": ".session-runs/task-driven-completion-cuda/cpu-regression.log",
+      "sha256": "00fcc31eb87b6f2d59b053a905e2187eca12afdf046d6284eacf8ed21b4fcb9d"
+    }
+  }
+}

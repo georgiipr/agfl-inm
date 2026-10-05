@@ -1,0 +1,2090 @@
+{
+  "candidate_tasks": [
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0/data_provenance.json",
+          "sha256": "3532a697aae1fab3024a3aee31c6e7a0cc04eff1db3ebbbc90bde1b00ed4578a"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "ed13c7bd5bae4a5036b7a51f111cb6bc5e09973d2ef7a6e7215cc51afd2fb07f"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0/ARMS/spatial_eegnet/history.json",
+          "sha256": "c35af44991047297e25a1238c37d5c6df00f3ee537be30171dac5b7b3ee250e9"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "0a72e33fdf55339b4d3b89bd679cbc00d31bb554c34c1b21534aa481ffaa21b1"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0/ARMS/spatial_eegnet/result.json",
+          "sha256": "900f1d9c2cf952ff9efcc781bcf945658bc5b94de6d8a14ff703c2efcdc540ee"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "2147480095d49f3f87426bc53fb92c59154a5086e8c013b35356493b0720dd40"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0/ARMS/spatial_transformer/history.json",
+          "sha256": "66a05660aa79bc2db7b3f077cc60d28a4509bd910065773c7c087c1ad9a96317"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "6763480f87ae731219831b8f854f8c2f50c9987a4b6fe1019a7ff1db797a1554"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0/ARMS/spatial_transformer/result.json",
+          "sha256": "ab01faf33f5a92fa46c8ab51e791a97935d2d600d44e62a59875f34db9786fa5"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_0/task.json",
+          "sha256": "a0129e80fd54b4469b4986ffeb18ce089c81558f383c29987fad6bf05d2979ed"
+        }
+      },
+      "seed": 0,
+      "subject": 1
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1/data_provenance.json",
+          "sha256": "ede524ead3b18dfe1d88c1a641d3ba2602bc7e9212f156e2d41d858b054c3cac"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "de62f0e8668ff814f75b129e37b8dcc6d55d1c76a4e5222d4e6fa2f662ab46c5"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1/ARMS/spatial_eegnet/history.json",
+          "sha256": "a84f2496cd2b12e9a51619c7a6ad82fc5442d1602b91951770fa4999b871e9f9"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "f5217be62876a9d943070638525a9672c4642e2240fda5747996b60d6449f760"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1/ARMS/spatial_eegnet/result.json",
+          "sha256": "77133a8acd61ef8f562b0951b67487300da45d86c3e1d3971a0f6dd5783d05a5"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "c8e531d1b9c478f47dfd9d5d953bd043d97456d4e739784b4be3c7fb4c4d6129"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1/ARMS/spatial_transformer/history.json",
+          "sha256": "840016a08454349b10209b34bdc62b84096c401e2e0578bfd7286bcc8a9d0d46"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "c2410a3ca6f7b86e88aa403fba413b51c18b5a36bced5ba408376a393339a54a"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1/ARMS/spatial_transformer/result.json",
+          "sha256": "caa6da92afd2bb30fcfa537393c11a06b1893d1b853ffb10e4511c6e2e912e12"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_1/task.json",
+          "sha256": "d8d8a2a127897a1827306f478350d828cf12b863b49a4d82b2bdd5bfadb836e6"
+        }
+      },
+      "seed": 1,
+      "subject": 1
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2/data_provenance.json",
+          "sha256": "173c54a4ddae0901aff816edb123991511a8b78c7e1a2ba4a764faed2009c5b7"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "fc1e75d7c2041808b8dc7902176cd6b8afcb6e4e464013d8157e89123bace58d"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2/ARMS/spatial_eegnet/history.json",
+          "sha256": "ff1817acf8d38412a9247db2d7f71388f4cc4086b8177a4ee7a2ffd750269847"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "10e6c1c44973e057f8a127a65513af8337e97c8f007b650f368cea30c48164f2"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2/ARMS/spatial_eegnet/result.json",
+          "sha256": "8cc63c32d71e4fa470e01ebb0db455a38bae83d57389804821f62a442003505c"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "8fba66ca89267478503b0399dd6cf55889709d2fe7b3fb98376db5fd3a9c8bd8"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2/ARMS/spatial_transformer/history.json",
+          "sha256": "c5592d893a2426b6ef1816949fbefacdf2ea819946845607a13a149d5ec746fa"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "36cb4f94b153463b80fb9807cd0dc66ab9af7cb73eaf965d8d09cb5ff5f724ba"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2/ARMS/spatial_transformer/result.json",
+          "sha256": "3c7aa710c0b4f5b6777f25844c5198e4ffe09cd33e6f4c5886c2a6775a58c32e"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A01_seed_2/task.json",
+          "sha256": "90ff680ea84d2c695b4ab650c3b86cbb35f6d0d8644c13184d6d998b25a11aea"
+        }
+      },
+      "seed": 2,
+      "subject": 1
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0/data_provenance.json",
+          "sha256": "b9236fa260dacf330fea90b4e3f3ba970b89198ee5488055e2505d5fd1df43b7"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "5aada337a17d48b40ab5170083f459c623e2e682358a5215583c9e776488fa88"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0/ARMS/spatial_eegnet/history.json",
+          "sha256": "e2fa3b9fa8102b57a9826c136fc4483f8d176ff0048690e563abe673a93f4431"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "ff2058772dc5ff2396643a3c115c8fc99b424455da3c85a6a921463a8c8f82d1"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0/ARMS/spatial_eegnet/result.json",
+          "sha256": "ec053e965ff584051b58f52a383cfe3f892aa5fc03b71482f920c5bd86fd72e9"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "421b884a92eb7c0a15049a5fd50b4eea85fe554b0cd0a5a7a9f92d0bf66b87bc"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0/ARMS/spatial_transformer/history.json",
+          "sha256": "8d811d84b0f88dd047aaab4311446dbd1d63f56788a8094e75794eb872e5623d"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "7a5f5f6ebdb9bf515fac90f5420a0a4f0eba72dc22a7c89def098470960d8a9c"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0/ARMS/spatial_transformer/result.json",
+          "sha256": "b5fe27b6f64eb66fdb79cded4dbe80f8a2a798c234fa7b7200772feb90551d36"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_0/task.json",
+          "sha256": "f35e9e50ace7bfd12a8c1a9224d0a4e95de1164405a1716c41d932e86f9a491c"
+        }
+      },
+      "seed": 0,
+      "subject": 2
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1/data_provenance.json",
+          "sha256": "683f64a91dfa7405975c1f35fba6f5cff9aedf4fc45bee2446742989612065a6"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "bed4d9f6ec24f06c6519c059facfc2d203527403faa64558285ee84e29ec5605"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1/ARMS/spatial_eegnet/history.json",
+          "sha256": "316ef2b48ff89d1ee1ca6be3d6dbda04c75b128d142827fc16403eabadab2fc2"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "3a929c02f53085370933e8496edb1e6ac18315525edc04186d18d98e5e67c146"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1/ARMS/spatial_eegnet/result.json",
+          "sha256": "a4327098c2e938efab005f7788bccbddf4ea653c3663b54cfda5fc863097a398"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "da438cbe839b220156078f9746fa257c1c7e90e897c30085ee7b66b6c6e9e09a"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1/ARMS/spatial_transformer/history.json",
+          "sha256": "b8ba9f08505822317dca7b027e070c34673bb5eecc11764e5a8ada255acbd181"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "f4f982efefd430856c9cde9a63b74d34129c863f81a6639b28f9ef981869e0fc"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1/ARMS/spatial_transformer/result.json",
+          "sha256": "e399d541792dc69be1ae4d1d4fac45d1542f0043224f8ac628e5b4cc9de56796"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_1/task.json",
+          "sha256": "00cb69b1067912698327a0296a974287a29b8afc479fddca1de33164b782a0bf"
+        }
+      },
+      "seed": 1,
+      "subject": 2
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2/data_provenance.json",
+          "sha256": "2e7b429311debd62637a4fa419faaf213baa25f34691e7b749852f09620c120b"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "364d2d0f95256ca3542e884ca47b624596fc1b852db2d990db719711b352d179"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2/ARMS/spatial_eegnet/history.json",
+          "sha256": "451e79b76da725d5ba7598d94ddd145583b958921ee6955bed1c88d218ee66b6"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "5773bae24a70ff6607594ca9da19b2ce6ff2619ba9a35ebcd025cf64482fa36f"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2/ARMS/spatial_eegnet/result.json",
+          "sha256": "4a26fbc188da979f60629e254072536cb388a189eefcc7543bafe99b8cfdebec"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "ea43dbe824598ce13013a4185c858e6b191a5c1584e23f5ccd0ad09c4dcf3b6f"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2/ARMS/spatial_transformer/history.json",
+          "sha256": "76e569fbc34984eca7d6c1caa74cc0e632d4016b3d12d6c7ff2f8df9481a4a35"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "29054ad01d00937bf2866d59a5bd417d555c51398915a1418f706f51773873e9"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2/ARMS/spatial_transformer/result.json",
+          "sha256": "9b70834ab0a105f7851035f46b637d9345fc775cc8278022604982dfdfff19a9"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A02_seed_2/task.json",
+          "sha256": "6555983e865ba93293275a12c5b02ca76cf1166e71c7a17f2c9a7814f3d2e2a6"
+        }
+      },
+      "seed": 2,
+      "subject": 2
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0/data_provenance.json",
+          "sha256": "a6f41ef0b79c963a4f4ae5f6f6018881b6748afa9462b78f29d0617fe511c18c"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "0553cfc5149e7643596ac87dc3d38bf375b918872509504c83f22b43dabc1bef"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0/ARMS/spatial_eegnet/history.json",
+          "sha256": "d96ebeec435899f2a4375309d2f8a8cd96d06e1944cd7e20e3f900172852b4fa"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "f650c2d8412a2e6604feec0133ce7b1ce5700669444f36edc43e9a79c0651fd3"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0/ARMS/spatial_eegnet/result.json",
+          "sha256": "653c4722adaba0c33bdaaf128cd39bccec2ed95382ecd85c9ebe16f1394954a9"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "2ca58e8b09dcd920db65da9926b64abb3e19f2fd7fafba805f5ca202af645933"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0/ARMS/spatial_transformer/history.json",
+          "sha256": "5f204bf467b616af039c8d5810189d8d4686eba3a4f0656509cc44c9e0804354"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "695f5bcf97a8b3e05396f96c4d4dcbf6585db9e697cd689dad4a1a253c018928"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0/ARMS/spatial_transformer/result.json",
+          "sha256": "9914adcf51a2c53ee13d5c00378d8b8a88ea9a07be83eeb9d7482eb122150e48"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_0/task.json",
+          "sha256": "c538184321308e5674185d08ea100a3005bb19cf4e4fa747c490bd752eb3e48d"
+        }
+      },
+      "seed": 0,
+      "subject": 3
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1/data_provenance.json",
+          "sha256": "8b4cfd7b0836f99619761f06554e65e7ca92ad8ef30e7e8e3436d2a674d8d616"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "44027c173f41075605f5a116386832fa311350b692c1a40d0ecf731e6293b44c"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1/ARMS/spatial_eegnet/history.json",
+          "sha256": "17bf62d1d0cbbe97f59e40187b41f2534a5af8c174eb2605f3aa50e0da741a4a"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "559c4fc965662696595374cb6d9be77600eb873841cd06f6c513ce04bd5eb605"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1/ARMS/spatial_eegnet/result.json",
+          "sha256": "f70321dc547380a42164744568d8412ba05c3dce347b825df3c172d81877ad05"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "4c82125edab61f01f527d666051c668c9ae30f50bb1970f302afd7d704c7505f"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1/ARMS/spatial_transformer/history.json",
+          "sha256": "2bc7c04e6f43c2c592f461bc5da41081a7c3235be30db8ea5b002c336d0a966e"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "256941fc0564f72766cc453adda4947c3c398ee1892175eabd333845339758f1"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1/ARMS/spatial_transformer/result.json",
+          "sha256": "3b1806e9bf7b2eed0ecd86e37352e7360070319db05ff9403cfdfffe5e56d5a4"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_1/task.json",
+          "sha256": "fa806725918b8479d1ec0721716ecea13d9a68e55dc13fd52f518377ecfae4ed"
+        }
+      },
+      "seed": 1,
+      "subject": 3
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2/data_provenance.json",
+          "sha256": "67067ea6133afeaddc83ebb9ecaf8dc130551458b1e1886452a84976fe638cd8"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "412a9e8233d6b73f0f272b9875030a39ed11012f0902033441b6a3fa09bf0909"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2/ARMS/spatial_eegnet/history.json",
+          "sha256": "9f936a472d08c9363d898a745e8e2f7c5e77de23811b8eb56f5a64114677cb3a"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "0a45f017f72189a23c90fb8b24e549ddb3e1a211363ef5b0a5e865c9a170f791"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2/ARMS/spatial_eegnet/result.json",
+          "sha256": "083823e635b0553f294dcb34ddb85fb829be57a4bb2da5cd0b20e199b7c7a516"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "83682d8b50eb35bcbdc5dbc509aea09218f1f66fadc55bcca93aab6406de7056"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2/ARMS/spatial_transformer/history.json",
+          "sha256": "6e1989a2f64bdd30d6f031fe146b8fe490ef242e453ce0913b11d68b366a6f1f"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "fc3f29c58d4ed62ebbbb2212e7dec392b1e98be08f06459c9dce6c0a4b3afb17"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2/ARMS/spatial_transformer/result.json",
+          "sha256": "9d1b7b320477369e0382431319f7010638cbbf3dbb209e74140cb183c2887015"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A03_seed_2/task.json",
+          "sha256": "8338fe7649a9c0dbd50894d975c65b47952d4576af70c4a1ffa19ff124c26b5e"
+        }
+      },
+      "seed": 2,
+      "subject": 3
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0/data_provenance.json",
+          "sha256": "2a87bd7527cad6632e8f9a800483b6d0e25787cf177445a8d79ab9615d4069fc"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "aa8b17473409177c7b40d982ea0393a5c7fbb5f2df076c64e0701f122828cae3"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0/ARMS/spatial_eegnet/history.json",
+          "sha256": "1bcde7f1f691d39dc6392a9506c69d39fbac619e80b701152447109bbe4d76be"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "3e111f81904fbb60e71cc28f8f4e1b1842840819b11ca162e0f5cb060a311870"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0/ARMS/spatial_eegnet/result.json",
+          "sha256": "5b4132d85d189af37273974110955e7ac1b4584fc4a529c232d3fd5ee3065a81"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "ab870910ef79e030e0f2317e70d7947c8a6d875d2e5f9c93ba6e7ecbd48f3140"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0/ARMS/spatial_transformer/history.json",
+          "sha256": "2b1385b67e3342ca64bb8fb0c957813f8fc4e595c7009f526e9fab2b661beab5"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "798eb582ffd21c448b6fc3d87ac0678b120da68f88b2f5f7ff285a6fa342b888"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0/ARMS/spatial_transformer/result.json",
+          "sha256": "539a0f25fd1cbfafc6e938e14c0d0e132af1b1f760c4e15981a5fc74836a7775"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_0/task.json",
+          "sha256": "813e4efe2c8ab3f5fed5368b75f06d5114673576a5e959cf924f49314cd7541d"
+        }
+      },
+      "seed": 0,
+      "subject": 4
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1/data_provenance.json",
+          "sha256": "d0ada9cf877d60855c806090fb6b83729da91f761926d767d6134d822c7e922f"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "7caa6f8f95645223e5b49315b6a52cee0da275cbd6aaafc356f8ab534c6bb183"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1/ARMS/spatial_eegnet/history.json",
+          "sha256": "54b8e0115b26fe6002a9a533a1d1b543b66948cc97480b2ed83b2f6447aa825e"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "079ad0df79114043884b64a217d1182ceeb05a97b227b35cb04bad2bb2306c46"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1/ARMS/spatial_eegnet/result.json",
+          "sha256": "5783048fdc52c0cb52d0fd874d8ff878e5f55cd9e347818963d8054e0bc5fadb"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "4146708df02619ac329c06f348e3bbbc6bacf83d8ab0db18c5b32e5949ca6227"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1/ARMS/spatial_transformer/history.json",
+          "sha256": "010c147a93e201621c07c5116bd6c964291f004b19d55952600727c0ec9f8b94"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "1a3d5856deff255883d77527fdcf1cad59eb6736167c6f49a7b503212b48c5d8"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1/ARMS/spatial_transformer/result.json",
+          "sha256": "2425cabb7ec0eaa777703de4ee858ee8fa22409434ec6ac7c3c46334eb047d85"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_1/task.json",
+          "sha256": "ed5a9a8429a2f04c408bebae505a6b4b1e614acf4b3df63be666486196a1e2c2"
+        }
+      },
+      "seed": 1,
+      "subject": 4
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2/data_provenance.json",
+          "sha256": "8cdaf0a8f1c1976cb841c9aab2075db3fdf5bed4c2e8fe50bed4445a342997b7"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "bb216fe985abf7092cda714dd1ac31217c37d4877f59ede9820462a0aeb60475"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2/ARMS/spatial_eegnet/history.json",
+          "sha256": "60b53aa0910b14b1320fd77fa571bec3a9a22db70a9700e76f7e179c967e58e5"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "ccaf35d33388a6ff119d5fbcf6c81805c96a819985b7730ca07f00dc6363a052"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2/ARMS/spatial_eegnet/result.json",
+          "sha256": "252397b4b2c1fba284c893b8292d11f4850d7850cce17a0ff6fb4f65c7bf1ca4"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "de165536b075923c17932f89f56aba6f9b2854ecaf6e0a401c54d5f0672a900f"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2/ARMS/spatial_transformer/history.json",
+          "sha256": "4844b0fa75860e25e91edb22f145d56a10e404c3fe2df2e851a93f512e6001f1"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "884339e8a78464a41908568c42489cf701e48513b34d9b4fe1a884dd18fe8b6f"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2/ARMS/spatial_transformer/result.json",
+          "sha256": "114842c796cdcd1f6fbc068c9a2026dcbfcf0d72056e72fb64a49fc7768e325d"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A04_seed_2/task.json",
+          "sha256": "b247d2cc35484c5dbe474ac8014f6ee3fe9e2eb8b2c0cd7c2cc19cce2d89b670"
+        }
+      },
+      "seed": 2,
+      "subject": 4
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0/data_provenance.json",
+          "sha256": "5a6446808284bb6ca38f32f1be2f864a2d29002b70b3c72c326d60292c685d33"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "5407bd75d2137be1e432fd0a2c322a4c9a351f29d37e93338791f17271b50eea"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0/ARMS/spatial_eegnet/history.json",
+          "sha256": "161cf9a5f59eba271463e00071caea1a6fb57e0924de1a41ab997d487bb30e35"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "4354fd6ce286313c04fea093cc4889dcfc683dd9181da8e92793bb78f6469a78"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0/ARMS/spatial_eegnet/result.json",
+          "sha256": "a50ea4e3a1543934d065d7356149b38513ecf696506c823e5043382f9239dcc6"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "b094425230602ebae1ec3c07113f522f5f65d40a465eaec65cc271afd1e85687"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0/ARMS/spatial_transformer/history.json",
+          "sha256": "06326af8d7c4269b7f2e5c48333ed72f08ad411eb07d7d537f56e3d5237033b8"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "305d2095a12e750c603301491a180355defd8fcda689e2e0a8cc83b815a3546c"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0/ARMS/spatial_transformer/result.json",
+          "sha256": "6471d4b9c27bcb9731f5260b88090f31831db5f2d27dba3aa0a3612c57847663"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_0/task.json",
+          "sha256": "a7c0297203c45631c029485aa2cae1dee754a16ebcafb4f45df3ef9fe4f9245b"
+        }
+      },
+      "seed": 0,
+      "subject": 5
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1/data_provenance.json",
+          "sha256": "5ca551fcb59aa38367077e4015a52b29cff7ce8fd30e567d84f2c3d95f234b96"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "d76c0c5beafeee3e9dcfc627a2a92652db094d8c7321107e85d3f3426fbd0989"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1/ARMS/spatial_eegnet/history.json",
+          "sha256": "926d782d35c6e38f3d981d20e0b4f722872dbd82f2034bde429795b21be9a76f"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "b7fcd6e9c26f4afad524416e89a928c53f7b72981fc016570e182ba3c0b04304"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1/ARMS/spatial_eegnet/result.json",
+          "sha256": "725b85c6d6889307c5271e6277d85ed7efefb0006d3aa92c33cce96cb8acadfd"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "d019497a0b522d242b01d377677450f3b7a73ed4dba9f4a12b758a9d99b3a4f6"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1/ARMS/spatial_transformer/history.json",
+          "sha256": "2f94dc78a250bd7d04f6ed1a55f73dbb8ac63c885291dcb1f1b772f97db9f4cc"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "86d1f2df85d919a3f2951dde7ec014c68964653e3a3f024f6e8624fdc85547ae"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1/ARMS/spatial_transformer/result.json",
+          "sha256": "f57dc822015b7618bf7b1c00ed8d5bc84af719a582a330f953451d360ca76f8a"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_1/task.json",
+          "sha256": "f7f6b75c5cb357d98a8c0fcc49eafbbc9f8639d6bcc88e43ab2b6d50e26d9d3d"
+        }
+      },
+      "seed": 1,
+      "subject": 5
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2/data_provenance.json",
+          "sha256": "395608e315af9994c14dc875cabe0af8e492edfbde2f700426bf9644a47e9860"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "1a1ed61c0920b774f51c6d4de8959f12571d61f4f4edb34afb14b8666c3a8526"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2/ARMS/spatial_eegnet/history.json",
+          "sha256": "fb2948ab48124e2bf7c309d7e32cab90084552e4faa3ad11c993feaa258669ba"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "7b458053571cc1de70d98c75b8243b288155e5e6e0adca53de0c1f68c74f0119"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2/ARMS/spatial_eegnet/result.json",
+          "sha256": "ef43690b09b30ccdd2799324c97936093f658f1364f04712815ee76174bee6b8"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "dad596201096abedf6a6f35dcde8de9de0f1327acf51aab6b7c32a535845bd75"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2/ARMS/spatial_transformer/history.json",
+          "sha256": "7959bd72a759732692da6546c129dae7fc6ec1057d5414017683cf12b3b749d1"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "7f6678215e72dac5353ea0a2ee8ebcca61458973fae89549cfcd013a07e5b9ab"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2/ARMS/spatial_transformer/result.json",
+          "sha256": "e627a31b0fd5e0b9f4aa7cc4c0407219f4c8c953a855460fc9f93049e7cc52e7"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A05_seed_2/task.json",
+          "sha256": "6e13730653689207e4c682f505ec840d230e8ed3cfec12bfba962b12c19a8b67"
+        }
+      },
+      "seed": 2,
+      "subject": 5
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0/data_provenance.json",
+          "sha256": "e17e9f0ba93e938543fe73e1904b16d0d54af69745c5c8970c6477a40ae9d4af"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "c3886e490c2cb5c69a359388c32528d15e4fdbf6ad56d3067a278de17dca9004"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0/ARMS/spatial_eegnet/history.json",
+          "sha256": "285f7d70fecac75b713b31a01326e8cdc0fec4ce06517b56a696e362b179cbf0"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "0745008d9b04b8504f4082281825d44c954773a3bb8d5e553b47b68a73085193"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0/ARMS/spatial_eegnet/result.json",
+          "sha256": "dd6e62db06d1a61c300fbb107fc9b4584c7f1a6983b83232da72ac807b90c837"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "4f7ccf7260e23bb702b681485a72ad220c86f2dc26a5357c7eeee0f5093b0533"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0/ARMS/spatial_transformer/history.json",
+          "sha256": "b1fc1ace4cf80880abb4001a5869b4f0363018bfd489fa6e2f7d1d5b61b659f2"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "adbe147e2fa3d19f00c70686fbde8b1bd5ab12395f39f98bfe782c317c3df63a"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0/ARMS/spatial_transformer/result.json",
+          "sha256": "c37b03a5c5f854e2aa38eb685bf2a8e10e9a7a8043dcb73f487c58159d858532"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_0/task.json",
+          "sha256": "a37cc43022b31ca788659a24ebc65601bede6e8065b71c276983ea2f31ebe31f"
+        }
+      },
+      "seed": 0,
+      "subject": 6
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1/data_provenance.json",
+          "sha256": "81ee6d9724198142f31800fc9e8786bc2b42cc6db3b86070bde07ae12c87c14a"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "b0ef6f4a1d70d415befaa6442e9a9fad073f02d704f1980b86c8c783b0c42659"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1/ARMS/spatial_eegnet/history.json",
+          "sha256": "5ea097cf1f4ba5f975e249e9a84afb64a284f2b2c60c4763ecf30285d926b4aa"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "3f5cc4b3354b4957ecc0e9a8445b9a6e6ba2c21357e7f11d9fe5da35f969994b"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1/ARMS/spatial_eegnet/result.json",
+          "sha256": "30bca8a73ea7df082f7d6b8c66e57ebb95d592836ea78059f47539b686ef51f1"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "3a1da190c1a037e7c672486cb19427de6d90224cb5631486a4fb9332753eb36d"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1/ARMS/spatial_transformer/history.json",
+          "sha256": "324137341e2cf63471c903a73e86e5895b814a11cf72193cedd428dfa24b2ff0"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "6a9227c420669f8cd5c4c24792eea887229a1c515f028685a082290fd4bb5a3a"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1/ARMS/spatial_transformer/result.json",
+          "sha256": "a931c574a94d0a5ac058f780ff8c843e7371867d219b1673159809d2bf0e18c1"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_1/task.json",
+          "sha256": "dc076d2f2f829af258929f97898bd6b0ffe2bdb8b2e853006bdb1156937df8bc"
+        }
+      },
+      "seed": 1,
+      "subject": 6
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2/data_provenance.json",
+          "sha256": "7c38f14a25ffb43faaa666038760cc329b4cd373f01b14aaeb1710f5a6cb1dfe"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "e22b83a5865ceff5a9028ecca179bb26d0dff1051c5446b97aee28ebd8539f12"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2/ARMS/spatial_eegnet/history.json",
+          "sha256": "431d1de43f85556e43d433380cfb938c800c62fd6f1d44e0686a5a63be566667"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "81f11284eccd91ef7ffa92a6df5a76bc1a06ffa07796b007d3d24fc1e6fad39e"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2/ARMS/spatial_eegnet/result.json",
+          "sha256": "c2c6a0ba8d9778e2b18865aa295a8ad26394a45128c3563fb4371b6caa5140f1"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "5d8f057d02532f7a1519391f6b4f4354b5ce56780204ed23e0ceef67491c9290"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2/ARMS/spatial_transformer/history.json",
+          "sha256": "f26acaf0ccd797ffbc8a1367000902809b5d2211a0e3053614639c85b9d8b1dc"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "42d0603ea10dd1d264d6496c1b8b0499c9e6a6947a53a81b412b87ce51eb7064"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2/ARMS/spatial_transformer/result.json",
+          "sha256": "9c4ac96b44c508d3cd1c3e00b0146870f3cbcf6e8925d594c07353d5ac0a88ef"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A06_seed_2/task.json",
+          "sha256": "c662d2008e74a0912aad37b697d3dd96516aa24520d1d64852e1d83c023dd88a"
+        }
+      },
+      "seed": 2,
+      "subject": 6
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0/data_provenance.json",
+          "sha256": "e250b2bc26b5f6f8f4ffa25b8e12c41adf2fd8f8d8110a160506b51599606e01"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "bfc80a250cf3548f1af4421d7cdd970f15c53c26894de637da1352b65acab8f9"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0/ARMS/spatial_eegnet/history.json",
+          "sha256": "2134b3abcfce1f9721f3a92f8948bd4160af9384acd9a1313278555d87deb59b"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "1531f1f4e4df894039790531fa74c45b783d0219000a7ed3c78c75fa54a48326"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0/ARMS/spatial_eegnet/result.json",
+          "sha256": "eb4f583c1a66d7f63c663400063255fc10970db70ee1c68ca7f634c5e71afdff"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "9c971b4c61007e69796c5bc73777e0246c76a8a039a72e0b808908e1c9233fef"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0/ARMS/spatial_transformer/history.json",
+          "sha256": "480511b62e8a981b9657cad6adccda036926231cb07b8b21978f682f3f14facf"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "95584c35a9f554eea87cc1808367f2c10a66263a2579d42e4b0d20f79de12790"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0/ARMS/spatial_transformer/result.json",
+          "sha256": "f174fd97a2f9d877c261c1ccafd6a9d95f7f099bdf6e6eb1b4944432d5ca9391"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_0/task.json",
+          "sha256": "af2e5da5062d4398a285e6d27650c9937d860a3eb3c9a1012e0374605d9f6d5c"
+        }
+      },
+      "seed": 0,
+      "subject": 7
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1/data_provenance.json",
+          "sha256": "6051e6cf78f9f30c8014051a5dcd81be04d871d49ee1a15f826ca898f68d8493"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "9aad64086f241209e0c5f8ce37a4a786ff24443dd06ca720d9ba6e8ffb5fac41"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1/ARMS/spatial_eegnet/history.json",
+          "sha256": "1ac18a98f415fc03f7db47ac6aedf5c10a6b3a29a816ada1001da515233abd26"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "63203c0a5a951d28019afa05c6358da3ffe6007518dcad4ab9231229f438418e"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1/ARMS/spatial_eegnet/result.json",
+          "sha256": "696d9cf245f69b1a7510c675f75bb5013b54125b49c08d4aa8ac03f9894905a7"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "03f234deaab4c0fe5a007abf91e4cb1febfd07dca0c800e4b649eb14f8b4cf34"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1/ARMS/spatial_transformer/history.json",
+          "sha256": "537ada778f0be53db76f617da09dc4556eb826ab16b1992fd273fe34973479d4"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "0a4eab82ed382ee43e8973380ae9f770006267e6b8e16c5eb09ed7ee55b0853e"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1/ARMS/spatial_transformer/result.json",
+          "sha256": "faed7cba63b768918645008fe64fb9262454ea2ee7011ae89add5b443ff3b535"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_1/task.json",
+          "sha256": "ba64622dcdbae0e4f04f1036fa244d1b4cfee233c5ad7ace30f1a94c924f8119"
+        }
+      },
+      "seed": 1,
+      "subject": 7
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2/data_provenance.json",
+          "sha256": "b0fad6c5264c54e116d5d0e321c7fe3a87d197657bf9063ff713ce914dce5dab"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "5d9c67729ddbb735ac563683227ed4e26bc6f46f5e478e0c3e9c9d15f004a0a3"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2/ARMS/spatial_eegnet/history.json",
+          "sha256": "0cb628384422e96ae2e826edbeb5f31e9970e310e49380447e5643f3cd27de12"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "23917ce0a2704236a855b9ee0cb4d2a8fb2ac8ecd71327aca05b42e6228b2f64"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2/ARMS/spatial_eegnet/result.json",
+          "sha256": "0b8f38919533ccec16424b8cb9646f467fbd570a38f37e737581fba1ed2ed4c2"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "436227ab78047e83bb7442c7d11af32de54b7a16f8972ddaf47eec85daf706c7"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2/ARMS/spatial_transformer/history.json",
+          "sha256": "b5b9ed844f09ff3abe0796f00c19c7476426c882c824d7013cd76b1e0a80dd1d"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "e7d5f51221fd25efa44a7fc3b4aae898a85038538bf29306e60a91806a125b76"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2/ARMS/spatial_transformer/result.json",
+          "sha256": "e5d1517a5750b39d8edcfee53eba9d77855d87cd3f25b4c2eaa69a82d6f15e44"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A07_seed_2/task.json",
+          "sha256": "5d7ca652807a8f45c2fb3db9dee520fcab1c3c0d1b387018adca6f03db965dcc"
+        }
+      },
+      "seed": 2,
+      "subject": 7
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0/data_provenance.json",
+          "sha256": "5524617a144b0464316874b10871588965bfc54e7ae0cb411cedbbdef55f1bc4"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "4a7ecc98fcb3d799e01e88ae7221411a10f12c0b413e3f54eb0dc4e24ad3a474"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0/ARMS/spatial_eegnet/history.json",
+          "sha256": "cb60a1199f10e946fca41d4d3ddfe9efb40a118f585456a1b2e6e970c08b42ac"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "8fdfbc0bc59905c10a10366e5e0daeee8ce9adad10d13c0965c8270952dde580"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0/ARMS/spatial_eegnet/result.json",
+          "sha256": "696ead15f4c970ea8c8bf0f1e7a8059a3ea1a7601e8dd01200171acef54990f1"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "b94b316e869ca533add55ffaa3f59ef5ca021986ec80c75db168b3ca9e01a30b"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0/ARMS/spatial_transformer/history.json",
+          "sha256": "c8db8bde14a47b466edfe4862bb1b3b1f58a35afc90ea8ab8469c509ac31cae9"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "85893eb15ecb1fb9ee41093592cd7dae07147dbe48cd3d9c75d70f9eb2a6f61c"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0/ARMS/spatial_transformer/result.json",
+          "sha256": "b1c8e77d7cddf1930ac50a0a8c2bf8a5fd3ef1c0e43c7666879ba15adda1e1d7"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_0/task.json",
+          "sha256": "c9766ccd0bc6622d84da8434685f187217ffc37181b05a0e8400c5828a44d0ef"
+        }
+      },
+      "seed": 0,
+      "subject": 8
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1/data_provenance.json",
+          "sha256": "f9cb60c14981148cad7adb0d3e05b4f01135c28b10cb33b3086e34d8da1934a0"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "636cb2cdb2149f473840ecde81bc51a144f2eb3175c46dc92bfb9706980087ff"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1/ARMS/spatial_eegnet/history.json",
+          "sha256": "b22a92de88461285bce0dbb5615ff94f7448a647d5afcccfd85297e1286a88cb"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "98866c7206dc67ac5a9ea1202f06aed5b5c2b1c84cbc97b438f26804b8cb2727"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1/ARMS/spatial_eegnet/result.json",
+          "sha256": "810775fae58e6777a19ee2588e999d55a64c933229ef6de03c9d6a86041dbddb"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "200779097b9ec581de1408c488f54ac11a5fee4df63a8e067895517398e8be8c"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1/ARMS/spatial_transformer/history.json",
+          "sha256": "9dab870bf5c00e74cb0d992ddd3844b25a2de7df12b0525a0d0bb37c9be99d38"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "4fa0a8133209d472c4271235e14b47fa01081f71f6c20913a6619c3fa3f9fb64"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1/ARMS/spatial_transformer/result.json",
+          "sha256": "0599a620d16e606656cb889527150533182abfcced27b81fca543856cda8a42e"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_1/task.json",
+          "sha256": "bed8578e2de8a8cc52265ba7c0b42f6a9a930af623fbbaf69914e44f5d4eb9ab"
+        }
+      },
+      "seed": 1,
+      "subject": 8
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2/data_provenance.json",
+          "sha256": "c2b5d3802e17d9c96d43aeec3a1f97f8edb31a8258e899ea6d22bacfd9ec296c"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "66fa3f4f96b9ea9d30e0be8b91bc7c167f98d2fb5894bccb150e80679e71fe6e"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2/ARMS/spatial_eegnet/history.json",
+          "sha256": "61bd160254714c70aeee127b0212b3dcfd5740458170e970d423d2a32c432a4c"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "50452ceeeb2279475bcbee3f0af3bb07025e6b5b550efc25ef6888566f0b1ded"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2/ARMS/spatial_eegnet/result.json",
+          "sha256": "f691e8fcde23bb70b0cbd53deb4c37693ecd599bf7242eaeadf3adb441b73216"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "042b01bb616936f2ce1f4614b709b3942f21a745790acad1b4ecd05cc0af0cbe"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2/ARMS/spatial_transformer/history.json",
+          "sha256": "65f878de8dd320559404849d649e210abbec5e3bae9613ea0b47ded3fc395866"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "0ff414c95ab1caa5e42f99d810a7248a597f6ef4b3d9c91412c752dd76fbd086"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2/ARMS/spatial_transformer/result.json",
+          "sha256": "0bcab4ed59a68169bd475a2eb6c75bd3a91a9a8a1ca2583a3d6685ca1c976ec1"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A08_seed_2/task.json",
+          "sha256": "d8baffbae89fc3c747c89bbb13a1bc2b579a127f663c34f45dc2d2893ef370b3"
+        }
+      },
+      "seed": 2,
+      "subject": 8
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0/data_provenance.json",
+          "sha256": "fad6d43a14e87a70df4c274b98deb43aa5fc9952c46f547921598015a40dfa48"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "df3859a9bcb93cc548f3ee29dcfaaf7315cebd4dbfb2886e8723c406502329da"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0/ARMS/spatial_eegnet/history.json",
+          "sha256": "cf949b3b3bfed9db1c98f848eafbb5ff89a4f6de43a1fd2ac3376335c65a2cfe"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "fe7a1a17cd18398aae3a725045d1f8f098ac0e9af8c58d1b4b6daead907325f9"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0/ARMS/spatial_eegnet/result.json",
+          "sha256": "6055be72d252877ed6d7964e3a8a09922ab602b6d4ebe56489d4d55e0bd9c644"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "96d72bfc46fde7880537b368a0c4f54e6e47bb2821d4820a3abe8b7e021072e2"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0/ARMS/spatial_transformer/history.json",
+          "sha256": "f5bb679f0f9fa577103d29f8afdd6ed24077b4fdc2fcda51eb8295ac0730e7ab"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "9525bf4cb56ce1cec43eb4617d0dba8ea035381c12fa49ba959bc1d4555b8b93"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0/ARMS/spatial_transformer/result.json",
+          "sha256": "0c17ac158637baa3d90ef4766e0d55ac94da49192c1a83aea67ca536cc54663c"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_0/task.json",
+          "sha256": "81fa251aaf8724395f746e5eacf77047e14227dc37e3d138bd31ef9e7d9753b2"
+        }
+      },
+      "seed": 0,
+      "subject": 9
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1/data_provenance.json",
+          "sha256": "4c8c720e4ac559e7ac480912f04f857f10ebd2a4af2c189ce7272b7741014a03"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "cc793671e775cb5d9079e9929a7175de0f581afb5b50a71d166c446b4f6b4286"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1/ARMS/spatial_eegnet/history.json",
+          "sha256": "20437bd6683837631679a5110044af9b70da8614f0706e7fcb39a039b9f9ea84"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "90ecc017bd6b46a92a41861b4935cecc6c085c21f85ac8ff6111dadf78075999"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1/ARMS/spatial_eegnet/result.json",
+          "sha256": "d9d21be4157e51afaf7829434d628a332445b8d5c022eff7e88729a6e6cd8e1c"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "322d618e144d7f758cbbc444843e36431145b505d435a28999a626b89ca090a1"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1/ARMS/spatial_transformer/history.json",
+          "sha256": "cfe9d091fae1db78ea83d06267aaf4fb3355dda3e6831a18470e7f3e3d92f212"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "4d3ce4f753850bc92cf29b4cf5dadf211cf384c73009df9beab925d5b9bbd130"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1/ARMS/spatial_transformer/result.json",
+          "sha256": "14389c34c3171e38f564b183bcf6ce7d949375ccab738721e4eaf29c9a46baa4"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_1/task.json",
+          "sha256": "f294dd4993818cc06e61d100a280356de1ce03d801c00fca1a35aa86349ef386"
+        }
+      },
+      "seed": 1,
+      "subject": 9
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2",
+      "files": {
+        "data_provenance": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2/data_provenance.json",
+          "sha256": "35c756ba95c271819556bafe223ef61ac651acb744d75a0ab63c294d661243c6"
+        },
+        "spatial_eegnet_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2/ARMS/spatial_eegnet/checkpoint.pt",
+          "sha256": "083d9c50ad02bb8f672383aba2d767ad1d31a2339f819c6a0b7a3feb8ef5e905"
+        },
+        "spatial_eegnet_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2/ARMS/spatial_eegnet/history.json",
+          "sha256": "937e3e108742a234fa5fe9e176db694f77f83eb383d8739cb978239eeb1dbb85"
+        },
+        "spatial_eegnet_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2/ARMS/spatial_eegnet/predictions.npz",
+          "sha256": "7c8d92979c16adffb1268cda58322fbc60c81f8e8167f98ba099427f9b0eccc1"
+        },
+        "spatial_eegnet_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2/ARMS/spatial_eegnet/result.json",
+          "sha256": "623a9a5ea05e498ba1bc1dc1e9b13b26f9f0caf33f6b223c83e76dfca891cf05"
+        },
+        "spatial_transformer_checkpoint": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2/ARMS/spatial_transformer/checkpoint.pt",
+          "sha256": "c10e70c6a043ce30e57b6dced523c6df4a85d4528f68ca27f43187b5830fdc18"
+        },
+        "spatial_transformer_history": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2/ARMS/spatial_transformer/history.json",
+          "sha256": "28f6796b7ef4b1c1566ad9f59eeede90b3d15542abf5fa4446e5442e16f0665e"
+        },
+        "spatial_transformer_predictions": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2/ARMS/spatial_transformer/predictions.npz",
+          "sha256": "a133a7f284e7de63591c513fb832ba57d3f1c163cd1685455dce77393aaa24ab"
+        },
+        "spatial_transformer_result": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2/ARMS/spatial_transformer/result.json",
+          "sha256": "8700584e2e3be02d4b8e42c8a4ddb741665fda7d53d93768d4498157b51b2711"
+        },
+        "task": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/tasks/A09_seed_2/task.json",
+          "sha256": "cd5f9bab4f5546291508dee0a4a216745bf78be5bd3970cabd4c9135c18eeba5"
+        }
+      },
+      "seed": 2,
+      "subject": 9
+    }
+  ],
+  "historical_manifests": {
+    "candidate_evidence": {
+      "available": true,
+      "path": "/home/kalexu97/Projects/AGFL/results/encoder-candidates-reproducible-v1/report/evidence.json",
+      "sha256": "055fdff855df2c269037599142aa5bf7dbdd8d70759345694df3491a93d35b39"
+    },
+    "split_source_study": {
+      "available": true,
+      "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json",
+      "sha256": "bbffbdc8717b7d9ba7db52a2a9702b57b797611383798798f57142e30dd12bba"
+    }
+  },
+  "limitations": [
+    "Metadata-only inventory: checkpoint tensors, EEG arrays and prediction arrays were not loaded.",
+    "Byte checksums establish file identity, not semantic compatibility or numerical correctness.",
+    "Historical per-task identities and source/package compatibility require replay-session verification."
+  ],
+  "missing_candidate_artifacts": [],
+  "missing_historical_manifests": [],
+  "missing_packages": [],
+  "missing_recordings": [],
+  "missing_split_metadata": [],
+  "packages": {
+    "mne": "1.13.2",
+    "numpy": "2.5.3",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "torch": "2.14.1+cu130"
+  },
+  "recordings": [
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A01T.gdf",
+      "sha256": "74d900ce83a115509f663c0ac45bd36d56f05be528064743c49b0c2efb5088a3",
+      "subject": 1
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A02T.gdf",
+      "sha256": "66c9eaf971198d08c95dc272fd310dc2a2f8fe470b7a4f29971a75552cdc2a56",
+      "subject": 2
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A03T.gdf",
+      "sha256": "b6327b61ad725062b538ac9bc4c4cbe792ff841a2b009b971ac151cb7a83f02d",
+      "subject": 3
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A04T.gdf",
+      "sha256": "2ce34de240bbf3d25b0dc8b54ead5a9b1fea743b8184d60c2b6c57e1bf0c9409",
+      "subject": 4
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A05T.gdf",
+      "sha256": "62558a31c342aa56fc93ae702a62fada9024b814a7adaab8069ca94027b2e917",
+      "subject": 5
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A06T.gdf",
+      "sha256": "ae709d09ac15c19d3c0af3c32de7f7101c0699dd72cdcacc4d7234e9a57d3169",
+      "subject": 6
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A07T.gdf",
+      "sha256": "331dae51fb07685b06526ee04994fb41230177d357c95e9d7cfa5977191a8155",
+      "subject": 7
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A08T.gdf",
+      "sha256": "0aa60752dcf02d7a88a0fdaf7082b68b57bc7a2e16698c89174aadce45d627d8",
+      "subject": 8
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A09T.gdf",
+      "sha256": "3e585fd3a4f10ded77003492529433abe6d172e80316cb068997ff4b498c3bc4",
+      "subject": 9
+    }
+  ],
+  "split_metadata_tasks": [
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_0",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_0/dataset.json",
+          "sha256": "c1486ae20bbae3a287800660a239e7fa519d5b10d65f11a20cb49f59b759799d"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_0/split.json",
+          "sha256": "5ede10e88b54c4c1bc8aec6ed9b520e912c83b41e940e10f3d4498d4061388e9"
+        }
+      },
+      "seed": 0,
+      "subject": 1
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_1",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_1/dataset.json",
+          "sha256": "b944307635ce0e4f820522d0d9baac6f492e85aee4a7f5905edb2eba10a62bd4"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_1/split.json",
+          "sha256": "5f28d6377e0f3ce818be52e6ee952f8d890c34421e75a2b5b04252f1f72b1774"
+        }
+      },
+      "seed": 1,
+      "subject": 1
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_2",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_2/dataset.json",
+          "sha256": "65a4b242e8220bd473fb04d1570b88ded5840ce058f264b2fc52ccf760e9d286"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_2/split.json",
+          "sha256": "f053150850c0892f2c5ef921f8274eec3beda4667241881c3cfea76581507433"
+        }
+      },
+      "seed": 2,
+      "subject": 1
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_0",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_0/dataset.json",
+          "sha256": "cdaad4518722944ac2f03cca5348cf85ad0d4a6e742fe633a13556dbc5165790"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_0/split.json",
+          "sha256": "e8ff8341a841d038bf520de7dac206fecff4d3fe715abd35925a71b8baa1ee66"
+        }
+      },
+      "seed": 0,
+      "subject": 2
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_1",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_1/dataset.json",
+          "sha256": "97c379ce96897e20b63ddb08ba6cf5b294fd92467fc29b924b5791e0637ea78f"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_1/split.json",
+          "sha256": "db5fb389de3aa5c7aed9e315e8aa922708e439a310c82b10101256b1bd9a92ab"
+        }
+      },
+      "seed": 1,
+      "subject": 2
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_2",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_2/dataset.json",
+          "sha256": "b5565f548583b79f3567cb435d4c517a62fd4de76830a9a585ad9de837000285"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_2/split.json",
+          "sha256": "d5dd822fc28f9e2cc4a6d520d78d973922ce93abbe265f366da7e04f4573a84b"
+        }
+      },
+      "seed": 2,
+      "subject": 2
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_0",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_0/dataset.json",
+          "sha256": "60b206fbd0970b13bedcaaa19ebb74dbf40fe0031deb362a2139a3230d252fc8"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_0/split.json",
+          "sha256": "b5dffd87714bbd4a35f61c3d92d4c1f92089dd3efca89a100b5311eb2c75bb4c"
+        }
+      },
+      "seed": 0,
+      "subject": 3
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_1",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_1/dataset.json",
+          "sha256": "509ef7f6eb0324db8331d63d8eade5e4b0ce6432f874a765a644d0d5a3af2062"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_1/split.json",
+          "sha256": "3d7cb66dbe2d1e9b494302e1798d9f0af3477f16607a694f6a72c1ac61e4802b"
+        }
+      },
+      "seed": 1,
+      "subject": 3
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_2",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_2/dataset.json",
+          "sha256": "248325d491eff49d9b62f61cbc75e2f084f188b80e15c5ed62a784c7f6ee26f8"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_2/split.json",
+          "sha256": "828ce8a3fd2a6294c2414deabd97e7229f90156dced2ab39d72735b7d0f9c69b"
+        }
+      },
+      "seed": 2,
+      "subject": 3
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_0",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_0/dataset.json",
+          "sha256": "41e81c0034f4ce8faa41d88ed080057ba82b997b00d3850bf689177297f19394"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_0/split.json",
+          "sha256": "d0115fc7ce61a7c8150a88361c5ee881565d7388c846fde4a7b06af418502c67"
+        }
+      },
+      "seed": 0,
+      "subject": 4
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_1",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_1/dataset.json",
+          "sha256": "db60f57581374a768be691d1021b4958f05d307cfe5ad265ba5a1d230300deaa"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_1/split.json",
+          "sha256": "e434f154385a2a3c7bf628c5828dc393c7304ffe75bb2dcda6b88a507fdf4e43"
+        }
+      },
+      "seed": 1,
+      "subject": 4
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_2",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_2/dataset.json",
+          "sha256": "d2e621e842ecacb97329186aefaf994fd779e36edfc8877447511255ce76f10b"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_2/split.json",
+          "sha256": "b8c9d595843663b9fec8abded00f2741668f36b0876fc58c4fa6825ca2f8fd0f"
+        }
+      },
+      "seed": 2,
+      "subject": 4
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_0",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_0/dataset.json",
+          "sha256": "e9e72552f4dab897b283202a625531966052edac535cba00f60f6b5ad3e13a1c"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_0/split.json",
+          "sha256": "4a1b798f3576b0ac4a1df6bf94615495f336c7ee135ef55a3d87dfb4a68386a2"
+        }
+      },
+      "seed": 0,
+      "subject": 5
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_1",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_1/dataset.json",
+          "sha256": "f7accadfe5dcc4d2cce922a28bd712610681783b092537624ae5d7fe058355d1"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_1/split.json",
+          "sha256": "a912abaa404787ad97301051e77bc14a47e7cc6c7c4635b5ebb40d023c67712b"
+        }
+      },
+      "seed": 1,
+      "subject": 5
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_2",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_2/dataset.json",
+          "sha256": "87bfe3e0671ab86a887bdba2d49004141cb6a4bc43b86293582df7985bd7bac4"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_2/split.json",
+          "sha256": "08a7b40a3e77b8de6842fd6b73249d7cad9a346f9a15c09dcb24fd793f029954"
+        }
+      },
+      "seed": 2,
+      "subject": 5
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_0",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_0/dataset.json",
+          "sha256": "ffdc584e4d8fece8f1b457926c036cb05b115fc51046f9fe16b1256e2da5b75a"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_0/split.json",
+          "sha256": "70430c567b12f682585f9440892fe15126ac4ddc89bff7990dabff3c687b68ad"
+        }
+      },
+      "seed": 0,
+      "subject": 6
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_1",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_1/dataset.json",
+          "sha256": "c3451dfbace835f43b8eb9b7c6da47568f39248167aba283f47898c9e6f68e23"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_1/split.json",
+          "sha256": "f18311e824666e3f51a21ffefff5142f64150e1a1a4899bfe240a00f717cf6c3"
+        }
+      },
+      "seed": 1,
+      "subject": 6
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_2",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_2/dataset.json",
+          "sha256": "c2b94ca5cc757343490c46cf257d84bf43e5355a4acf807ede005d7c9bfccf96"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_2/split.json",
+          "sha256": "9701392087fa090fd81252fc0106aeee263d6c544bbe94d7abe6ee7ec655fcc1"
+        }
+      },
+      "seed": 2,
+      "subject": 6
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_0",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_0/dataset.json",
+          "sha256": "c8742d1b5bf856ae54907049735be8988c1c68e6f289d60becf944c45a229d59"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_0/split.json",
+          "sha256": "8d8677e45084b9276d3d79bee41a3b34fe1a1468fa2ccf253af9b14ea9031f13"
+        }
+      },
+      "seed": 0,
+      "subject": 7
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_1",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_1/dataset.json",
+          "sha256": "953f52888d68b7cc813390b10b1f29b792e44dfd06bf7fe84b6b565bc621cc28"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_1/split.json",
+          "sha256": "0410178ffb774b2a2509259dd6df9e10331a2406f5fed16b2a3cd51f6a97484a"
+        }
+      },
+      "seed": 1,
+      "subject": 7
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_2",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_2/dataset.json",
+          "sha256": "cb891944850b94dcdb8f6776a1cf986b5c364f5c77a31b14bb925132b32292d2"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_2/split.json",
+          "sha256": "848624bf7a7154a983e9bff89982d46ce5ca92e064a912a96c8190c9424674dc"
+        }
+      },
+      "seed": 2,
+      "subject": 7
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_0",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_0/dataset.json",
+          "sha256": "37a112415ac4a63dba2c6947447f3596f97137b436cf25510fa61b049ec51cb2"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_0/split.json",
+          "sha256": "552911acb491ba866443a9db64c4400a4cf20f993a3bb084c6cd870467f7770d"
+        }
+      },
+      "seed": 0,
+      "subject": 8
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_1",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_1/dataset.json",
+          "sha256": "f33a9284162dba6ef3d457b8053fbf2d1e50b154b9e9df24a1749c1cbd60c64c"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_1/split.json",
+          "sha256": "931661ac1d71248b461a4c3ad6e4530b59ee2ad8b7a7d0f6fead72dbc1c923f3"
+        }
+      },
+      "seed": 1,
+      "subject": 8
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_2",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_2/dataset.json",
+          "sha256": "08d19d00205192ac6bf1261a1fd2992d88ac11f91f5c9c60cb48879fa3bcd38a"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_2/split.json",
+          "sha256": "1061eb4ed75049e42d63e651d5075e4243bfe3b1228d7e20b576b68ada41a775"
+        }
+      },
+      "seed": 2,
+      "subject": 8
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_0",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_0/dataset.json",
+          "sha256": "63e585be74e95c9bcd0922aadece33cb38c5c17f8f5d21b3a3dbd8ec3e3aff3a"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_0/split.json",
+          "sha256": "f0264085ed03c83fe1e5a0f60e4e3a6af9c45e16bfb97027bd61473ab6aed549"
+        }
+      },
+      "seed": 0,
+      "subject": 9
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_1",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_1/dataset.json",
+          "sha256": "cb482ec816f63da0b6b67ba7e5cc07dc3e5d25465987ef602e77e04a0a27a69a"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_1/split.json",
+          "sha256": "c69b9b26056c1a6de95c4b5e19f7acc72c6981426a8bb17c9cb5c866a8400420"
+        }
+      },
+      "seed": 1,
+      "subject": 9
+    },
+    {
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_2",
+      "files": {
+        "dataset.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_2/dataset.json",
+          "sha256": "94509d5018efdaae89d586c1964220408e5f3b129f0c127c6fdbadc2497be752"
+        },
+        "split.json": {
+          "available": true,
+          "path": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_2/split.json",
+          "sha256": "4e54b1633c3d8edd4ba67daf63ecc28272b6643d2732ffecac704a4d84443e3e"
+        }
+      },
+      "seed": 2,
+      "subject": 9
+    }
+  ],
+  "status": "inventory_complete"
+}

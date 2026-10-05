@@ -1,0 +1,262 @@
+{
+  "schema_name": "agfl-task-driven-completion-cuda-v1",
+  "protocol": {
+    "partitions": [
+      "train",
+      "validation"
+    ],
+    "sessions": [
+      "T"
+    ],
+    "channels": 22,
+    "channel_order": "canonical_22",
+    "windows": 4,
+    "window_samples": 250,
+    "trial_samples": 1000,
+    "sampling_rate": 250,
+    "filter_hz": [
+      2.0,
+      30.0
+    ],
+    "normalization": "historical_training_channel_mean_population_std_floor_1e-8",
+    "backbones": [
+      "spatial_transformer"
+    ],
+    "strategies": [
+      "zero",
+      "covariance_frozen",
+      "covariance_learned",
+      "tucker_frozen",
+      "tucker_learned"
+    ],
+    "conditions": [
+      {
+        "name": "full_22",
+        "pattern": "full",
+        "retained": 22,
+        "repeats": 1
+      },
+      {
+        "name": "random_static_16",
+        "pattern": "random_static",
+        "retained": 16,
+        "repeats": 5
+      },
+      {
+        "name": "dynamic_random_16",
+        "pattern": "dynamic_random",
+        "retained": 16,
+        "repeats": 5
+      },
+      {
+        "name": "random_static_6",
+        "pattern": "random_static",
+        "retained": 6,
+        "repeats": 5
+      },
+      {
+        "name": "dynamic_random_6",
+        "pattern": "dynamic_random",
+        "retained": 6,
+        "repeats": 5
+      }
+    ],
+    "execution": {
+      "device": "cuda:0",
+      "calibration_device": "cpu",
+      "historical_replay_device": "cpu",
+      "threads": 1,
+      "cuda_verified": false,
+      "restore_python_numpy_torch_rng_and_threads": true,
+      "independent_scoped_model_data_rng": true,
+      "deterministic_algorithms": true,
+      "cublas_workspace_config": ":4096:8",
+      "amp": false,
+      "tf32": false,
+      "cross_device_rtol": 0.0001,
+      "cross_device_atol": 1e-06
+    },
+    "historical": {
+      "verification": "inm.completion_transformer.replay.verify_historical_task",
+      "replay": "inm.completion_transformer.replay.replay_full_input",
+      "verified_backbones": [
+        "spatial_eegnet",
+        "spatial_transformer"
+      ],
+      "original_full_input_prediction_replay_required": true,
+      "read_only": true,
+      "backbone_fits": 0,
+      "backbone_checkpoints": "historical_full_input_validation_selected",
+      "frozen_weights_batchnorm_dropout": true,
+      "input_gradients": true,
+      "whole_trial_historical_eegnet_convolutions": true
+    },
+    "covariance": {
+      "estimator": "training_channel_second_moment",
+      "fit_partitions": [
+        "train"
+      ],
+      "initialization_jitter": 1e-06,
+      "parameterization": "cholesky_softplus_diagonal",
+      "diagonal_floor": 1e-06,
+      "inverse_softplus_initialization": true,
+      "ridge_scale": 0.001,
+      "ridge_multiplier": "mean_diagonal",
+      "paired_initialization_and_inference": true,
+      "learned_parameters": "free_lower_triangle",
+      "anchor_parameters": "free_cholesky_parameters"
+    },
+    "tucker": {
+      "implementation": "inm.tensor_attention.Tucker2",
+      "fit_partitions": [
+        "train"
+      ],
+      "rank_channels": 4,
+      "rank_features": 16,
+      "ridge": 0.001,
+      "ridge_penalty": "n_observed*250*0.001",
+      "solver": "differentiable_observed_entry_ridge_float64_both_arms",
+      "epochs": 30,
+      "learning_rate": 0.01,
+      "batch_size": 64,
+      "seed_offset": 810001,
+      "restore_ambient_rng": true,
+      "paired_initialization_and_inference": true,
+      "unit_columns_after_optimizer_step": true,
+      "anchor_parameters": "U_and_V"
+    },
+    "training": {
+      "strategies": [
+        "covariance_learned",
+        "tucker_learned"
+      ],
+      "partitions": [
+        "train"
+      ],
+      "classification_loss": "cross_entropy_through_frozen_backbone",
+      "reconstruction_loss": "mean_squared_error_artificially_hidden_training_samples",
+      "reconstruction_weight": 0.1,
+      "anchor_loss": "mean_squared_parameter_displacement_from_initial_state",
+      "anchor_weight": 0.0001,
+      "empty_reconstruction_target": "differentiable_zero",
+      "skip_wholly_full_batch_updates": true,
+      "optimizer": "Adam",
+      "learning_rate": 0.001,
+      "batch_size": 32,
+      "maximum_epochs": 100,
+      "minimum_epochs": 10,
+      "patience": 20,
+      "gradient_clip": 1.0,
+      "scheduler": null,
+      "weight_decay": 0.0,
+      "paired_batch_order_and_masks": true
+    },
+    "training_masks": {
+      "retained": [
+        22,
+        16,
+        6
+      ],
+      "retained_distribution": "uniform_per_example",
+      "nonfull_patterns": [
+        "random_static",
+        "dynamic_random"
+      ],
+      "nonfull_pattern_distribution": "uniform",
+      "implementation": "make_mask_bank",
+      "partition": "train",
+      "sample_ids_required": true,
+      "seed_derivation": "epoch_and_repeat",
+      "disjoint_from_validation": true
+    },
+    "selection": {
+      "partition": "validation",
+      "metric": "mean_degraded_balanced_accuracy",
+      "conditions": [
+        "random_static_16",
+        "dynamic_random_16",
+        "random_static_6",
+        "dynamic_random_6"
+      ],
+      "repeats": 5,
+      "tie_break": [
+        "lower_mean_degraded_log_loss",
+        "earlier_epoch"
+      ],
+      "epoch_zero_eligible": true,
+      "minimum_training_epochs": 10,
+      "frozen_controls_supervised_selection": false,
+      "test_data": false,
+      "full_input_accuracy_gain_objective": false
+    },
+    "mask_policy": {
+      "preserve_original_boolean_flags": true,
+      "observed_values_selected_before_arithmetic": true,
+      "hidden_nan_inf_invariance": true,
+      "reject_observed_nonfinite": true,
+      "observed_samples_bitwise_unchanged": true,
+      "all_missing_window": false,
+      "full_input_bypasses_completion": true,
+      "complete_independently_per_window": true
+    },
+    "artifacts": {
+      "numeric_probabilities_labels_sample_ids": true,
+      "masks_and_hashes": true,
+      "initial_and_selected_completion_states": true,
+      "histories_selected_epoch": true,
+      "checksums_and_independent_replay": true,
+      "resume_verified_complete_only": true,
+      "recheck_historical_input_hashes": true,
+      "synthetic_excluded_from_real_reports": true
+    },
+    "evaluation": {
+      "partition": "validation",
+      "metrics": [
+        "balanced_accuracy",
+        "log_loss"
+      ],
+      "paired_masks_across_strategies": true,
+      "selection_masks_reused": true,
+      "repeat_then_seed_then_participant_equal_averaging": true,
+      "primary": "mean_degraded_tucker_learned_minus_tucker_frozen",
+      "secondary": [
+        "mean_degraded_tucker_learned_minus_covariance_frozen",
+        "mean_degraded_tucker_learned_minus_covariance_learned",
+        "mean_degraded_covariance_learned_minus_covariance_frozen",
+        "mean_degraded_tucker_learned_minus_zero"
+      ],
+      "screening_mean_gain": 0.02,
+      "screening_positive_participants": 6,
+      "screening_separate_from_strong_control_comparisons": true,
+      "bootstrap_unit": "paired_participant",
+      "bootstrap_repeats": 2000,
+      "bootstrap_seed": 20261005,
+      "intervals": "exploratory_unadjusted",
+      "suppress_incomplete_real_cohort_means": true,
+      "preserve_negative_effects_and_per_condition_log_loss": true,
+      "independent_confirmation": false
+    }
+  },
+  "name": "task-driven-completion-cuda-v1",
+  "subjects": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "data_dir": "../../ml",
+  "candidate_source_dir": "../results/encoder-candidates-reproducible-v1",
+  "split_source_dir": "../results/baselines-reproducible-v1",
+  "output_dir": "../results/task-driven-completion-cuda-v1",
+  "synthetic": false
+}

@@ -1,0 +1,38 @@
+{
+  "decision": "proceed_to_cohort",
+  "study_id": "74bfeb36445f3b0d365fac8ca03514e9e8e359c2c205b277e0389bf2922eb071",
+  "reviewed_utc": "2026-10-05T09:46:39.535060+00:00",
+  "independent_audit": "passed; 105 exact replayed cells; no refits",
+  "fit_seconds": 193.09052538871765,
+  "audit_seconds": 14.518072366714478,
+  "fits": {
+    "covariance_frozen": {
+      "epochs": 0,
+      "selected_epoch": null
+    },
+    "covariance_learned": {
+      "epochs": 84,
+      "selected_epoch": 64
+    },
+    "tucker_frozen": {
+      "epochs": 0,
+      "selected_epoch": null
+    },
+    "tucker_learned": {
+      "epochs": 56,
+      "selected_epoch": 36
+    },
+    "zero": {
+      "epochs": 0,
+      "selected_epoch": null
+    }
+  },
+  "finite_histories": true,
+  "paired_training_masks_orders_ids": true,
+  "unchanged_backbone": true,
+  "observed_gpu_memory_peak_sampled_MiB": 525,
+  "protected_files_unchanged": 7806,
+  "review_basis": "Operational checks only. No accuracy-based advancement or scientific changes.",
+  "failed_v1_preserved": true,
+  "remaining_tasks": 26
+}

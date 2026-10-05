@@ -1,0 +1,283 @@
+{
+  "schema_name": "agfl-encoder-candidates-v1",
+  "partitions": [
+    "train",
+    "validation"
+  ],
+  "training_regime": "full",
+  "preprocessing": {
+    "sessions": [
+      "T"
+    ],
+    "channels": 22,
+    "channel_order": "canonical_22",
+    "sampling_rate": 250,
+    "windows": 4,
+    "window_samples": 250,
+    "trial_samples": 1000,
+    "cue_offset_seconds": 0.0,
+    "filter_low_hz": 2.0,
+    "filter_high_hz": 30.0,
+    "filter_scope": "window",
+    "artifact_policy": "exclude",
+    "augmentation": "none",
+    "normalization": "training_channel_mean_population_std_floor_1e-8"
+  },
+  "arms": [
+    {
+      "id": "local_control",
+      "encoder": "EEGWindowEncoder",
+      "encoder_settings": {
+        "f1": 16,
+        "d": 2,
+        "f2": 32,
+        "kernel_length": 32,
+        "pools": [
+          8,
+          16
+        ],
+        "dropout": 0.5
+      },
+      "head": "FeatureClassifier",
+      "head_settings": {
+        "representation": "baseline",
+        "attention": "MHA",
+        "dim": 32,
+        "heads": 4,
+        "depth": 1,
+        "dropout": 0.1
+      }
+    },
+    {
+      "id": "local_power",
+      "encoder": "LocalPowerEncoder",
+      "encoder_settings": {
+        "kernels": [
+          16,
+          32,
+          64,
+          128
+        ],
+        "filters_per_branch": 8,
+        "input_channels": 1,
+        "stride": 1,
+        "padding": "explicit_zero_same",
+        "bias": false,
+        "variance": "population_over_250_responses",
+        "log_epsilon": 1e-06,
+        "features": 32,
+        "layout": "B22W4F32"
+      },
+      "head": "FeatureClassifier",
+      "head_settings": {
+        "representation": "baseline",
+        "attention": "MHA",
+        "dim": 32,
+        "heads": 4,
+        "depth": 1,
+        "dropout": 0.1
+      }
+    },
+    {
+      "id": "spatial_eegnet",
+      "encoder": "EEGNetClassifier",
+      "encoder_settings": {
+        "f1": 8,
+        "depth_multiplier": 2,
+        "f2": 16,
+        "temporal_kernel": 64,
+        "separable_kernel": 16,
+        "pooling": [
+          4,
+          8
+        ],
+        "dropout": 0.5,
+        "head_type": "flatten",
+        "mask_conditioned": true
+      },
+      "head": "EEGNet flatten"
+    },
+    {
+      "id": "spatial_filterbank",
+      "encoder": "SpatialFilterBank",
+      "encoder_settings": {
+        "bands_hz": [
+          [
+            4,
+            8
+          ],
+          [
+            8,
+            12
+          ],
+          [
+            12,
+            16
+          ],
+          [
+            16,
+            20
+          ],
+          [
+            20,
+            24
+          ],
+          [
+            24,
+            30
+          ]
+        ],
+        "fir_taps": 81,
+        "fir_window": "hamming",
+        "fir_design": "scipy.signal.firwin",
+        "sampling_rate": 250,
+        "pass_zero": false,
+        "spatial_filters_per_band": 4,
+        "spatial_filter_max_norm": 1.0,
+        "variance": "population_over_250_responses",
+        "log_epsilon": 1e-06,
+        "dropout": 0.5,
+        "availability_flags": 88,
+        "classifier": "linear_four_class"
+      },
+      "head": "linear"
+    },
+    {
+      "id": "spatial_transformer",
+      "encoder": "EEGNetTransformer",
+      "encoder_settings": {
+        "front_end": "spatial_eegnet_without_classifier",
+        "front_end_features": 16,
+        "temporal_positions": 31,
+        "d_model": 32,
+        "position_encoding": "fixed_sinusoidal",
+        "layers": 1,
+        "heads": 4,
+        "dim_feedforward": 64,
+        "activation": "gelu",
+        "dropout": 0.1,
+        "norm_first": true,
+        "batch_first": true,
+        "pooling": "mean_positions",
+        "availability_flags": 88,
+        "classifier": "linear_four_class"
+      },
+      "head": "compact_transformer"
+    }
+  ],
+  "training": {
+    "loss": "cross_entropy_unweighted",
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 32,
+    "maximum_epochs": 250,
+    "minimum_epochs": 75,
+    "patience": 50,
+    "gradient_clip_norm": 1.0,
+    "warmup_epochs": 10,
+    "schedule": "linear_warmup_cosine_to_zero",
+    "seed_order": "independent_model_seed"
+  },
+  "probes": {
+    "local_arms": [
+      "local_control",
+      "local_power"
+    ],
+    "per_arm": [
+      "ordered_feature_logistic",
+      "shuffled_training_label_control"
+    ],
+    "scaler": "StandardScaler_train_only",
+    "penalty": "l2",
+    "C": 1.0,
+    "solver": "lbfgs",
+    "max_iter": 1000,
+    "tol": 0.0001,
+    "random_state": 0,
+    "class_weight": null,
+    "label_shuffle_seed_offset": 700001,
+    "search": false,
+    "fits_per_task": 4
+  },
+  "conditions": [
+    {
+      "name": "full_22",
+      "pattern": "full",
+      "retained": 22,
+      "repeats": 1
+    },
+    {
+      "name": "random_static_16",
+      "pattern": "random_static",
+      "retained": 16,
+      "repeats": 5
+    },
+    {
+      "name": "dynamic_random_16",
+      "pattern": "dynamic_random",
+      "retained": 16,
+      "repeats": 5
+    },
+    {
+      "name": "random_static_6",
+      "pattern": "random_static",
+      "retained": 6,
+      "repeats": 5
+    },
+    {
+      "name": "dynamic_random_6",
+      "pattern": "dynamic_random",
+      "retained": 6,
+      "repeats": 5
+    }
+  ],
+  "selection": {
+    "metric": "validation_balanced_accuracy",
+    "tie_breaker": "validation_log_loss",
+    "tie_breaker_2": "earlier_epoch",
+    "input": "full_22_only",
+    "test_selection": false
+  },
+  "comparisons": {
+    "primary": [
+      "local_power",
+      "local_control"
+    ],
+    "secondary": [
+      [
+        "spatial_filterbank",
+        "spatial_eegnet"
+      ],
+      [
+        "spatial_transformer",
+        "spatial_eegnet"
+      ]
+    ],
+    "screening_mean_gain": 0.02,
+    "screening_positive_participants": 6,
+    "bootstrap_repeats": 2000,
+    "bootstrap_seed": 20261003
+  },
+  "name": "encoder_candidates_reproducible_v1",
+  "subjects": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "data_dir": "../../ml",
+  "split_source_dir": "../results/baselines-reproducible-v1",
+  "output_dir": "../results/encoder-candidates-reproducible-v1",
+  "synthetic": false
+}

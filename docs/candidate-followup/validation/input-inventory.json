@@ -1,0 +1,348 @@
+{
+  "historical_checkpoint_source_mismatch": "not an input; fresh fits use current source",
+  "limits": [
+    "inventory only: EEG arrays and checkpoints were not loaded",
+    "metadata contents and recording hashes are verified by the data session"
+  ],
+  "missing_packages": [],
+  "missing_recordings": [],
+  "missing_split_metadata": [],
+  "packages": {
+    "mne": "1.13.2",
+    "numpy": "2.5.3",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "torch": "2.14.1+cu130",
+    "tqdm": "4.70.1"
+  },
+  "recordings": [
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A01T.gdf",
+      "subject": 1
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A02T.gdf",
+      "subject": 2
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A03T.gdf",
+      "subject": 3
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A04T.gdf",
+      "subject": 4
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A05T.gdf",
+      "subject": 5
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A06T.gdf",
+      "subject": 6
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A07T.gdf",
+      "subject": 7
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A08T.gdf",
+      "subject": 8
+    },
+    {
+      "available": true,
+      "path": "/home/kalexu97/Projects/ml/A09T.gdf",
+      "subject": 9
+    }
+  ],
+  "splits": [
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_0",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 0,
+      "split_json": true,
+      "subject": 1
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_1",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 1,
+      "split_json": true,
+      "subject": 1
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A01_seed_2",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 2,
+      "split_json": true,
+      "subject": 1
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_0",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 0,
+      "split_json": true,
+      "subject": 2
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_1",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 1,
+      "split_json": true,
+      "subject": 2
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A02_seed_2",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 2,
+      "split_json": true,
+      "subject": 2
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_0",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 0,
+      "split_json": true,
+      "subject": 3
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_1",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 1,
+      "split_json": true,
+      "subject": 3
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A03_seed_2",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 2,
+      "split_json": true,
+      "subject": 3
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_0",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 0,
+      "split_json": true,
+      "subject": 4
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_1",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 1,
+      "split_json": true,
+      "subject": 4
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A04_seed_2",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 2,
+      "split_json": true,
+      "subject": 4
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_0",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 0,
+      "split_json": true,
+      "subject": 5
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_1",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 1,
+      "split_json": true,
+      "subject": 5
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A05_seed_2",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 2,
+      "split_json": true,
+      "subject": 5
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_0",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 0,
+      "split_json": true,
+      "subject": 6
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_1",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 1,
+      "split_json": true,
+      "subject": 6
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A06_seed_2",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 2,
+      "split_json": true,
+      "subject": 6
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_0",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 0,
+      "split_json": true,
+      "subject": 7
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_1",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 1,
+      "split_json": true,
+      "subject": 7
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A07_seed_2",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 2,
+      "split_json": true,
+      "subject": 7
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_0",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 0,
+      "split_json": true,
+      "subject": 8
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_1",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 1,
+      "split_json": true,
+      "subject": 8
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A08_seed_2",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 2,
+      "split_json": true,
+      "subject": 8
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_0",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 0,
+      "split_json": true,
+      "subject": 9
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_1",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 1,
+      "split_json": true,
+      "subject": 9
+    },
+    {
+      "dataset_json": true,
+      "directory": "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/artifacts/A09_seed_2",
+      "manifest_candidates": [
+        "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+      ],
+      "seed": 2,
+      "split_json": true,
+      "subject": 9
+    }
+  ],
+  "status": "ready",
+  "study_manifest": {
+    "available": [
+      "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json"
+    ],
+    "candidates": [
+      "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study.json",
+      "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/manifest.json",
+      "/home/kalexu97/Projects/AGFL/results/baselines-reproducible-v1/study_manifest.json"
+    ]
+  }
+}

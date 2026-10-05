@@ -1,0 +1,326 @@
+{
+  "01": {
+    "receipt": {
+      "session": "01",
+      "status": "accepted",
+      "decision": "proceed",
+      "finished_unix": 1791184263.2528343,
+      "worker": "completion_protocol",
+      "acceptance": [
+        {
+          "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python plans/task-driven-completion/acceptance.py 01",
+          "exit_code": 0,
+          "tests": 14,
+          "skips": 0,
+          "log": "acceptance-final.log"
+        },
+        {
+          "command": "python plans/task-driven-completion/watchdog.py review 01",
+          "exit_code": 0
+        }
+      ],
+      "findings": [
+        "Fixed declaration matches contract; dependency-light inventory does not claim replay readiness",
+        "All 7677 protected files unchanged; no out-of-scope edits"
+      ],
+      "limits": [
+        "Numerical implementation and real replay pending",
+        "No real fitting"
+      ]
+    },
+    "start": {
+      "deadline_unix": 1791184797.7943087,
+      "plan_sha256": {
+        "plans/task-driven-completion/CONTRACT.md": "e3d961d9cdff1e1ec51d27e5c1b624e4282aad11596c6c6b2f2789f124753b4d",
+        "plans/task-driven-completion/README.md": "159f0779778a14859fc46293cd18881a735607d9b07746d2fc31e14c768c7aea",
+        "plans/task-driven-completion/acceptance.py": "4bebff0fdfec9f56a8ba0170fb698070b6dad3e52c740e09db6c434ed5021e59",
+        "plans/task-driven-completion/sessions/01-protocol.md": "0693af285d328d24b550198a782538f349663ac3e90e44f1c7733713a305d291",
+        "plans/task-driven-completion/sessions/02-models.md": "55f42df18f0162900f0074b8e10843618dd63a0228fcc704f6186b2ecc5681f0",
+        "plans/task-driven-completion/sessions/03-execution.md": "2599a1ab31cf296b67dc235078d0fa255bb67abd4af7a4daf45f4faaeedc975e",
+        "plans/task-driven-completion/sessions/04-integration.md": "6dd138adfb41405ee9f2e32a6e2f6d61b9be47a98655846f32b8f05511d6abfd",
+        "plans/task-driven-completion/watchdog.py": "628daff2718d16c47818f60f557df7c7828aa3f91e7d3b41c96fd0458b975a15"
+      },
+      "session": "01",
+      "start_unix": 1791183597.7943087,
+      "start_utc": "2026-10-05T06:59:57.794309+00:00",
+      "worker_model": "inherited current model"
+    },
+    "elapsed_seconds": 665.459,
+    "protection_review": {
+      "changed": [
+        "configs/task-driven-completion.json",
+        "docs/task-driven-completion/protocol.md",
+        "docs/task-driven-completion/session-01-handoff.md",
+        "inm/task_driven_completion/__init__.py",
+        "inm/task_driven_completion/__main__.py",
+        "inm/task_driven_completion/protocol.py",
+        "tests/task_driven_completion/test_protocol.py"
+      ],
+      "historical_changes": [],
+      "out_of_scope": [],
+      "protected_files": 7677,
+      "protection_passed": true,
+      "session": "01"
+    }
+  },
+  "02": {
+    "receipt": {
+      "session": "02",
+      "status": "accepted",
+      "decision": "proceed",
+      "finished_unix": 1791184834.4418428,
+      "worker": "completion_models",
+      "acceptance": [
+        {
+          "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python plans/task-driven-completion/acceptance.py 02",
+          "exit_code": 0,
+          "tests": 22,
+          "skips": 0,
+          "log": "acceptance.log"
+        },
+        {
+          "command": "independent explicit ridge and real Transformer classification-gradient probe",
+          "exit_code": 0,
+          "log": "supervisor-numerical.log"
+        },
+        {
+          "command": "python plans/task-driven-completion/watchdog.py review 02",
+          "exit_code": 0
+        }
+      ],
+      "findings": [
+        "Explicit ridge reference maximum error 2.22e-16",
+        "Finite nonzero classification gradients in both learned families; frozen backbone unchanged",
+        "All 7677 historical files unchanged; scoped edits only"
+      ],
+      "limits": [
+        "Training/artifact/report implementation pending",
+        "No real completion fitting"
+      ]
+    },
+    "start": {
+      "deadline_unix": 1791185463.281248,
+      "plan_sha256": {
+        "plans/task-driven-completion/CONTRACT.md": "e3d961d9cdff1e1ec51d27e5c1b624e4282aad11596c6c6b2f2789f124753b4d",
+        "plans/task-driven-completion/README.md": "159f0779778a14859fc46293cd18881a735607d9b07746d2fc31e14c768c7aea",
+        "plans/task-driven-completion/acceptance.py": "4bebff0fdfec9f56a8ba0170fb698070b6dad3e52c740e09db6c434ed5021e59",
+        "plans/task-driven-completion/sessions/01-protocol.md": "0693af285d328d24b550198a782538f349663ac3e90e44f1c7733713a305d291",
+        "plans/task-driven-completion/sessions/02-models.md": "55f42df18f0162900f0074b8e10843618dd63a0228fcc704f6186b2ecc5681f0",
+        "plans/task-driven-completion/sessions/03-execution.md": "2599a1ab31cf296b67dc235078d0fa255bb67abd4af7a4daf45f4faaeedc975e",
+        "plans/task-driven-completion/sessions/04-integration.md": "6dd138adfb41405ee9f2e32a6e2f6d61b9be47a98655846f32b8f05511d6abfd",
+        "plans/task-driven-completion/watchdog.py": "628daff2718d16c47818f60f557df7c7828aa3f91e7d3b41c96fd0458b975a15"
+      },
+      "session": "02",
+      "start_unix": 1791184263.281248,
+      "start_utc": "2026-10-05T07:11:03.281248+00:00",
+      "worker_model": "inherited current model"
+    },
+    "elapsed_seconds": 571.161,
+    "protection_review": {
+      "changed": [
+        "docs/task-driven-completion/session-02-handoff.md",
+        "inm/task_driven_completion/adapters.py",
+        "inm/task_driven_completion/completion.py",
+        "tests/task_driven_completion/test_models.py"
+      ],
+      "historical_changes": [],
+      "out_of_scope": [],
+      "protected_files": 7677,
+      "protection_passed": true,
+      "session": "02"
+    }
+  },
+  "03": {
+    "receipt": {
+      "session": "03",
+      "status": "accepted",
+      "decision": "proceed",
+      "finished_unix": 1791185730.035037,
+      "worker": "completion_execution",
+      "acceptance": [
+        {
+          "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python plans/task-driven-completion/acceptance.py 03",
+          "exit_code": 0,
+          "tests": 53,
+          "skips": 0,
+          "log": "acceptance.log"
+        },
+        {
+          "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python .session-runs/task-driven-completion/03/independent_training.py",
+          "exit_code": 0,
+          "log": "independent-training.log"
+        },
+        {
+          "command": "python plans/task-driven-completion/watchdog.py review 03",
+          "exit_code": 0
+        }
+      ],
+      "findings": [
+        "Reviewed training, task persistence and report verifier; fixed grid/history gaps before acceptance",
+        "Actual short synthetic fits independent of ambient RNG and reversed arm order",
+        "All 7677 protected files unchanged; no out-of-scope edits"
+      ],
+      "limits": [
+        "Integration/readiness pending",
+        "No real completion fitting"
+      ]
+    },
+    "start": {
+      "deadline_unix": 1791186034.4697993,
+      "plan_sha256": {
+        "plans/task-driven-completion/CONTRACT.md": "e3d961d9cdff1e1ec51d27e5c1b624e4282aad11596c6c6b2f2789f124753b4d",
+        "plans/task-driven-completion/README.md": "159f0779778a14859fc46293cd18881a735607d9b07746d2fc31e14c768c7aea",
+        "plans/task-driven-completion/acceptance.py": "4bebff0fdfec9f56a8ba0170fb698070b6dad3e52c740e09db6c434ed5021e59",
+        "plans/task-driven-completion/sessions/01-protocol.md": "0693af285d328d24b550198a782538f349663ac3e90e44f1c7733713a305d291",
+        "plans/task-driven-completion/sessions/02-models.md": "55f42df18f0162900f0074b8e10843618dd63a0228fcc704f6186b2ecc5681f0",
+        "plans/task-driven-completion/sessions/03-execution.md": "2599a1ab31cf296b67dc235078d0fa255bb67abd4af7a4daf45f4faaeedc975e",
+        "plans/task-driven-completion/sessions/04-integration.md": "6dd138adfb41405ee9f2e32a6e2f6d61b9be47a98655846f32b8f05511d6abfd",
+        "plans/task-driven-completion/watchdog.py": "628daff2718d16c47818f60f557df7c7828aa3f91e7d3b41c96fd0458b975a15"
+      },
+      "session": "03",
+      "start_unix": 1791184834.4697993,
+      "start_utc": "2026-10-05T07:20:34.469799+00:00",
+      "worker_model": "inherited current model"
+    },
+    "elapsed_seconds": 895.565,
+    "protection_review": {
+      "changed": [
+        "docs/task-driven-completion/session-03-handoff.md",
+        "inm/task_driven_completion/__main__.py",
+        "inm/task_driven_completion/reporting.py",
+        "inm/task_driven_completion/study.py",
+        "inm/task_driven_completion/training.py",
+        "tests/task_driven_completion/test_study.py",
+        "tests/task_driven_completion/test_training.py"
+      ],
+      "historical_changes": [],
+      "out_of_scope": [],
+      "protected_files": 7677,
+      "protection_passed": true,
+      "session": "03"
+    }
+  },
+  "04": {
+    "receipt": {
+      "session": "04",
+      "status": "accepted",
+      "decision": "implementation_complete_real_pilot_separate",
+      "finished_unix": 1791186486.2658203,
+      "worker": "completion_integration",
+      "acceptance": [
+        {
+          "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python plans/task-driven-completion/acceptance.py 04",
+          "exit_code": 0,
+          "tests": 60,
+          "skips": 0,
+          "log": "acceptance.log"
+        },
+        {
+          "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python -m unittest discover -s tests/supervised_tucker -v",
+          "exit_code": 0,
+          "tests": 25,
+          "skips": 0,
+          "log": "regression-supervised-tucker.log"
+        },
+        {
+          "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python -m unittest discover -s tests/completion_transformer -v",
+          "exit_code": 1,
+          "passing_tests": 35,
+          "errors": 1,
+          "log": "regression-completion.log",
+          "finding": "Preexisting completed output conflicts with empty-output fixture; no new source regression identified"
+        },
+        {
+          "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 .venv/bin/python .session-runs/task-driven-completion/04/isolated_legacy_fixture.py",
+          "exit_code": 0,
+          "tests": 1,
+          "skips": 0,
+          "log": "regression-completion-isolated.log",
+          "finding": "Same test and loader, byte-identical config relocated to fresh temporary fixture; no historical mutation"
+        },
+        {
+          "command": "python plans/task-driven-completion/watchdog.py review 04",
+          "exit_code": 0
+        },
+        {
+          "command": "independent frozen identity plus all26 validation artifact hashes",
+          "exit_code": 0
+        },
+        {
+          "command": "git diff --check and scoped compileall",
+          "exit_code": 0
+        }
+      ],
+      "findings": [
+        "Independent 60-test acceptance includes numerical, deterministic training, provenance, separate-process CLI and105-cell selected-state audit",
+        "All7677 protected files unchanged; scoped additions only",
+        "No real study output created"
+      ],
+      "limits": [
+        "Raw historical completion suite retains documented occupied-output fixture limitation",
+        "No real completion measurements, no real pilot/cohort execution",
+        "CPU verified; CUDA unverified"
+      ],
+      "watchdog_running_after_completion": false
+    },
+    "start": {
+      "deadline_unix": 1791186930.0643861,
+      "plan_sha256": {
+        "plans/task-driven-completion/CONTRACT.md": "e3d961d9cdff1e1ec51d27e5c1b624e4282aad11596c6c6b2f2789f124753b4d",
+        "plans/task-driven-completion/README.md": "159f0779778a14859fc46293cd18881a735607d9b07746d2fc31e14c768c7aea",
+        "plans/task-driven-completion/acceptance.py": "4bebff0fdfec9f56a8ba0170fb698070b6dad3e52c740e09db6c434ed5021e59",
+        "plans/task-driven-completion/sessions/01-protocol.md": "0693af285d328d24b550198a782538f349663ac3e90e44f1c7733713a305d291",
+        "plans/task-driven-completion/sessions/02-models.md": "55f42df18f0162900f0074b8e10843618dd63a0228fcc704f6186b2ecc5681f0",
+        "plans/task-driven-completion/sessions/03-execution.md": "2599a1ab31cf296b67dc235078d0fa255bb67abd4af7a4daf45f4faaeedc975e",
+        "plans/task-driven-completion/sessions/04-integration.md": "6dd138adfb41405ee9f2e32a6e2f6d61b9be47a98655846f32b8f05511d6abfd",
+        "plans/task-driven-completion/watchdog.py": "628daff2718d16c47818f60f557df7c7828aa3f91e7d3b41c96fd0458b975a15"
+      },
+      "session": "04",
+      "start_unix": 1791185730.0643861,
+      "start_utc": "2026-10-05T07:35:30.064386+00:00",
+      "worker_model": "inherited current model"
+    },
+    "elapsed_seconds": 756.201,
+    "protection_review": {
+      "changed": [
+        "docs/task-driven-completion/readiness.json",
+        "docs/task-driven-completion/review.md",
+        "docs/task-driven-completion/runbook.md",
+        "docs/task-driven-completion/session-04-handoff.md",
+        "docs/task-driven-completion/validation/.gitignore",
+        "docs/task-driven-completion/validation/acceptance-worker04.log",
+        "docs/task-driven-completion/validation/audit.json",
+        "docs/task-driven-completion/validation/audit.stderr.log",
+        "docs/task-driven-completion/validation/changed-identity.stderr.log",
+        "docs/task-driven-completion/validation/changed-identity.stdout.log",
+        "docs/task-driven-completion/validation/execution.json",
+        "docs/task-driven-completion/validation/frozen-real-identity.json",
+        "docs/task-driven-completion/validation/frozen-smoke-identity.json",
+        "docs/task-driven-completion/validation/integration-attempt1.log",
+        "docs/task-driven-completion/validation/plan.json",
+        "docs/task-driven-completion/validation/plan.stderr.log",
+        "docs/task-driven-completion/validation/preflight.json",
+        "docs/task-driven-completion/validation/preflight.stderr.log",
+        "docs/task-driven-completion/validation/resume.json",
+        "docs/task-driven-completion/validation/resume.stderr.log",
+        "docs/task-driven-completion/validation/smoke.json",
+        "docs/task-driven-completion/validation/smoke.stderr.log",
+        "docs/task-driven-completion/validation/supervisor-acceptance.log",
+        "docs/task-driven-completion/validation/supervisor-historical-input-review.json",
+        "docs/task-driven-completion/validation/supervisor-isolated_legacy_fixture.py",
+        "docs/task-driven-completion/validation/supervisor-original-a01-replay.json",
+        "docs/task-driven-completion/validation/supervisor-regression-completion-isolated.log",
+        "docs/task-driven-completion/validation/supervisor-regression-completion.log",
+        "docs/task-driven-completion/validation/supervisor-regression-supervised-tucker.log",
+        "docs/task-driven-completion/validation/synthetic-smoke-artifacts.tar.gz",
+        "inm/task_driven_completion/audit.py",
+        "tests/task_driven_completion/test_integration.py"
+      ],
+      "historical_changes": [],
+      "out_of_scope": [],
+      "protected_files": 7677,
+      "protection_passed": true,
+      "session": "04"
+    }
+  }
+}

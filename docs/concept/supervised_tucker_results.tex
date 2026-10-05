@@ -1,0 +1,105 @@
+All 54 real-data fits completed (nine participants, three paired split/training
+seeds, two arms). The following values average seeds within participant and
+participants equally. Accuracy values are percentages; differences are percentage
+points. Log loss is unitless and lower is better.
+
+\begin{center}\begin{tabular}{@{}lrrrr@{}}\toprule
+Model & Train BA & Validation BA & Gap & Val. log loss \\ \midrule
+Frozen factors & 67.44 & 45.71 & 21.73 & 1.593 \\
+Supervised factors & 72.86 & 47.47 & 25.40 & 1.570 \\
+\bottomrule\end{tabular}\end{center}
+
+\begin{center}\begin{tabular}{@{}lrrr@{}}\toprule
+Participant & Frozen BA & Supervised BA & Difference \\ \midrule
+A01 & 39.74 & 45.70 & +5.95 \\
+A02 & 38.10 & 41.80 & +3.71 \\
+A03 & 59.71 & 63.42 & +3.71 \\
+A04 & 42.36 & 41.93 & -0.43 \\
+A05 & 40.38 & 41.03 & +0.64 \\
+A06 & 42.42 & 42.58 & +0.15 \\
+A07 & 41.85 & 43.04 & +1.19 \\
+A08 & 48.53 & 49.08 & +0.55 \\
+A09 & 58.32 & 58.62 & +0.31 \\
+\bottomrule\end{tabular}\end{center}
+
+\begin{center}\begin{tabular}{@{}lrrr@{}}\toprule
+Availability & Frozen BA & Supervised BA & Difference \\ \midrule
+Full 22 & 45.71 & 47.47 & +1.75 \\
+Static 16 & 37.94 & 40.03 & +2.08 \\
+Dynamic 16 & 37.61 & 40.47 & +2.86 \\
+Static 6 & 35.42 & 35.38 & -0.04 \\
+Dynamic 6 & 35.52 & 36.37 & +0.85 \\
+\bottomrule\end{tabular}\end{center}
+
+\textbf{Primary finding.} Updating the factors improved full-input balanced
+accuracy by 1.75 percentage points, with an exploratory participant-bootstrap
+95\% interval of $[0.56,3.18]$ points. Eight of nine participant averages improved;
+A04 declined by 0.43 points. However, the prespecified two-point mean-gain
+threshold was not met. The appropriate verdict is a small, fairly consistent
+benefit from supervised factors, with a failed practical screening criterion.
+It is not a null result, nor evidence of a strong classification architecture.
+
+Split/training-seed mean gains were $+1.80$, $+2.58$ and $+0.87$ points for
+seeds 0, 1 and 2. Seventeen of the 27 individual participant/seed pairs improved,
+eight declined and two tied (absolute tolerance $10^{-12}$ in balanced accuracy).
+Training balanced accuracy increased by 5.42 points while validation increased
+by 1.75, widening the mean train--validation gap from 21.73 to 25.40 points.
+This is consistent with additional fitting capacity exceeding the gain in
+generalization; it does not uniquely identify the cause. Full-input log loss
+changed by $-0.023$ with interval $[-0.243,0.182]$, providing no clear improvement
+in probabilistic prediction. Both mean full-input log losses exceed the uniform
+four-class predictor's $\log 4\simeq1.386$, despite above-chance balanced accuracy.
+This indicates a weakness in confidence quality. All 54 fits stopped before
+the 250-epoch limit (75--121 epochs); extending the epoch budget is not supported
+by these histories.
+
+\textbf{Electrode-loss findings.} At 16 retained channels, gains were
+$+2.08$ points for static masks (interval $[0.81,3.10]$) and $+2.86$ for dynamic
+masks ($[1.08,4.47]$), each positive in eight participants. At six channels,
+static masks changed by $-0.04$ points ($[-1.28,1.45]$) and dynamic masks by
+$+0.85$ ($[-0.89,2.72]$). Thus this intervention helps moderate-loss accuracy,
+but does not establish a severe-loss benefit. Mean log loss at six channels
+increased by 0.068 (static) and 0.027 (dynamic), with both intervals crossing
+zero. All these condition-specific findings are exploratory.
+
+\textbf{Research decision.} Keep differentiable factor learning as a modestly
+supported component, but do not promote this model as the accuracy baseline.
+The 47.47\% validation balanced accuracy remains below the earlier spatial
+Transformer's 63.71\% single-seed screen and 64.87\% three-seed study; those are
+historical context, not matched contrasts in this study. The result supports
+classification-informed factor adaptation at these fixed spectral features,
+ranks and head, but cannot show that task adaptation alone repairs the
+information bottleneck. It also does not test learned raw temporal features.
+
+A useful next bounded comparison would train both frozen and supervised arms
+with the same mixed-availability schedule, retaining this full-training study
+as a control. That would test whether exposure to missing channels improves
+the six-channel outcome. For the separate full-input accuracy objective,
+test a simpler or more strongly regularized classifier on the same cores before
+increasing factor ranks or Transformer depth. The larger train--validation gap
+motivates this test but does not prove that classifier capacity is the cause.
+Each change
+requires its own declared identity and controls; neither experiment was run here.
+
+\textbf{Verification and provenance.} The independent audit replays all 54
+selected checkpoints on training and validation data, reconstructs all 1,134
+availability evaluations, recalibrates each task's training-only initial factors,
+and independently checks aggregate means and bootstrap intervals. Selected
+supervised factors changed in all 27 fits, while frozen factors were unchanged;
+paired initial full states and calibration histories match exactly. The software
+checks comprise 25 new model/runner tests and 17 tensor temporal regression tests.
+The numerical review checks the direct system against an explicit observed-entry
+design and verifies gradients. Historical source/configuration/workflow/result
+preservation checks cover 1,122 files.
+
+All 85 Python source hashes, 64 input hashes, configuration and package versions
+are recorded in the manifest. The study identity is
+\begin{center}{\scriptsize\ttfamily
+479db2ec18e7f1e1b5d1e5255c5a200c3df7d59b7d8a73936b4415252af8ed57}
+\end{center}
+The machine-readable results and independent audit are under
+\code{results/supervised-tucker-v1/report/}. Fits used one CPU thread each;
+cohort execution used up to four independent processes. Elapsed times are
+execution records, not controlled speed benchmarks. Checkpoint selection and
+reporting used validation only, so an independent session or dataset remains
+necessary before a confirmatory accuracy claim.

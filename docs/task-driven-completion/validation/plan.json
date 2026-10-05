@@ -1,0 +1,140 @@
+{
+  "backbone_fits": 0,
+  "backbones": [
+    "spatial_transformer"
+  ],
+  "covariance_initializations": 27,
+  "device": "cpu",
+  "evaluation_rows_per_strategy": 21,
+  "limitations": [
+    "Plan only; no historical verification, numerical replay or fitting."
+  ],
+  "partitions": [
+    "train",
+    "validation"
+  ],
+  "real_fitting_ready": false,
+  "status": "planned",
+  "strategies": [
+    "zero",
+    "covariance_frozen",
+    "covariance_learned",
+    "tucker_frozen",
+    "tucker_learned"
+  ],
+  "strategies_per_task": 5,
+  "supervised_completion_fits": 54,
+  "task_rows": [
+    {
+      "seed": 0,
+      "subject": 1
+    },
+    {
+      "seed": 1,
+      "subject": 1
+    },
+    {
+      "seed": 2,
+      "subject": 1
+    },
+    {
+      "seed": 0,
+      "subject": 2
+    },
+    {
+      "seed": 1,
+      "subject": 2
+    },
+    {
+      "seed": 2,
+      "subject": 2
+    },
+    {
+      "seed": 0,
+      "subject": 3
+    },
+    {
+      "seed": 1,
+      "subject": 3
+    },
+    {
+      "seed": 2,
+      "subject": 3
+    },
+    {
+      "seed": 0,
+      "subject": 4
+    },
+    {
+      "seed": 1,
+      "subject": 4
+    },
+    {
+      "seed": 2,
+      "subject": 4
+    },
+    {
+      "seed": 0,
+      "subject": 5
+    },
+    {
+      "seed": 1,
+      "subject": 5
+    },
+    {
+      "seed": 2,
+      "subject": 5
+    },
+    {
+      "seed": 0,
+      "subject": 6
+    },
+    {
+      "seed": 1,
+      "subject": 6
+    },
+    {
+      "seed": 2,
+      "subject": 6
+    },
+    {
+      "seed": 0,
+      "subject": 7
+    },
+    {
+      "seed": 1,
+      "subject": 7
+    },
+    {
+      "seed": 2,
+      "subject": 7
+    },
+    {
+      "seed": 0,
+      "subject": 8
+    },
+    {
+      "seed": 1,
+      "subject": 8
+    },
+    {
+      "seed": 2,
+      "subject": 8
+    },
+    {
+      "seed": 0,
+      "subject": 9
+    },
+    {
+      "seed": 1,
+      "subject": 9
+    },
+    {
+      "seed": 2,
+      "subject": 9
+    }
+  ],
+  "tasks": 27,
+  "threads": 1,
+  "tucker_initializations": 27
+}

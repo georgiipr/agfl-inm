@@ -1,0 +1,45 @@
+{
+  "decision": "proceed_to_fresh_real_pilot",
+  "study_id": "74bfeb36445f3b0d365fac8ca03514e9e8e359c2c205b277e0389bf2922eb071",
+  "reviewed_utc": "2026-10-05T09:42:23.607874+00:00",
+  "repair": "Disable fused MHA execution; retain original cross-device tolerance and all science",
+  "gpu_tests_passed": 6,
+  "gpu_tests_skipped": 0,
+  "protocol_tests_passed": 3,
+  "gpu_acceptance_exit_code": 0,
+  "all_task_prefit_exit_code": 0,
+  "historical_tasks_replayed": 27,
+  "cross_device_tasks_passed": 27,
+  "max_abs_probability_error": 1.0728836059570312e-06,
+  "protected_files_unchanged": 7806,
+  "failed_v1_preserved": true,
+  "new_completion_fits": 0,
+  "execution": {
+    "device": "cuda:0",
+    "calibration_device": "cpu",
+    "historical_replay_device": "cpu",
+    "threads": 1,
+    "gpu_name": "NVIDIA GeForce RTX 3060 Laptop GPU",
+    "gpu_capability": [
+      8,
+      6
+    ],
+    "gpu_total_memory": 6088359936,
+    "gpu_uuid": "85addf28-8b6e-88e1-221c-a8df084a1f92",
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "cudnn": 92400,
+    "deterministic_algorithms": true,
+    "deterministic_warn_only": false,
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "tf32": false,
+    "amp": false,
+    "mha_fastpath_enabled": false,
+    "cublas_workspace_config": ":4096:8",
+    "cross_device_tolerance": {
+      "rtol": 0.0001,
+      "atol": 1e-06
+    }
+  }
+}

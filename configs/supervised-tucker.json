@@ -1,0 +1,116 @@
+{
+  "preprocessing": {
+    "sessions": [
+      "T"
+    ],
+    "channels": 22,
+    "channel_order": "canonical_22",
+    "sampling_rate": 250,
+    "windows": 4,
+    "window_samples": 250,
+    "trial_samples": 1000,
+    "cue_offset_seconds": 0.0,
+    "filter_low_hz": 2.0,
+    "filter_high_hz": 30.0,
+    "filter_scope": "window",
+    "artifact_policy": "exclude",
+    "augmentation": "none",
+    "normalization": "training_channel_mean_population_std_floor_1e-8"
+  },
+  "training": {
+    "loss": "cross_entropy_unweighted",
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 32,
+    "maximum_epochs": 250,
+    "minimum_epochs": 75,
+    "patience": 50,
+    "gradient_clip_norm": 1.0,
+    "warmup_epochs": 10,
+    "schedule": "linear_warmup_cosine_to_zero",
+    "seed_order": "independent_model_seed"
+  },
+  "selection": {
+    "metric": "validation_balanced_accuracy",
+    "tie_breaker": "validation_log_loss",
+    "tie_breaker_2": "earlier_epoch",
+    "input": "full_22_only",
+    "test_selection": false
+  },
+  "conditions": [
+    {
+      "name": "full_22",
+      "pattern": "full",
+      "retained": 22,
+      "repeats": 1
+    },
+    {
+      "name": "random_static_16",
+      "pattern": "random_static",
+      "retained": 16,
+      "repeats": 5
+    },
+    {
+      "name": "dynamic_random_16",
+      "pattern": "dynamic_random",
+      "retained": 16,
+      "repeats": 5
+    },
+    {
+      "name": "random_static_6",
+      "pattern": "random_static",
+      "retained": 6,
+      "repeats": 5
+    },
+    {
+      "name": "dynamic_random_6",
+      "pattern": "dynamic_random",
+      "retained": 6,
+      "repeats": 5
+    }
+  ],
+  "schema_name": "agfl-supervised-tucker-v1",
+  "partitions": [
+    "train",
+    "validation"
+  ],
+  "training_regime": "full",
+  "arms": [
+    "spectral_tucker_frozen",
+    "spectral_tucker_supervised"
+  ],
+  "calibration_epochs": 30,
+  "name": "supervised_tucker_v1",
+  "subjects": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "data_dir": "../../ml",
+  "split_source_dir": "../results/baselines-reproducible-v1",
+  "output_dir": "../results/supervised-tucker-v1",
+  "synthetic": false,
+  "comparisons": {
+    "primary": [
+      "spectral_tucker_supervised",
+      "spectral_tucker_frozen"
+    ],
+    "secondary": [],
+    "screening_mean_gain": 0.02,
+    "screening_positive_participants": 6,
+    "bootstrap_repeats": 2000,
+    "bootstrap_seed": 20261004
+  }
+}

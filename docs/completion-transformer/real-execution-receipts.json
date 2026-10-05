@@ -1,0 +1,1817 @@
+{
+  "status": "complete",
+  "tasks": [
+    {
+      "index": 0,
+      "subject": 1,
+      "seed": 0,
+      "start": "2026-10-05T05:51:11.583899+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "0"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 20.727,
+      "end": "2026-10-05T05:51:32.311500+00:00",
+      "task_sha256": "9cc6d144a22a082d711261521b31606881fbb0b3ca24dfb0fcb528773019a54c",
+      "rows_verified": 126,
+      "validation_trials": 55,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.853021978021978,
+            "degraded_ba": 0.4458791208791209,
+            "degraded_log_loss": 1.54876615082311
+          },
+          "covariance": {
+            "full_ba": 0.853021978021978,
+            "degraded_ba": 0.6574862637362637,
+            "degraded_log_loss": 0.8525367368355392
+          },
+          "tucker": {
+            "full_ba": 0.853021978021978,
+            "degraded_ba": 0.47135989010989005,
+            "degraded_log_loss": 1.3321564152510583
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.8365384615384616,
+            "degraded_ba": 0.34896978021978026,
+            "degraded_log_loss": 2.6699730978323264
+          },
+          "covariance": {
+            "full_ba": 0.8365384615384616,
+            "degraded_ba": 0.6344093406593406,
+            "degraded_log_loss": 1.2519351046628768
+          },
+          "tucker": {
+            "full_ba": 0.8365384615384616,
+            "degraded_ba": 0.4034340659340659,
+            "degraded_log_loss": 2.3583348515840976
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:52:02.804343+00:00",
+      "review": "Pilot valid:126 numeric rows,30 factor epochs, original checkpoint replay and unchanged full inputs, metrics independently recomputed, protected hashes unchanged. Covariance outperforms Tucker descriptively; no tuning. Proceed with declared cohort.",
+      "log_sha256": "54c1f95818019b0a854246293f329ae800a7508a96ce9a0ae88981a6de76d437"
+    },
+    {
+      "index": 1,
+      "subject": 1,
+      "seed": 1,
+      "start": "2026-10-05T05:52:03.086356+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "1"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 20.726,
+      "end": "2026-10-05T05:52:23.812428+00:00",
+      "task_sha256": "ae9bae97a180d05e2d161fde030430eff9801a0dd5768fe73085cb1384eec955",
+      "rows_verified": 126,
+      "validation_trials": 55,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.75,
+            "degraded_ba": 0.3587225274725274,
+            "degraded_log_loss": 1.692222679354676
+          },
+          "covariance": {
+            "full_ba": 0.75,
+            "degraded_ba": 0.6111950549450549,
+            "degraded_log_loss": 0.9430097262079234
+          },
+          "tucker": {
+            "full_ba": 0.75,
+            "degraded_ba": 0.4133241758241758,
+            "degraded_log_loss": 1.3538945673867904
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.7802197802197801,
+            "degraded_ba": 0.4113324175824176,
+            "degraded_log_loss": 1.9301174654375781
+          },
+          "covariance": {
+            "full_ba": 0.7802197802197801,
+            "degraded_ba": 0.6186126373626374,
+            "degraded_log_loss": 1.21508179494608
+          },
+          "tucker": {
+            "full_ba": 0.7802197802197801,
+            "degraded_ba": 0.41929945054945056,
+            "degraded_log_loss": 1.8408455674210942
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:52:35.757047+00:00",
+      "review": "126 rows and fixed-state checks valid. A01 seed1 Transformer Tucker gain smaller than pilot, covariance remains higher. Preserve variability; proceed unchanged.",
+      "log_sha256": "a95a3a8f1cd955aa1a2ed5747d4394743f01be9551c7fe9a516448fbee13bf33"
+    },
+    {
+      "index": 2,
+      "subject": 1,
+      "seed": 2,
+      "start": "2026-10-05T05:52:36.042531+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "2"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 20.724,
+      "end": "2026-10-05T05:52:56.766301+00:00",
+      "task_sha256": "4da1f014302f2302ee0daae12533585dd1df0a2f6934b1c2a908d37ca99253d3",
+      "rows_verified": 126,
+      "validation_trials": 55,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.7678571428571429,
+            "degraded_ba": 0.4304945054945056,
+            "degraded_log_loss": 1.4483348625400756
+          },
+          "covariance": {
+            "full_ba": 0.7678571428571429,
+            "degraded_ba": 0.6273351648351648,
+            "degraded_log_loss": 0.8657670960309922
+          },
+          "tucker": {
+            "full_ba": 0.7678571428571429,
+            "degraded_ba": 0.43825549450549445,
+            "degraded_log_loss": 1.3969280305965301
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.875,
+            "degraded_ba": 0.41126373626373625,
+            "degraded_log_loss": 2.566517232853913
+          },
+          "covariance": {
+            "full_ba": 0.875,
+            "degraded_ba": 0.5954670329670331,
+            "degraded_log_loss": 1.4235505689219043
+          },
+          "tucker": {
+            "full_ba": 0.875,
+            "degraded_ba": 0.4165521978021978,
+            "degraded_log_loss": 2.413865339014307
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:53:09.547727+00:00",
+      "review": "A01 seed2 valid,126 rows; positive but small Transformer Tucker gain and larger covariance benefit. All three seeds retained without selection. Proceed A02.",
+      "log_sha256": "8fa02cdb48f18e4cd39119201be7c3715fd65aeb31849fa58790647173080bb7"
+    },
+    {
+      "index": 3,
+      "subject": 2,
+      "seed": 0,
+      "start": "2026-10-05T05:53:09.828443+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "3"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 20.623,
+      "end": "2026-10-05T05:53:30.451586+00:00",
+      "task_sha256": "b676e4d7c8bbd3e66d4757826f9095023a9f099855900f73e710b138882807c0",
+      "rows_verified": 126,
+      "validation_trials": 54,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.4409340659340659,
+            "degraded_ba": 0.3525412087912088,
+            "degraded_log_loss": 1.409959793773321
+          },
+          "covariance": {
+            "full_ba": 0.4409340659340659,
+            "degraded_ba": 0.39759615384615393,
+            "degraded_log_loss": 1.3325530687644807
+          },
+          "tucker": {
+            "full_ba": 0.4409340659340659,
+            "degraded_ba": 0.3667582417582418,
+            "degraded_log_loss": 1.3656312459638638
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.5989010989010989,
+            "degraded_ba": 0.2793956043956044,
+            "degraded_log_loss": 3.028278251900252
+          },
+          "covariance": {
+            "full_ba": 0.5989010989010989,
+            "degraded_ba": 0.4417582417582417,
+            "degraded_log_loss": 1.553595627670117
+          },
+          "tucker": {
+            "full_ba": 0.5989010989010989,
+            "degraded_ba": 0.29848901098901093,
+            "degraded_log_loss": 2.8347796282063205
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:53:40.549378+00:00",
+      "review": "A02 seed0 complete and independently valid. Tucker Transformer BA gain1.91pp, covariance16.24pp; lower participant baseline preserved. Proceed.",
+      "log_sha256": "5c502eee6fe55fc571b5ae96497dd13df3ddb794e85060995b6e14670e64f615"
+    },
+    {
+      "index": 4,
+      "subject": 2,
+      "seed": 1,
+      "start": "2026-10-05T05:53:40.829486+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "4"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 23.028,
+      "end": "2026-10-05T05:54:03.858065+00:00",
+      "task_sha256": "9d2a4e2760bd37cc31c4a32b1fbc6f56a06e5f8d49d2d172e516815f2c36f3c4",
+      "rows_verified": 126,
+      "validation_trials": 54,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.4423076923076923,
+            "degraded_ba": 0.3109203296703297,
+            "degraded_log_loss": 1.369555867323308
+          },
+          "covariance": {
+            "full_ba": 0.4423076923076923,
+            "degraded_ba": 0.36696428571428574,
+            "degraded_log_loss": 1.3479062061491223
+          },
+          "tucker": {
+            "full_ba": 0.4423076923076923,
+            "degraded_ba": 0.3087912087912088,
+            "degraded_log_loss": 1.3681407817077669
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.5480769230769231,
+            "degraded_ba": 0.27850274725274726,
+            "degraded_log_loss": 1.9390420680222138
+          },
+          "covariance": {
+            "full_ba": 0.5480769230769231,
+            "degraded_ba": 0.40885989010989016,
+            "degraded_log_loss": 1.540338883016075
+          },
+          "tucker": {
+            "full_ba": 0.5480769230769231,
+            "degraded_ba": 0.3108516483516484,
+            "degraded_log_loss": 1.8315337231862838
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:54:22.864665+00:00",
+      "review": "A02 seed1 valid; Transformer Tucker+3.23pp while EEGNet Tucker slightly negative. Preserve both effects. No integrity failures; proceed.",
+      "log_sha256": "1e63333e6596bbe823da3db91391454eeecc45d572f78f9685babb0062d12ca1"
+    },
+    {
+      "index": 5,
+      "subject": 2,
+      "seed": 2,
+      "start": "2026-10-05T05:54:23.154611+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "5"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 22.825,
+      "end": "2026-10-05T05:54:45.979498+00:00",
+      "task_sha256": "01276ff9641f0d636222f7feb1139d2acaea31d4b1847945d7df100db96ea3b4",
+      "rows_verified": 126,
+      "validation_trials": 54,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.38873626373626374,
+            "degraded_ba": 0.2542582417582417,
+            "degraded_log_loss": 1.3855237614614386
+          },
+          "covariance": {
+            "full_ba": 0.38873626373626374,
+            "degraded_ba": 0.3162087912087912,
+            "degraded_log_loss": 1.381814797749446
+          },
+          "tucker": {
+            "full_ba": 0.38873626373626374,
+            "degraded_ba": 0.2708791208791209,
+            "degraded_log_loss": 1.3859636317380741
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.5453296703296703,
+            "degraded_ba": 0.30103021978021977,
+            "degraded_log_loss": 2.6065691731126526
+          },
+          "covariance": {
+            "full_ba": 0.5453296703296703,
+            "degraded_ba": 0.4177884615384616,
+            "degraded_log_loss": 1.726900248243156
+          },
+          "tucker": {
+            "full_ba": 0.5453296703296703,
+            "degraded_ba": 0.3017857142857142,
+            "degraded_log_loss": 2.6022321744365247
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:54:56.901013+00:00",
+      "review": "A02 seed2 passes126 rows and immutable-input checks. Transformer Tucker effectively flat; covariance larger. All A02 seeds valid. Proceed A03.",
+      "log_sha256": "97cbbb24adfac679853e8e01afc282e8536dff304f162a003cb4f72f4e285ac2"
+    },
+    {
+      "index": 6,
+      "subject": 3,
+      "seed": 0,
+      "start": "2026-10-05T05:54:57.190067+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "6"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 22.93,
+      "end": "2026-10-05T05:55:20.119729+00:00",
+      "task_sha256": "600e6568f77e056a7ce1a739539d01c41a0a7691da462ba3475d5302cdc7c781",
+      "rows_verified": 126,
+      "validation_trials": 54,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.8324175824175826,
+            "degraded_ba": 0.43001373626373623,
+            "degraded_log_loss": 1.5170258024168972
+          },
+          "covariance": {
+            "full_ba": 0.8324175824175826,
+            "degraded_ba": 0.6588598901098902,
+            "degraded_log_loss": 0.8334119647296019
+          },
+          "tucker": {
+            "full_ba": 0.8324175824175826,
+            "degraded_ba": 0.42980769230769234,
+            "degraded_log_loss": 1.3151108269339657
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.7925824175824177,
+            "degraded_ba": 0.4341346153846154,
+            "degraded_log_loss": 1.8969111832870886
+          },
+          "covariance": {
+            "full_ba": 0.7925824175824177,
+            "degraded_ba": 0.6747252747252748,
+            "degraded_log_loss": 0.8919939282808587
+          },
+          "tucker": {
+            "full_ba": 0.7925824175824177,
+            "degraded_ba": 0.42163461538461544,
+            "degraded_log_loss": 1.9145350534121373
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:55:33.440133+00:00",
+      "review": "A03 seed0 valid. Transformer Tucker -1.25pp retained; covariance +24.06pp. Operational checks pass regardless of negative effect; proceed.",
+      "log_sha256": "1b06d04489864f0fcad51af1f7b3c5e775860e1cea78345f477716023a2e3080"
+    },
+    {
+      "index": 7,
+      "subject": 3,
+      "seed": 1,
+      "start": "2026-10-05T05:55:33.720579+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "7"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 20.222,
+      "end": "2026-10-05T05:55:53.942546+00:00",
+      "task_sha256": "6e38961d1d23db18143996ab7d8ac059c60c6a3c87dc30bd4f87f080f2c4d9bc",
+      "rows_verified": 126,
+      "validation_trials": 54,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.7898351648351649,
+            "degraded_ba": 0.4333791208791209,
+            "degraded_log_loss": 1.445050967442045
+          },
+          "covariance": {
+            "full_ba": 0.7898351648351649,
+            "degraded_ba": 0.6209478021978023,
+            "degraded_log_loss": 0.8669006215584861
+          },
+          "tucker": {
+            "full_ba": 0.7898351648351649,
+            "degraded_ba": 0.4313873626373626,
+            "degraded_log_loss": 1.3502012763067264
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.7733516483516483,
+            "degraded_ba": 0.43365384615384617,
+            "degraded_log_loss": 1.9333326471270034
+          },
+          "covariance": {
+            "full_ba": 0.7733516483516483,
+            "degraded_ba": 0.6506181318681318,
+            "degraded_log_loss": 0.9490785807574771
+          },
+          "tucker": {
+            "full_ba": 0.7733516483516483,
+            "degraded_ba": 0.4383241758241757,
+            "degraded_log_loss": 1.8906658994735228
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:56:04.036412+00:00",
+      "review": "A03 seed1 valid; small Transformer Tucker gain with reduced log loss, EEGNet BA slightly negative. All evidence retained; proceed.",
+      "log_sha256": "d0c5595cb8cbc73251bfc1229b82efc2f6d12e0730134b7dedf7512897efaa8d"
+    },
+    {
+      "index": 8,
+      "subject": 3,
+      "seed": 2,
+      "start": "2026-10-05T05:56:04.335667+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "8"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 18.924,
+      "end": "2026-10-05T05:56:23.260028+00:00",
+      "task_sha256": "b1ef1cfa48c9cece15f2912c130b1b23925f47bd46313ccce27b15210d41c924",
+      "rows_verified": 126,
+      "validation_trials": 54,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.8118131868131868,
+            "degraded_ba": 0.466620879120879,
+            "degraded_log_loss": 1.420067879092722
+          },
+          "covariance": {
+            "full_ba": 0.8118131868131868,
+            "degraded_ba": 0.659271978021978,
+            "degraded_log_loss": 0.8518811472166623
+          },
+          "tucker": {
+            "full_ba": 0.8118131868131868,
+            "degraded_ba": 0.49828296703296715,
+            "degraded_log_loss": 1.213614470372771
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.831043956043956,
+            "degraded_ba": 0.44656593406593414,
+            "degraded_log_loss": 1.7977842644458017
+          },
+          "covariance": {
+            "full_ba": 0.831043956043956,
+            "degraded_ba": 0.6733516483516483,
+            "degraded_log_loss": 0.9361213119225293
+          },
+          "tucker": {
+            "full_ba": 0.831043956043956,
+            "degraded_ba": 0.4699175824175824,
+            "degraded_log_loss": 1.7506966895282319
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:56:41.716370+00:00",
+      "review": "A03 seed2 valid; Tucker helps both backbones, unlike some prior seeds. Completion/full-input/hash checks pass; proceed A04.",
+      "log_sha256": "9d4941f930d867368b18f78a4495c953b0cbfafb6a1ab321e6447790648aafd7"
+    },
+    {
+      "index": 9,
+      "subject": 4,
+      "seed": 0,
+      "start": "2026-10-05T05:56:41.994732+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "9"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 22.126,
+      "end": "2026-10-05T05:57:04.120604+00:00",
+      "task_sha256": "971a50f28ef2e62c6ce58a323bf4ad62309913665230eef77e01e7d648cef30c",
+      "rows_verified": 126,
+      "validation_trials": 51,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.33814102564102566,
+            "degraded_ba": 0.2822916666666667,
+            "degraded_log_loss": 1.42696372416193
+          },
+          "covariance": {
+            "full_ba": 0.33814102564102566,
+            "degraded_ba": 0.29855769230769225,
+            "degraded_log_loss": 1.4081445229433718
+          },
+          "tucker": {
+            "full_ba": 0.33814102564102566,
+            "degraded_ba": 0.3024038461538462,
+            "degraded_log_loss": 1.4116855062628588
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.39743589743589747,
+            "degraded_ba": 0.2771634615384615,
+            "degraded_log_loss": 2.0803098035211383
+          },
+          "covariance": {
+            "full_ba": 0.39743589743589747,
+            "degraded_ba": 0.283573717948718,
+            "degraded_log_loss": 1.8557840097859988
+          },
+          "tucker": {
+            "full_ba": 0.39743589743589747,
+            "degraded_ba": 0.2894230769230769,
+            "degraded_log_loss": 2.123157690359071
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:57:16.240407+00:00",
+      "review": "A04 seed0 valid. Small Tucker BA gain but Transformer log loss worsens; covariance not universally best BA. Retain metric disagreement and weak participant performance; proceed.",
+      "log_sha256": "f9fbfb91fbc53106281699ec9e9c6e20b3345af15620031940958a643ce49bf1"
+    },
+    {
+      "index": 10,
+      "subject": 4,
+      "seed": 1,
+      "start": "2026-10-05T05:57:16.524101+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "10"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 19.625,
+      "end": "2026-10-05T05:57:36.148999+00:00",
+      "task_sha256": "b78fe1b5d21eb5c8ad26bccb9f42686794d959a9a35d23a319ac8ce284cef380",
+      "rows_verified": 126,
+      "validation_trials": 51,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.4278846153846154,
+            "degraded_ba": 0.3416666666666667,
+            "degraded_log_loss": 1.3863165362386525
+          },
+          "covariance": {
+            "full_ba": 0.4278846153846154,
+            "degraded_ba": 0.4006410256410257,
+            "degraded_log_loss": 1.383280406628378
+          },
+          "tucker": {
+            "full_ba": 0.4278846153846154,
+            "degraded_ba": 0.36858974358974356,
+            "degraded_log_loss": 1.3815439872516857
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.4326923076923077,
+            "degraded_ba": 0.2959935897435898,
+            "degraded_log_loss": 1.5177300017549165
+          },
+          "covariance": {
+            "full_ba": 0.4326923076923077,
+            "degraded_ba": 0.3294070512820512,
+            "degraded_log_loss": 1.3704794242803593
+          },
+          "tucker": {
+            "full_ba": 0.4326923076923077,
+            "degraded_ba": 0.2943910256410257,
+            "degraded_log_loss": 1.5328895599410932
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:57:48.813266+00:00",
+      "review": "A04 seed1 valid; Transformer Tucker BA and log loss slightly worse while EEGNet improves. Preserve negative effects. Proceed fixed matrix.",
+      "log_sha256": "32ca429573eeef74e8f7499c038524b80bcdc629a3578840a7c9ac7091c8151a"
+    },
+    {
+      "index": 11,
+      "subject": 4,
+      "seed": 2,
+      "start": "2026-10-05T05:57:49.104431+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "11"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 19.522,
+      "end": "2026-10-05T05:58:08.626336+00:00",
+      "task_sha256": "b2f683cb3757173e96af4682758a70a9c055d9cbaa966c571ae8d4a14368abd1",
+      "rows_verified": 126,
+      "validation_trials": 51,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.3717948717948718,
+            "degraded_ba": 0.26169871794871796,
+            "degraded_log_loss": 1.5905652117162583
+          },
+          "covariance": {
+            "full_ba": 0.3717948717948718,
+            "degraded_ba": 0.321875,
+            "degraded_log_loss": 1.3978760769439178
+          },
+          "tucker": {
+            "full_ba": 0.3717948717948718,
+            "degraded_ba": 0.278525641025641,
+            "degraded_log_loss": 1.4657296156970336
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.3942307692307693,
+            "degraded_ba": 0.27363782051282054,
+            "degraded_log_loss": 1.7107540433566317
+          },
+          "covariance": {
+            "full_ba": 0.3942307692307693,
+            "degraded_ba": 0.32628205128205134,
+            "degraded_log_loss": 1.4267366127546561
+          },
+          "tucker": {
+            "full_ba": 0.3942307692307693,
+            "degraded_ba": 0.2595352564102564,
+            "degraded_log_loss": 1.7323963596595022
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:58:19.593396+00:00",
+      "review": "A04 seed2 valid; Transformer Tucker negative, EEGNet positive, covariance higher. All A04 seeds preserved; proceed A05.",
+      "log_sha256": "e8fb020f7c6f00dc7c8af22431e81d50bb17ed7d0266f9e30f22f9a40a119757"
+    },
+    {
+      "index": 12,
+      "subject": 5,
+      "seed": 0,
+      "start": "2026-10-05T05:58:19.877174+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "12"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 18.627,
+      "end": "2026-10-05T05:58:38.503937+00:00",
+      "task_sha256": "e3eae80bcc93af4dd77a5664d66c3ac9489a57109b733241373bb373e1b279ab",
+      "rows_verified": 126,
+      "validation_trials": 52,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.34615384615384615,
+            "degraded_ba": 0.2586538461538462,
+            "degraded_log_loss": 1.5734507590581461
+          },
+          "covariance": {
+            "full_ba": 0.34615384615384615,
+            "degraded_ba": 0.30096153846153845,
+            "degraded_log_loss": 1.4295760517318252
+          },
+          "tucker": {
+            "full_ba": 0.34615384615384615,
+            "degraded_ba": 0.2605769230769231,
+            "degraded_log_loss": 1.46799993147157
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.5,
+            "degraded_ba": 0.3115384615384616,
+            "degraded_log_loss": 2.0737680875270867
+          },
+          "covariance": {
+            "full_ba": 0.5,
+            "degraded_ba": 0.41923076923076924,
+            "degraded_log_loss": 1.584635374682026
+          },
+          "tucker": {
+            "full_ba": 0.5,
+            "degraded_ba": 0.3548076923076923,
+            "degraded_log_loss": 1.8823651207299423
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:58:52.489990+00:00",
+      "review": "A05 seed0 valid; Transformer Tucker+4.33pp, covariance+10.77pp. Full-input unchanged and saved metrics verified. Proceed.",
+      "log_sha256": "cd2784cc70bc06eab208522d2a300eca9325c6871724534152d523886985258e"
+    },
+    {
+      "index": 13,
+      "subject": 5,
+      "seed": 1,
+      "start": "2026-10-05T05:58:52.771076+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "13"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 19.827,
+      "end": "2026-10-05T05:59:12.598283+00:00",
+      "task_sha256": "e1b2ed4627dceb76e580782db0c1f6080315f70edb73d155d0bcab559321d651",
+      "rows_verified": 126,
+      "validation_trials": 52,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.5384615384615385,
+            "degraded_ba": 0.24519230769230776,
+            "degraded_log_loss": 1.8331797341580174
+          },
+          "covariance": {
+            "full_ba": 0.5384615384615385,
+            "degraded_ba": 0.39134615384615384,
+            "degraded_log_loss": 1.3855510586554796
+          },
+          "tucker": {
+            "full_ba": 0.5384615384615385,
+            "degraded_ba": 0.2846153846153846,
+            "degraded_log_loss": 1.5556234249578793
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.5,
+            "degraded_ba": 0.30096153846153845,
+            "degraded_log_loss": 2.0058478529567187
+          },
+          "covariance": {
+            "full_ba": 0.5,
+            "degraded_ba": 0.4115384615384615,
+            "degraded_log_loss": 1.4230752491518477
+          },
+          "tucker": {
+            "full_ba": 0.5,
+            "degraded_ba": 0.2971153846153846,
+            "degraded_log_loss": 2.013953999826462
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T05:59:30.379327+00:00",
+      "review": "A05 seed1 valid, Transformer Tucker slight negative vs prior positive seed; covariance improves both. Preserve seed variability, proceed.",
+      "log_sha256": "99deaeef8969622b1eda0675fc611adc6107862d9da43b9e8e1be7ce117ee08c"
+    },
+    {
+      "index": 14,
+      "subject": 5,
+      "seed": 2,
+      "start": "2026-10-05T05:59:30.657760+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "14"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 19.426,
+      "end": "2026-10-05T05:59:50.083395+00:00",
+      "task_sha256": "1e092550f15b2def7cbbbcc61b10e9cd2d242e5ce07c6928e0f81729d9d60293",
+      "rows_verified": 126,
+      "validation_trials": 52,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.42307692307692313,
+            "degraded_ba": 0.26634615384615384,
+            "degraded_log_loss": 2.0005923644056747
+          },
+          "covariance": {
+            "full_ba": 0.42307692307692313,
+            "degraded_ba": 0.3836538461538461,
+            "degraded_log_loss": 1.3043732890414432
+          },
+          "tucker": {
+            "full_ba": 0.42307692307692313,
+            "degraded_ba": 0.275,
+            "degraded_log_loss": 1.5934417409077635
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.5384615384615384,
+            "degraded_ba": 0.3038461538461538,
+            "degraded_log_loss": 2.0956193022824072
+          },
+          "covariance": {
+            "full_ba": 0.5384615384615384,
+            "degraded_ba": 0.4519230769230768,
+            "degraded_log_loss": 1.3801614620904525
+          },
+          "tucker": {
+            "full_ba": 0.5384615384615384,
+            "degraded_ba": 0.3423076923076923,
+            "degraded_log_loss": 2.073695486295837
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:00:03.354209+00:00",
+      "review": "A05 seed2 valid; Transformer Tucker+3.85pp and covariance+14.81pp, log-loss differences preserved. All A05 seeds complete; proceed A06.",
+      "log_sha256": "35cbc91b28d78b5c3e72d6bf49ced60bf79d9b1f60fc8c2fbd7830cabfb9b322"
+    },
+    {
+      "index": 15,
+      "subject": 6,
+      "seed": 0,
+      "start": "2026-10-05T06:00:03.637385+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "15"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 16.224,
+      "end": "2026-10-05T06:00:19.861027+00:00",
+      "task_sha256": "ca0582f641e824ed26c31422bdafddc8db58e4fef9c800005dc1cb81aaaec0c0",
+      "rows_verified": 126,
+      "validation_trials": 43,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.3772727272727273,
+            "degraded_ba": 0.27875,
+            "degraded_log_loss": 1.4219469566122773
+          },
+          "covariance": {
+            "full_ba": 0.3772727272727273,
+            "degraded_ba": 0.32170454545454547,
+            "degraded_log_loss": 1.4097298230267215
+          },
+          "tucker": {
+            "full_ba": 0.3772727272727273,
+            "degraded_ba": 0.29545454545454547,
+            "degraded_log_loss": 1.4094688999403608
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.509090909090909,
+            "degraded_ba": 0.2818181818181818,
+            "degraded_log_loss": 2.1963557491885304
+          },
+          "covariance": {
+            "full_ba": 0.509090909090909,
+            "degraded_ba": 0.37113636363636365,
+            "degraded_log_loss": 1.9299918275519183
+          },
+          "tucker": {
+            "full_ba": 0.509090909090909,
+            "degraded_ba": 0.3025,
+            "degraded_log_loss": 2.2712232195142543
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:00:29.765692+00:00",
+      "review": "A06 seed0 valid; Tucker BA positive but Transformer log loss worse. Metrics and provenance checked; proceed without metric selection.",
+      "log_sha256": "89932091e826d3a922cb52e36657e4c214c29473f5324e74c4bd163a71921b26"
+    },
+    {
+      "index": 16,
+      "subject": 6,
+      "seed": 1,
+      "start": "2026-10-05T06:00:30.043281+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "16"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 16.923,
+      "end": "2026-10-05T06:00:46.966569+00:00",
+      "task_sha256": "2160e791107b1bf48cdde1a9428934fa680eeb154be0726bb9e8251d1c0970a8",
+      "rows_verified": 126,
+      "validation_trials": 43,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.6022727272727273,
+            "degraded_ba": 0.29715909090909093,
+            "degraded_log_loss": 1.5947738190885439
+          },
+          "covariance": {
+            "full_ba": 0.6022727272727273,
+            "degraded_ba": 0.40125,
+            "degraded_log_loss": 1.2835784464474709
+          },
+          "tucker": {
+            "full_ba": 0.6022727272727273,
+            "degraded_ba": 0.30670454545454545,
+            "degraded_log_loss": 1.4234890862103227
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.41363636363636364,
+            "degraded_ba": 0.30011363636363636,
+            "degraded_log_loss": 2.2593579093909586
+          },
+          "covariance": {
+            "full_ba": 0.41363636363636364,
+            "degraded_ba": 0.32125,
+            "degraded_log_loss": 2.203255383779573
+          },
+          "tucker": {
+            "full_ba": 0.41363636363636364,
+            "degraded_ba": 0.3035227272727273,
+            "degraded_log_loss": 2.230609490171165
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:01:01.210213+00:00",
+      "review": "A06 seed1 valid; Transformer Tucker benefit small and covariance benefit modest, EEGNet stronger. All126 records and preserved-input hashes pass; proceed.",
+      "log_sha256": "48e39f9dc47da4850139ccf3b49fdc724dbd67ff920d6dd61c8a1a498c228165"
+    },
+    {
+      "index": 17,
+      "subject": 6,
+      "seed": 2,
+      "start": "2026-10-05T06:01:01.500165+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "17"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 16.223,
+      "end": "2026-10-05T06:01:17.722950+00:00",
+      "task_sha256": "471c40577e1c82688eca5c7ccfa53e7b94af2f43a185da7c419674484461306f",
+      "rows_verified": 126,
+      "validation_trials": 43,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.6,
+            "degraded_ba": 0.3534090909090909,
+            "degraded_log_loss": 1.5093710868219787
+          },
+          "covariance": {
+            "full_ba": 0.6,
+            "degraded_ba": 0.4525,
+            "degraded_log_loss": 1.2552401049040447
+          },
+          "tucker": {
+            "full_ba": 0.6,
+            "degraded_ba": 0.37306818181818185,
+            "degraded_log_loss": 1.36174563991811
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.35227272727272724,
+            "degraded_ba": 0.2564772727272727,
+            "degraded_log_loss": 1.6813611774705124
+          },
+          "covariance": {
+            "full_ba": 0.35227272727272724,
+            "degraded_ba": 0.2684090909090909,
+            "degraded_log_loss": 1.5257157518359674
+          },
+          "tucker": {
+            "full_ba": 0.35227272727272724,
+            "degraded_ba": 0.23272727272727267,
+            "degraded_log_loss": 1.7495751487309292
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:01:28.750892+00:00",
+      "review": "A06 seed2 valid; Transformer Tucker negative while EEGNet positive. Full participant evidence retained; proceed A07.",
+      "log_sha256": "bda1b1fb9608caf6765efc1cb6ed1b0b0dd2f75c9c2cef6182eb160c1db134ad"
+    },
+    {
+      "index": 18,
+      "subject": 7,
+      "seed": 0,
+      "start": "2026-10-05T06:01:29.039269+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "18"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 20.024,
+      "end": "2026-10-05T06:01:49.062965+00:00",
+      "task_sha256": "a7b6613990f719d74f38c2be7fddaf0de1115e65b87afa22fbd99eff5f789674",
+      "rows_verified": 126,
+      "validation_trials": 53,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.41620879120879123,
+            "degraded_ba": 0.33351648351648355,
+            "degraded_log_loss": 1.3950101737731957
+          },
+          "covariance": {
+            "full_ba": 0.41620879120879123,
+            "degraded_ba": 0.367239010989011,
+            "degraded_log_loss": 1.3439336269208437
+          },
+          "tucker": {
+            "full_ba": 0.41620879120879123,
+            "degraded_ba": 0.3491071428571428,
+            "degraded_log_loss": 1.3613222642162255
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.6401098901098902,
+            "degraded_ba": 0.2737637362637363,
+            "degraded_log_loss": 3.7362059489546637
+          },
+          "covariance": {
+            "full_ba": 0.6401098901098902,
+            "degraded_ba": 0.3896291208791208,
+            "degraded_log_loss": 2.4941433645591347
+          },
+          "tucker": {
+            "full_ba": 0.6401098901098902,
+            "degraded_ba": 0.27321428571428574,
+            "degraded_log_loss": 3.6496001824400524
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:02:01.513423+00:00",
+      "review": "A07 seed0 valid; Transformer Tucker BA essentially flat despite log-loss reduction, covariance larger. All checks pass; proceed.",
+      "log_sha256": "4d9631f17f94095f01ce58ac6329554036c24a57fc3ab556b766f3ec2f34aa9c"
+    },
+    {
+      "index": 19,
+      "subject": 7,
+      "seed": 1,
+      "start": "2026-10-05T06:02:01.796172+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "19"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 20.125,
+      "end": "2026-10-05T06:02:21.921449+00:00",
+      "task_sha256": "6e5f7d3debc493ebe448077240bffb5183ac056a84f4ab77305bffeec494b35c",
+      "rows_verified": 126,
+      "validation_trials": 53,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.41346153846153844,
+            "degraded_ba": 0.30446428571428574,
+            "degraded_log_loss": 1.493057864749582
+          },
+          "covariance": {
+            "full_ba": 0.41346153846153844,
+            "degraded_ba": 0.3271291208791208,
+            "degraded_log_loss": 1.3821307474127853
+          },
+          "tucker": {
+            "full_ba": 0.41346153846153844,
+            "degraded_ba": 0.31579670329670334,
+            "degraded_log_loss": 1.418917385271851
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.75,
+            "degraded_ba": 0.2813186813186814,
+            "degraded_log_loss": 4.081463597581908
+          },
+          "covariance": {
+            "full_ba": 0.75,
+            "degraded_ba": 0.43811813186813187,
+            "degraded_log_loss": 2.246325511772673
+          },
+          "tucker": {
+            "full_ba": 0.75,
+            "degraded_ba": 0.279739010989011,
+            "degraded_log_loss": 4.00416909816438
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:02:31.724047+00:00",
+      "review": "A07 seed1 valid; Transformer Tucker nearly flat BA, covariance+15.68pp, high log losses retained. Proceed.",
+      "log_sha256": "f82ffb2290ae4cd17c7da194785732c4702081e73fe4955997e8f7b653ba7f12"
+    },
+    {
+      "index": 20,
+      "subject": 7,
+      "seed": 2,
+      "start": "2026-10-05T06:02:32.006357+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "20"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 20.525,
+      "end": "2026-10-05T06:02:52.531731+00:00",
+      "task_sha256": "46898ebf979357236623be753026bd182fa216d4236fdfe9668c43c16645e219",
+      "rows_verified": 126,
+      "validation_trials": 53,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.37225274725274726,
+            "degraded_ba": 0.29244505494505496,
+            "degraded_log_loss": 1.3917092535444926
+          },
+          "covariance": {
+            "full_ba": 0.37225274725274726,
+            "degraded_ba": 0.2889423076923078,
+            "degraded_log_loss": 1.3931824477871424
+          },
+          "tucker": {
+            "full_ba": 0.37225274725274726,
+            "degraded_ba": 0.29388736263736265,
+            "degraded_log_loss": 1.3878557215355527
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.635989010989011,
+            "degraded_ba": 0.2809752747252747,
+            "degraded_log_loss": 2.6707957471103976
+          },
+          "covariance": {
+            "full_ba": 0.635989010989011,
+            "degraded_ba": 0.35885989010989017,
+            "degraded_log_loss": 1.9591287103348833
+          },
+          "tucker": {
+            "full_ba": 0.635989010989011,
+            "degraded_ba": 0.2842032967032967,
+            "degraded_log_loss": 2.617159171949273
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:03:02.467659+00:00",
+      "review": "A07 seed2 valid; small Transformer Tucker gain, EEGNet covariance slightly negative. All seven participants complete; proceed A08.",
+      "log_sha256": "c5f11a36990443dab17af450bb6e94d7216bf3ecf78addf53cc94a8b666acee4"
+    },
+    {
+      "index": 21,
+      "subject": 8,
+      "seed": 0,
+      "start": "2026-10-05T06:03:02.749006+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "21"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 19.024,
+      "end": "2026-10-05T06:03:21.773098+00:00",
+      "task_sha256": "e31c1616d5a56c77141d2e623f8f6a118a732fbafc21fee564b8c34176fa9557",
+      "rows_verified": 126,
+      "validation_trials": 53,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.7527472527472527,
+            "degraded_ba": 0.30494505494505486,
+            "degraded_log_loss": 2.3253390657018214
+          },
+          "covariance": {
+            "full_ba": 0.7527472527472527,
+            "degraded_ba": 0.6216346153846155,
+            "degraded_log_loss": 0.9454501407366894
+          },
+          "tucker": {
+            "full_ba": 0.7527472527472527,
+            "degraded_ba": 0.34237637362637374,
+            "degraded_log_loss": 1.5552926361734047
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.7953296703296703,
+            "degraded_ba": 0.3660027472527473,
+            "degraded_log_loss": 2.3226423635742726
+          },
+          "covariance": {
+            "full_ba": 0.7953296703296703,
+            "degraded_ba": 0.6258928571428573,
+            "degraded_log_loss": 1.0690360364801177
+          },
+          "tucker": {
+            "full_ba": 0.7953296703296703,
+            "degraded_ba": 0.4094093406593407,
+            "degraded_log_loss": 1.907956813766058
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:03:36.036203+00:00",
+      "review": "A08 seed0 valid; both completions help, covariance considerably stronger. All126 rows and factor/checkpoint checks pass; proceed.",
+      "log_sha256": "7e51ebf304027df373185150947df347f709708d425dd1e18c9fd00990c07f79"
+    },
+    {
+      "index": 22,
+      "subject": 8,
+      "seed": 1,
+      "start": "2026-10-05T06:03:36.324039+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "22"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 19.925,
+      "end": "2026-10-05T06:03:56.249247+00:00",
+      "task_sha256": "bae8cb9a5d63254d508660182f38c0234c097ad22d64e9bd23a6165437e7227f",
+      "rows_verified": 126,
+      "validation_trials": 53,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.7692307692307693,
+            "degraded_ba": 0.34134615384615385,
+            "degraded_log_loss": 1.9117181519082493
+          },
+          "covariance": {
+            "full_ba": 0.7692307692307693,
+            "degraded_ba": 0.6019230769230769,
+            "degraded_log_loss": 0.9964872506966952
+          },
+          "tucker": {
+            "full_ba": 0.7692307692307693,
+            "degraded_ba": 0.3708104395604396,
+            "degraded_log_loss": 1.4621835190940504
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.7692307692307693,
+            "degraded_ba": 0.35109890109890113,
+            "degraded_log_loss": 3.0105074444487707
+          },
+          "covariance": {
+            "full_ba": 0.7692307692307693,
+            "degraded_ba": 0.6014423076923078,
+            "degraded_log_loss": 1.4298009871227382
+          },
+          "tucker": {
+            "full_ba": 0.7692307692307693,
+            "degraded_ba": 0.43159340659340667,
+            "degraded_log_loss": 2.428802634749912
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:04:05.931246+00:00",
+      "review": "A08 seed1 valid; Transformer Tucker+8.05pp, covariance+25.03pp. Stronger participant effect retained alongside earlier negatives; proceed.",
+      "log_sha256": "35c49de94286568d9ccfeaa219a375ae0f848367cbbb8432ed855dee2f01b786"
+    },
+    {
+      "index": 23,
+      "subject": 8,
+      "seed": 2,
+      "start": "2026-10-05T06:04:06.220638+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "23"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 18.724,
+      "end": "2026-10-05T06:04:24.944499+00:00",
+      "task_sha256": "a5eb013df80103f20a16b2ea551a251ad47730d4aa15166b74acbec1551d5c63",
+      "rows_verified": 126,
+      "validation_trials": 53,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.8269230769230769,
+            "degraded_ba": 0.39354395604395603,
+            "degraded_log_loss": 2.2466102329714603
+          },
+          "covariance": {
+            "full_ba": 0.8269230769230769,
+            "degraded_ba": 0.7251373626373626,
+            "degraded_log_loss": 0.7985948325660776
+          },
+          "tucker": {
+            "full_ba": 0.8269230769230769,
+            "degraded_ba": 0.44766483516483524,
+            "degraded_log_loss": 1.477925770179393
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.8296703296703297,
+            "degraded_ba": 0.3626373626373626,
+            "degraded_log_loss": 3.047964311530735
+          },
+          "covariance": {
+            "full_ba": 0.8296703296703297,
+            "degraded_ba": 0.6859203296703297,
+            "degraded_log_loss": 1.0600538275502651
+          },
+          "tucker": {
+            "full_ba": 0.8296703296703297,
+            "degraded_ba": 0.43111263736263733,
+            "degraded_log_loss": 2.2823480371497853
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:04:35.232742+00:00",
+      "review": "A08 seed2 valid; strong covariance and moderate Tucker gains on both backbones. All A08 seeds verified; proceed final participant A09.",
+      "log_sha256": "14e589d0ff491d9005ed22c303ecb4af2147841ee51d65ad9f40dcc053ddbb43"
+    },
+    {
+      "index": 24,
+      "subject": 9,
+      "seed": 0,
+      "start": "2026-10-05T06:04:35.520114+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "24"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 17.222,
+      "end": "2026-10-05T06:04:52.741824+00:00",
+      "task_sha256": "c216c6523421482785dc9cf490080b89a2f90e715bcb37a3a8e9abfaf73d4fdf",
+      "rows_verified": 126,
+      "validation_trials": 48,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.7961829836829836,
+            "degraded_ba": 0.45895979020979033,
+            "degraded_log_loss": 1.6795677549547967
+          },
+          "covariance": {
+            "full_ba": 0.7961829836829836,
+            "degraded_ba": 0.7076558857808857,
+            "degraded_log_loss": 0.8191658742703615
+          },
+          "tucker": {
+            "full_ba": 0.7961829836829836,
+            "degraded_ba": 0.5292395104895105,
+            "degraded_log_loss": 1.2296901192775782
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.7580128205128205,
+            "degraded_ba": 0.426791958041958,
+            "degraded_log_loss": 1.7146953751065575
+          },
+          "covariance": {
+            "full_ba": 0.7580128205128205,
+            "degraded_ba": 0.5952432983682984,
+            "degraded_log_loss": 1.0683500327094744
+          },
+          "tucker": {
+            "full_ba": 0.7580128205128205,
+            "degraded_ba": 0.45002913752913765,
+            "degraded_log_loss": 1.4768182691790621
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:05:02.867004+00:00",
+      "review": "A09 seed0 valid; Tucker benefits EEGNet more than Transformer, covariance strongest. Full-input and provenance gates pass; proceed.",
+      "log_sha256": "4fef40e0c6f71d8e262970ed57e519617a51459f55a514f9289a69a0e7b8587f"
+    },
+    {
+      "index": 25,
+      "subject": 9,
+      "seed": 1,
+      "start": "2026-10-05T06:05:03.153636+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "25"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 17.624,
+      "end": "2026-10-05T06:05:20.777646+00:00",
+      "task_sha256": "d2f2340af07aea8bd122f91d10b2daaabc4299971c39ec879e3c3e8642dafd27",
+      "rows_verified": 126,
+      "validation_trials": 48,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.8173076923076923,
+            "degraded_ba": 0.4909527972027973,
+            "degraded_log_loss": 1.1534587605053173
+          },
+          "covariance": {
+            "full_ba": 0.8173076923076923,
+            "degraded_ba": 0.6259032634032634,
+            "degraded_log_loss": 0.9001979593087459
+          },
+          "tucker": {
+            "full_ba": 0.8173076923076923,
+            "degraded_ba": 0.47524766899766896,
+            "degraded_log_loss": 1.1542956391686325
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.8573717948717949,
+            "degraded_ba": 0.49436917249417245,
+            "degraded_log_loss": 1.8820847786163513
+          },
+          "covariance": {
+            "full_ba": 0.8573717948717949,
+            "degraded_ba": 0.6916666666666667,
+            "degraded_log_loss": 1.1617420863964087
+          },
+          "tucker": {
+            "full_ba": 0.8573717948717949,
+            "degraded_ba": 0.5088068181818183,
+            "degraded_log_loss": 1.8096109003712577
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:05:31.983541+00:00",
+      "review": "A09 seed1 valid; Transformer Tucker positive but EEGNet negative. Retain paired contrast and proceed last seed.",
+      "log_sha256": "81cfc5a674c3b3ef2a133b30624a724519636f60c8231bcd66e94838fe68b018"
+    },
+    {
+      "index": 26,
+      "subject": 9,
+      "seed": 2,
+      "start": "2026-10-05T06:05:32.280233+00:00",
+      "timeout_seconds": 1200,
+      "command": [
+        "timeout",
+        "--kill-after=15s",
+        "1200s",
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.completion_transformer",
+        "--config",
+        "configs/completion-transformer.json",
+        "--task-index",
+        "26"
+      ],
+      "study_id": "093fd37830cee7228cdc9b8793d7f8919395054f9b23558795b5ce1e26e7f6df",
+      "status": "reviewed",
+      "exit_code": 0,
+      "elapsed_seconds": 17.525,
+      "end": "2026-10-05T06:05:49.805794+00:00",
+      "task_sha256": "90561847bda5144cdd3b5e667d3750bd1880c51693d44c5a567837a1bd408992",
+      "rows_verified": 126,
+      "validation_trials": 48,
+      "scores": {
+        "spatial_eegnet": {
+          "zero": {
+            "full_ba": 0.7977855477855478,
+            "degraded_ba": 0.30839889277389276,
+            "degraded_log_loss": 3.37782561388113
+          },
+          "covariance": {
+            "full_ba": 0.7977855477855478,
+            "degraded_ba": 0.6696751165501166,
+            "degraded_log_loss": 0.8548516044369319
+          },
+          "tucker": {
+            "full_ba": 0.7977855477855478,
+            "degraded_ba": 0.38114073426573425,
+            "degraded_log_loss": 1.817804050415511
+          }
+        },
+        "spatial_transformer": {
+          "zero": {
+            "full_ba": 0.8589743589743589,
+            "degraded_ba": 0.4428904428904429,
+            "degraded_log_loss": 2.0984325074947736
+          },
+          "covariance": {
+            "full_ba": 0.8589743589743589,
+            "degraded_ba": 0.6986815268065268,
+            "degraded_log_loss": 0.8815307344326708
+          },
+          "tucker": {
+            "full_ba": 0.8589743589743589,
+            "degraded_ba": 0.4983755827505827,
+            "degraded_log_loss": 1.5947545407400505
+          }
+        }
+      },
+      "decision": "proceed",
+      "reviewed_at": "2026-10-05T06:06:01.642206+00:00",
+      "review": "Final task valid; Tucker improves both, covariance larger. All27 tasks reviewed,3402 rows independently verified. Proceed to frozen-source cohort report and independent aggregation.",
+      "log_sha256": "a314a54fcbf86f2ab2e9ca21901299fc6c9c99bd1a530201919d4a49ca325976"
+    }
+  ],
+  "watchdog_sha256": "82e90c31b88c6308bdc2cc5cb2792deccfa183e637a71d848f3728258dea6c9d",
+  "summary_exit_code": 0,
+  "summary_log_sha256": "96ddd96d48c5fc39f8a6bfb6c9787f98693515313fd7e5cd0539beb5f5b4460a"
+}

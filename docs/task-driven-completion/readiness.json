@@ -1,0 +1,228 @@
+{
+  "archive_limit": "Synthetic archival evidence only; stored identity includes original absolute output path. Do not resume the archive under a different output path.",
+  "checks": [
+    {
+      "log": "validation/acceptance-worker04.log",
+      "name": "worker_acceptance04",
+      "passed": true,
+      "seconds": 23.793,
+      "skips": 0,
+      "tests": 60
+    },
+    {
+      "log": "validation/supervisor-acceptance.log",
+      "name": "supervisor_acceptance04",
+      "passed": true,
+      "seconds": 23.772,
+      "skips": 0,
+      "tests": 60
+    },
+    {
+      "log": "validation/supervisor-regression-supervised-tucker.log",
+      "name": "supervisor_supervised_tucker_regression",
+      "passed": true,
+      "skips": 0,
+      "tests": 25
+    },
+    {
+      "errors": 1,
+      "log": "validation/supervisor-regression-completion.log",
+      "name": "supervisor_completion_transformer_raw_regression",
+      "passed": false,
+      "passing_tests": 35,
+      "reason": "Preexisting fixed-declaration test assumes completed historical output is empty.",
+      "skips": 0,
+      "tests": 36
+    },
+    {
+      "harness": "validation/supervisor-isolated_legacy_fixture.py",
+      "log": "validation/supervisor-regression-completion-isolated.log",
+      "name": "supervisor_completion_transformer_isolated_unchanged_fixture",
+      "passed": true,
+      "reason": "Byte-identical declaration in fresh temporary config/output; unchanged loader and occupancy assertions.",
+      "skips": 0,
+      "tests": 1
+    },
+    {
+      "audit_new_fits": 0,
+      "cells": 105,
+      "exact_prediction_replay": true,
+      "log": "validation/execution.json",
+      "name": "final_public_fresh_resume_audit",
+      "passed": true,
+      "separate_processes": true,
+      "strategies": 5,
+      "supervised_synthetic_fits": 2
+    },
+    {
+      "expected_exit_code": 2,
+      "log": "validation/changed-identity.stderr.log",
+      "name": "changed_identity_rejection",
+      "passed": true
+    }
+  ],
+  "cohort_authorized": false,
+  "cohort_ready": false,
+  "commands": [
+    {
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion",
+        "--config",
+        "configs/task-driven-completion.json",
+        "--plan"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "plan"
+    },
+    {
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion",
+        "--config",
+        "configs/task-driven-completion.json",
+        "--preflight"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "preflight"
+    },
+    {
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion",
+        "--config",
+        "configs/task-driven-completion.json",
+        "--smoke",
+        "--output-dir",
+        "/tmp/task-driven-completion-worker04-final-20261005T074155Z"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "smoke"
+    },
+    {
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion",
+        "--config",
+        "configs/task-driven-completion.json",
+        "--smoke",
+        "--output-dir",
+        "/tmp/task-driven-completion-worker04-final-20261005T074155Z",
+        "--resume-smoke"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "resume"
+    },
+    {
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion.audit",
+        "--config",
+        "configs/task-driven-completion.json",
+        "--synthetic-smoke",
+        "--output-dir",
+        "/tmp/task-driven-completion-worker04-final-20261005T074155Z"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "name": "audit"
+    },
+    {
+      "command": [
+        "/home/kalexu97/Projects/AGFL/.venv/bin/python",
+        "-m",
+        "inm.task_driven_completion",
+        "--config",
+        "/tmp/task-driven-completion-worker04-final-20261005T074155Z-changed-config.json",
+        "--smoke",
+        "--output-dir",
+        "/tmp/task-driven-completion-worker04-final-20261005T074155Z",
+        "--resume-smoke"
+      ],
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "name": "changed-identity"
+    }
+  ],
+  "config_sha256": "76265ee8054cea63a08e3a6744630700a8caa0fe2aa07556289a7248d37f0992",
+  "created_utc": "2026-10-05T07:45:08.530710+00:00",
+  "cuda_verified": false,
+  "device": "cpu",
+  "eligible_for_separately_authorized_pilot": true,
+  "empirical_benefit_established": false,
+  "frozen_identity": "validation/frozen-real-identity.json",
+  "frozen_smoke_identity": "validation/frozen-smoke-identity.json",
+  "limits": [
+    "No real completion calibration, fitting or degraded evaluation was performed in coding sessions.",
+    "Real audit reader path is implemented but has not been executed on degraded real inputs.",
+    "Public preflight remains inventory-only, not fitting readiness.",
+    "CPU one thread only; CUDA is unverified.",
+    "Explicit real A01 pilot, independent audit and pilot review precede any cohort authorization.",
+    "Changed source/config/packages requires a new reviewed output identity; no failed or partial retries.",
+    "Historical and completion checkpoint selection reuse validation; no independent confirmation.",
+    "Negative effects retained; incomplete real coverage suppresses cohort means and intervals; synthetic excluded."
+  ],
+  "new_real_accuracy_measurements": false,
+  "packages": {
+    "mne": "1.13.2",
+    "numpy": "2.5.3",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "torch": "2.14.1+cu130"
+  },
+  "python": "3.13.13",
+  "real_pilot_executed": false,
+  "real_study_id": "1b2d20abcfd1bfa824b7dba5d77b38d5cfc5826ee820cd8943b1892aa0ec45ee",
+  "schema_name": "agfl-task-driven-completion-readiness-v1",
+  "source_frozen_before_final_smoke": true,
+  "source_sha256": "fd2124d452a9da15eca6112981092cfb30298a5ce192b4fb2a714ad1b13a70e7",
+  "status": "synthetic_verified_pending_separately_authorized_real_pilot",
+  "supervisor_historical_evidence": {
+    "attribution": "Supervisor read-only checks; not repeated by integration worker",
+    "degraded_evaluations": 0,
+    "historical_input_log": "validation/supervisor-historical-input-review.json",
+    "new_completion_fits": 0,
+    "original_A01_seed0_full_input_replay": "validation/supervisor-original-a01-replay.json",
+    "verified_tasks": 27
+  },
+  "synthetic_archive": "validation/synthetic-smoke-artifacts.tar.gz",
+  "synthetic_output": "/tmp/task-driven-completion-worker04-final-20261005T074155Z",
+  "threads": 1,
+  "validation_files_sha256": {
+    ".gitignore": "5c684bc18537b160af6927f3ab85199306659daa38e3d9a20d5d2757389a9a47",
+    "acceptance-worker04.log": "9a5489804d6abc9c420fe45f663c9d6cbe718b50d40ff55ed4ebb8c812c17956",
+    "audit.json": "05670f2300365fd9da9cd895662e9c0a66aa57b3835600bf220b40b9641cf4a2",
+    "audit.stderr.log": "db657f3a0c0225b5246ea5ebf118a9a2cb4462337f61c2bcba9c6b7e8ea4ec8f",
+    "changed-identity.stderr.log": "f8e1e3856b4440c3bace195fdc07092e6cf6eb3d2c9babd405fda0483aa5fe35",
+    "changed-identity.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "execution.json": "f0f5f2be7d4c9ae379757c53b4adeebe9ddd33012045c5206d7a00865f7bd60e",
+    "frozen-real-identity.json": "37f3e3c3ce5d893bd92dd256525e291ec9c1e1e83d0fe090b936dbba7e2de5bc",
+    "frozen-smoke-identity.json": "6bc60d15c0453091d0a0fc8e646fea2a0282a57cfda1a63b17be545d2b560403",
+    "integration-attempt1.log": "789d5ad3c5fe6f55cc6208f34a4d01a5b4d632f7154642470c6d16a90704296d",
+    "plan.json": "5fdb63c9c2f3ecf1f8fe1bd172859222619fa145cee8a68db7793c458835cb02",
+    "plan.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "preflight.json": "6dbb510aa12d9a6c3d708450a8c517a9fe4ce0ac385a07dee70f1c138c387ceb",
+    "preflight.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "resume.json": "4ad93afb0ccadc213064bd84fcfd9e73bdb2789c525dbebd57d25d19bdf7b9b0",
+    "resume.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "smoke.json": "4ad93afb0ccadc213064bd84fcfd9e73bdb2789c525dbebd57d25d19bdf7b9b0",
+    "smoke.stderr.log": "db657f3a0c0225b5246ea5ebf118a9a2cb4462337f61c2bcba9c6b7e8ea4ec8f",
+    "supervisor-acceptance.log": "c4960c269463a5193d9c4921ad88addbaec745e19639a1c6f6fd69008c8844b1",
+    "supervisor-historical-input-review.json": "6015bdcea0e437bc901c418ba72d96a1d6ffde70c01d4862424d307e34de8b7b",
+    "supervisor-isolated_legacy_fixture.py": "85858460e4dd20eb9ab543cb2870ca2b51e85fcfc1ea738a26dcd941f600ac75",
+    "supervisor-original-a01-replay.json": "9d6ec5a3d6ff7e38f5a114191ce14cb6628bd50bde5d6ddf617a5eff405a07e8",
+    "supervisor-regression-completion-isolated.log": "1e521f66908b68991f20bee32d63835135c5e3477080e0202921086c83e0c368",
+    "supervisor-regression-completion.log": "79c2b4601e35a380db3d10837fa41cb95b850bd6bae13ce90cf3b2ee82d3615c",
+    "supervisor-regression-supervised-tucker.log": "c9290e06bf441f5c34e352362295599ec2d6354ed442afd2c9c5a173eed79e88",
+    "synthetic-smoke-artifacts.tar.gz": "9094b38e3e80cffb748c54b15af84ac5d7ff7d9582febc4a7b0fd6caf3b0415f"
+  }
+}
