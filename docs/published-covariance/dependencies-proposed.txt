@@ -1,0 +1,8 @@
+# Proposed isolated native-source runtime. Supervisor owns provisioning and lock.
+# These exact versions have not yet passed the native H5 load / CUDA parity gate.
+python==3.11
+tensorflow==2.15.1
+numpy==1.26.4
+scipy==1.11.4
+scikit-learn==1.3.2
+h5py==3.10.0

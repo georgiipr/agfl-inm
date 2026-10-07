@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "admission": "compatible",
+  "provenance_grade": "B",
+  "evaluation_role": "exploratory_published_checkpoint_robustness",
+  "accuracy_used_for_selection": false,
+  "new_e_fitted_transform": false,
+  "hidden_channel_local_preprocessing": true,
+  "upstream_input_locality_verified_for_all_subjects": false,
+  "native_recipe_resolved": true,
+  "recipe_resolution_scope": "Author preprocessing from structured MAT input through classifier tensor is resolved. Actual upstream MAT/GDF equality has been diagnostically checked for A01 only; remaining eight participants are a session-02 gate.",
+  "source_repository": "https://github.com/Altaheri/EEG-ATCNet",
+  "source_revision": "65162fb359ea46a2f62c885a9987247ab491ee7a",
+  "source_directory": "EEG-ATCNet",
+  "checkpoint_upload_commit": "1ef6beb7ca6d60dcec146dadf9bc9299a15ac68b",
+  "checkpoint_upload_commit_utc": "2024-01-31T16:36:09+03:00",
+  "license": "Apache-2.0",
+  "checkpoint_family": "complete official results/saved models/run-1 set; A01-A09; no best-per-subject substitution",
+  "framework_metadata": {
+    "hdf5_backend": "tensorflow",
+    "hdf5_keras_version": "2.4.0",
+    "tensorflow_version": "unknown"
+  },
+  "architecture": {
+    "function": "models.ATCNet_",
+    "input_layout": "[B,1,22,1125]",
+    "classes": 4,
+    "channels": 22,
+    "samples": 1125,
+    "windows": 5,
+    "attention": "mha",
+    "eegn_F1": 16,
+    "eegn_D": 2,
+    "eegn_kernelSize": 64,
+    "eegn_poolSize": 7,
+    "eegn_dropout": 0.3,
+    "tcn_depth": 2,
+    "tcn_kernelSize": 4,
+    "tcn_filters": 32,
+    "tcn_dropout": 0.3,
+    "tcn_activation": "elu",
+    "fuse": "average",
+    "output": "softmax"
+  },
+  "provenance_evidence": {
+    "prior_results_deleted_commit": "607fd66d0ad760090a8a714a2c701dd268141c71",
+    "revised_results_added_commit": "3d9885a918cc4f9f78ff397f9d5cc64322338e24",
+    "revised_results_commit_utc": "2023-12-31T11:06:05+03:00",
+    "revised_log_matches": "main_TrainValTest.py (T split, val_loss checkpoint, one run, E reported after training)",
+    "current_run_manifest": "results/best models.txt lists run-1 for A01-A09",
+    "competing_legacy_path": "main_TrainTest.py uses E as validation for checkpoint epoch and run selection; no exact H5-to-log receipt proves which invocation created current files",
+    "grade_reason": "B: T-only revised path is supported by repository chronology/log, but exact checkpoint selection history is unresolved; legacy E-guided path exists."
+  },
+  "native_recipe": {
+    "source_function": "preprocess.load_BCI2a_data / preprocess.get_data",
+    "expected_recording": "author-format structured AxxT.mat/AxxE.mat with data entries; not a label-only E MAT",
+    "sampling_rate_hz": 250,
+    "recording_channels": 25,
+    "classifier_channels": 22,
+    "channel_selection": "first 22, original order",
+    "trial_start_semantics": "Use stored a_trial integer directly as Python start; do not subtract one.",
+    "trial_window_samples": 1750,
+    "classifier_slice_from_trial": [
+      375,
+      1500
+    ],
+    "classifier_samples": 1125,
+    "duration_seconds": 4.5,
+    "relative_interval_seconds": [
+      1.5,
+      6.0
+    ],
+    "labels_source": "a_y one-based 1..4 converted to zero-based 0..3",
+    "artifact_policy": "all_trials=True; do not exclude nonzero artifact flags",
+    "filtering": "none in this BCI load path",
+    "rereference": "none in this BCI load path",
+    "resampling": "none; expects 250Hz input",
+    "shuffle": "training and testing arrays/labels shuffled independently together with sklearn.utils.shuffle(random_state=42) before standardization",
+    "normalization": "Per channel j, StandardScaler.fit on X_train[:,0,j,:] shaped [n_trials,1125]; per-timepoint mean/scale across all T trials; apply same T stats to T and E.",
+    "normalization_split_exposure": "For revised recipe, scaler fit to all T trials before 80/20 T split; covariance validation T trials contribute to scaler.",
+    "tensor_layout": "[B,1,22,1125]; model graph internally permutes axes."
+  },
+  "native_mat_origin": {
+    "A01T_origin_manifest": "recordings/A01T-origin.json",
+    "url": "https://bnci-horizon-2020.eu/database/data-sets/001-2014/A01T.mat",
+    "sha256": "054f02e70cf9c4ada1517e9b9864f45407939c1062c6793516585c6f511d0325",
+    "bytes": 42806453,
+    "verified_subjects": [
+      "A01"
+    ],
+    "remaining_subjects": "A02-A09 not present in session-01 audit assets; session02 gate"
+  },
+  "A01_gdf_diagnostic": {
+    "receipt": "../01/A01-native-gdf-comparison.json",
+    "count": 288,
+    "observed": "All retained native MAT windows X[trial+375:trial+1500,:22] align to GDF [marker+376:marker+1501,:22].",
+    "max_abs_error_microvolts": 1.4210854715202004e-14,
+    "offset_zero_error_microvolts": 84.326,
+    "offset_minus_one_error_microvolts": 71.338,
+    "interpretation": "Preserve source loader offset: it starts one sample after the zero-based GDF marker (4ms). This was a diagnostic; session02 must declare acceptance tolerance before parity checks.",
+    "artifact_trials_retained": 15,
+    "run_structure": "9 runs; first 3 have no trial annotations; last 6 have 48 each; each MI class occurs 12 times per run."
+  },
+  "runtime_proposal": {
+    "python": "3.11",
+    "tensorflow": "2.15.1",
+    "numpy": "1.26.4",
+    "scipy": "1.11.4",
+    "scikit_learn": "1.3.2",
+    "h5py": "3.10.0",
+    "keras": "TensorFlow bundled tf.keras; no standalone keras pin",
+    "status": "proposed; supervisor provisioned separately; native load/forward/gradient parity not yet accepted",
+    "reason": "HDF5 metadata records Keras 2.4.0 but does not identify exact TensorFlow version; TF2.15.1 preserves legacy tf.keras API without a framework port and supports the available Python 3.11 interpreter."
+  },
+  "subjects": [
+    {
+      "subject": "A01",
+      "asset_path": "EEG-ATCNet/results/saved models/run-1/subject-1.h5",
+      "sha256": "15a6a6cd7454d4d5b1b59adfe1d9636140fb0bd5a5e0f42adafadb4a36e9b1fd",
+      "bytes": 775936,
+      "tensor_count": 195,
+      "tensor_elements": 115172,
+      "dtype": "float32",
+      "compatible": true,
+      "training_sessions": [
+        "AxxT; exact per-checkpoint receipt absent"
+      ],
+      "selection_sessions": [
+        "T-derived validation supported by contemporaneous revised log; E selection not conclusively excluded"
+      ],
+      "normalization_source": "AxxT all trials before 80/20 split; per channel and time index, StandardScaler",
+      "provenance_grade": "B",
+      "unresolved_facts": [
+        "Exact current H5-to-training-log linkage and external run selection history"
+      ]
+    },
+    {
+      "subject": "A02",
+      "asset_path": "EEG-ATCNet/results/saved models/run-1/subject-2.h5",
+      "sha256": "e9a26fca0e07a82b1374ffbdeedf3bf8d16ba67a39603d39160613a54590171d",
+      "bytes": 776008,
+      "tensor_count": 195,
+      "tensor_elements": 115172,
+      "dtype": "float32",
+      "compatible": true,
+      "training_sessions": [
+        "AxxT; exact per-checkpoint receipt absent"
+      ],
+      "selection_sessions": [
+        "T-derived validation supported by contemporaneous revised log; E selection not conclusively excluded"
+      ],
+      "normalization_source": "AxxT all trials before 80/20 split; per channel and time index, StandardScaler",
+      "provenance_grade": "B",
+      "unresolved_facts": [
+        "Exact current H5-to-training-log linkage and external run selection history"
+      ]
+    },
+    {
+      "subject": "A03",
+      "asset_path": "EEG-ATCNet/results/saved models/run-1/subject-3.h5",
+      "sha256": "acec4e58ac81d0df72c89e1910aca444cda11a8c76465780b709c318925c2e9b",
+      "bytes": 776240,
+      "tensor_count": 195,
+      "tensor_elements": 115172,
+      "dtype": "float32",
+      "compatible": true,
+      "training_sessions": [
+        "AxxT; exact per-checkpoint receipt absent"
+      ],
+      "selection_sessions": [
+        "T-derived validation supported by contemporaneous revised log; E selection not conclusively excluded"
+      ],
+      "normalization_source": "AxxT all trials before 80/20 split; per channel and time index, StandardScaler",
+      "provenance_grade": "B",
+      "unresolved_facts": [
+        "Exact current H5-to-training-log linkage and external run selection history"
+      ]
+    },
+    {
+      "subject": "A04",
+      "asset_path": "EEG-ATCNet/results/saved models/run-1/subject-4.h5",
+      "sha256": "87a3e5973b35d6e81500f6d134669a6dda16eeca41e24a90da7cbc757f457b92",
+      "bytes": 776240,
+      "tensor_count": 195,
+      "tensor_elements": 115172,
+      "dtype": "float32",
+      "compatible": true,
+      "training_sessions": [
+        "AxxT; exact per-checkpoint receipt absent"
+      ],
+      "selection_sessions": [
+        "T-derived validation supported by contemporaneous revised log; E selection not conclusively excluded"
+      ],
+      "normalization_source": "AxxT all trials before 80/20 split; per channel and time index, StandardScaler",
+      "provenance_grade": "B",
+      "unresolved_facts": [
+        "Exact current H5-to-training-log linkage and external run selection history"
+      ]
+    },
+    {
+      "subject": "A05",
+      "asset_path": "EEG-ATCNet/results/saved models/run-1/subject-5.h5",
+      "sha256": "685da44928c8c0d57dcd9247016b0a48f09af02e041a923596ff5c5077c1aeee",
+      "bytes": 776392,
+      "tensor_count": 195,
+      "tensor_elements": 115172,
+      "dtype": "float32",
+      "compatible": true,
+      "training_sessions": [
+        "AxxT; exact per-checkpoint receipt absent"
+      ],
+      "selection_sessions": [
+        "T-derived validation supported by contemporaneous revised log; E selection not conclusively excluded"
+      ],
+      "normalization_source": "AxxT all trials before 80/20 split; per channel and time index, StandardScaler",
+      "provenance_grade": "B",
+      "unresolved_facts": [
+        "Exact current H5-to-training-log linkage and external run selection history"
+      ]
+    },
+    {
+      "subject": "A06",
+      "asset_path": "EEG-ATCNet/results/saved models/run-1/subject-6.h5",
+      "sha256": "ddfffffa081e197b4e5117c24a186a056a74a358cc4f81f436864ae34b16be3d",
+      "bytes": 776456,
+      "tensor_count": 195,
+      "tensor_elements": 115172,
+      "dtype": "float32",
+      "compatible": true,
+      "training_sessions": [
+        "AxxT; exact per-checkpoint receipt absent"
+      ],
+      "selection_sessions": [
+        "T-derived validation supported by contemporaneous revised log; E selection not conclusively excluded"
+      ],
+      "normalization_source": "AxxT all trials before 80/20 split; per channel and time index, StandardScaler",
+      "provenance_grade": "B",
+      "unresolved_facts": [
+        "Exact current H5-to-training-log linkage and external run selection history"
+      ]
+    },
+    {
+      "subject": "A07",
+      "asset_path": "EEG-ATCNet/results/saved models/run-1/subject-7.h5",
+      "sha256": "a9cb9da09f0b52f331fdcdd47899a7eec3affa4d4a3cfd674e2e8c4ac85f0866",
+      "bytes": 776456,
+      "tensor_count": 195,
+      "tensor_elements": 115172,
+      "dtype": "float32",
+      "compatible": true,
+      "training_sessions": [
+        "AxxT; exact per-checkpoint receipt absent"
+      ],
+      "selection_sessions": [
+        "T-derived validation supported by contemporaneous revised log; E selection not conclusively excluded"
+      ],
+      "normalization_source": "AxxT all trials before 80/20 split; per channel and time index, StandardScaler",
+      "provenance_grade": "B",
+      "unresolved_facts": [
+        "Exact current H5-to-training-log linkage and external run selection history"
+      ]
+    },
+    {
+      "subject": "A08",
+      "asset_path": "EEG-ATCNet/results/saved models/run-1/subject-8.h5",
+      "sha256": "86ba692320a1d057b116b9a88f9b1de966ae7f93487bfc05d097fd87e18363c7",
+      "bytes": 776456,
+      "tensor_count": 195,
+      "tensor_elements": 115172,
+      "dtype": "float32",
+      "compatible": true,
+      "training_sessions": [
+        "AxxT; exact per-checkpoint receipt absent"
+      ],
+      "selection_sessions": [
+        "T-derived validation supported by contemporaneous revised log; E selection not conclusively excluded"
+      ],
+      "normalization_source": "AxxT all trials before 80/20 split; per channel and time index, StandardScaler",
+      "provenance_grade": "B",
+      "unresolved_facts": [
+        "Exact current H5-to-training-log linkage and external run selection history"
+      ]
+    },
+    {
+      "subject": "A09",
+      "asset_path": "EEG-ATCNet/results/saved models/run-1/subject-9.h5",
+      "sha256": "46bc137b2b6e34e6ecdc092099918b2c2fd322830786bdbfc93d6f0ea7c97ba8",
+      "bytes": 776456,
+      "tensor_count": 195,
+      "tensor_elements": 115172,
+      "dtype": "float32",
+      "compatible": true,
+      "training_sessions": [
+        "AxxT; exact per-checkpoint receipt absent"
+      ],
+      "selection_sessions": [
+        "T-derived validation supported by contemporaneous revised log; E selection not conclusively excluded"
+      ],
+      "normalization_source": "AxxT all trials before 80/20 split; per channel and time index, StandardScaler",
+      "provenance_grade": "B",
+      "unresolved_facts": [
+        "Exact current H5-to-training-log linkage and external run selection history"
+      ]
+    }
+  ],
+  "source_links": {
+    "model": "https://github.com/Altaheri/EEG-ATCNet/blob/65162fb359ea46a2f62c885a9987247ab491ee7a/models.py#L34-L117",
+    "attention": "https://github.com/Altaheri/EEG-ATCNet/blob/65162fb359ea46a2f62c885a9987247ab491ee7a/attention_models.py#L60-L93",
+    "training_legacy": "https://github.com/Altaheri/EEG-ATCNet/blob/65162fb359ea46a2f62c885a9987247ab491ee7a/main_TrainTest.py#L118-L177",
+    "preprocessing": "https://github.com/Altaheri/EEG-ATCNet/blob/65162fb359ea46a2f62c885a9987247ab491ee7a/preprocess.py#L85-L148",
+    "normalization": "https://github.com/Altaheri/EEG-ATCNet/blob/65162fb359ea46a2f62c885a9987247ab491ee7a/preprocess.py#L308-L365",
+    "revised_training": "https://github.com/Altaheri/EEG-ATCNet/blob/65162fb359ea46a2f62c885a9987247ab491ee7a/main_TrainValTest.py#L120-L164",
+    "official_dataset": "https://www.bbci.de/competition/iv/download/"
+  }
+}

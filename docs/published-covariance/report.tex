@@ -1,0 +1,106 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,booktabs,tabularx,array}
+\usepackage[margin=22mm,headheight=14pt]{geometry}
+\usepackage{xcolor,hyperref,fancyhdr,enumitem}
+\definecolor{navy}{HTML}{173B52}
+\definecolor{teal}{HTML}{087E8B}
+\definecolor{gray}{HTML}{53616A}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=teal,pdftitle={Can learned covariance recover missing EEG channels?},pdfauthor={AGFL research project}}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small\color{gray}Missing-electrode EEG study}\fancyhead[R]{\small\color{gray}Method, checks and findings}\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\setlength{\parindent}{0pt}\setlength{\parskip}{5pt}
+\setlist[itemize]{leftmargin=*,itemsep=3pt,topsep=4pt}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\pp}{\,pp}
+\begin{document}
+\thispagestyle{empty}
+{\Huge\bfseries\color{navy}Recovering missing EEG channels}\par
+\vspace{5pt}{\LARGE\color{navy}A plain-language report on learned covariance completion}\par
+\vspace{10pt}{\large Method, checks, results and limits}\par
+\vspace{4pt}7 October 2026\quad\textbullet\quad Exploratory study, nine participants
+
+\vspace{14pt}
+\textbf{Main finding.} For this set of nine already-trained EEG classifiers, learning how channels relate to one another improved balanced accuracy under simulated electrode loss. The gain over a fixed, data-estimated covariance was 9.55 percentage points averaged across two loss levels and participants (participant-bootstrap 95\% interval: 6.32 to 12.55 points). The gain was much larger when only six of 22 electrodes remained. This is encouraging evidence for this specific setup, not proof that the method generalizes to other people, models or recording conditions.
+
+\section{The question in everyday terms}
+Electroencephalography (EEG) records electrical activity through electrodes placed on the scalp. A classifier can recognize four imagined-movement classes from these signals, but an electrode may be unavailable or unusable. If we know which channels remain, can we estimate the missing signals well enough to preserve classification?
+
+This study compares three ways to handle absent channels. \emph{Zero fill} inserts zero in their place. \emph{Fixed covariance completion} estimates channel relationships from training signals and keeps those relationships fixed. \emph{Learned covariance completion} starts from the same estimate and adjusts it using the classifier's training objective. In all three cases the downstream classifier is an existing published EEG-ATCNet model whose weights stay frozen. Only the 253-parameter covariance representation can change.
+
+The data are from the BCI Competition IV 2a motor-imagery task: nine participants, four classes, 22 channels, and 288 trials in each of two sessions per participant. Session T supplies the data used to fit the completion rule and choose its training checkpoint. Session E is evaluated after fitting. The source classifier receives 1,125 time samples per trial. No trials were excluded.
+
+\section{How the completion rule works}
+For one time point, let $x\in\mathbb R^{22}$ be the channel vector. The mask tells us which channels were observed. Let $O$ be their original channel indices and $H$ the missing indices. The method never renumbers channels: it selects the appropriate rows and columns from a shared 22-by-22 matrix.
+
+The matrix $\Sigma$ describes second-order relationships: its diagonal entries measure channel variance and its off-diagonal entries measure how channel pairs vary together. It is initialized from training samples only:
+\begin{equation}
+ S=\frac{1}{NT}\sum_{n=1}^{N}\sum_{t=1}^{T}x_{nt}x_{nt}^{\mathsf T},\qquad
+ \Sigma_0=S+10^{-6}I.
+\end{equation}
+Here $N$ and $T$ count training trials and time samples; each $x_{nt}$ is a 22-element vector after the study's inherited normalization. The tiny diagonal term makes the matrix numerically safer to solve with.
+
+For a chosen covariance, the estimate for the missing channels is
+\begin{equation}
+ \widehat x_H=\Sigma_{HO}\bigl(\Sigma_{OO}+\rho I\bigr)^{-1}x_O,
+ \qquad \rho=10^{-3}\frac{\operatorname{tr}(\Sigma)}{22}.
+ \label{eq:conditional}
+\end{equation}
+The subscript $OO$ means rows and columns for observed channels; $HO$ means missing-channel rows and observed-channel columns. In implementation, a linear system is solved instead of explicitly calculating the inverse. This is the regularized conditional-mean formula: it uses observed channel values and their learned relationships to predict missing values. It is motivated by a Gaussian model, but does not require EEG itself to be Gaussian.
+
+The observed values are copied exactly into the completed signal. Only missing entries are estimated. A lower-triangular factor $L$ guarantees a valid positive-definite covariance:
+\begin{equation}
+ \Sigma=LL^{\mathsf T},\qquad L_{ii}=\operatorname{softplus}(a_i)+10^{-6}.
+\end{equation}
+The lower triangle contains $22\cdot23/2=253$ free numbers. A single such matrix is shared across trials and masks for a participant and training split; the mask determines which conditional prediction is used.
+
+\section{How it is trained and compared}
+The learned matrix is trained on T-session training trials. The frozen classifier still computes gradients with respect to its input, so the learning signal can pass through the completion step back to the covariance parameters. The objective combines correct classification, reconstruction of artificially hidden training samples, and a small penalty for moving too far from the initial covariance:
+\begin{equation}
+ \mathcal L=\underbrace{\mathrm{CE}(p,y)}_{\text{classification}}+
+ 0.1\underbrace{\mathrm{MSE}_{H}(\widetilde X,X)}_{\text{hidden-sample reconstruction}}+
+ 10^{-4}\underbrace{\operatorname{mean}\!\left[(a-a_0)^2\right]}_{\text{stay near initialization}}.
+ \label{eq:loss}
+\end{equation}
+Here $p$ is the classifier's four-class probability output, $y$ is the known class, $\widetilde X$ is the completed signal, and $H$ denotes entries hidden on purpose during training. The reconstruction term is calculated only on those hidden entries. Optimization uses Adam with learning rate 0.001, batches of 32 and gradient clipping; the run allows up to 100 epochs.
+
+At each epoch, a held-out T validation set is scored under ten fixed masks (five repeats each at 16 and 6 retained channels). The selected checkpoint has the highest mean balanced accuracy; ties are resolved by lower log loss, then earlier epoch. Session E is not used to fit or select the covariance checkpoint. Three covariance seeds per participant vary the T split, training order and random masks.
+
+The comparison is paired: every arm sees the same participants, trials, splits and evaluation masks. The conditions keep all 22 electrodes, or keep 16, or keep 6 for the whole trial. The main score is \emph{balanced accuracy (BA)}, the mean of the four class-specific recalls. Unlike ordinary accuracy, this gives each imagined-movement class equal weight. Log loss is also reported; it penalizes confident wrong probabilities. Results are averaged over mask repeats, then seeds within each participant, then participants equally. The uncertainty interval resamples participants, not individual predictions.
+
+\section{Checks that support the result}
+Before interpreting scores, the study checked that the input data, frozen models, and run records matched their declared identities. All 288 trials per participant and session were retained, and recording alignment was checked against the native source. The nine checkpoints have the same audited architecture and parameter count (115,172 each). Their lineage is grade B: source and tensor structure were verified, but checkpoint-specific training receipts cannot conclusively exclude historical E-guided checkpoint selection.
+
+For all nine participants, the wrapped model's full-input probabilities matched the native checkpoint exactly on both T and E references (maximum absolute difference zero). Full-input predictions were also exactly the same across zero-fill, fixed-covariance and learned-covariance arms. All 27 covariance fits passed task audits, and the final cohort audit and an independent recomputation of the summary passed. There were 27 fits, 81 arm evaluations and 891 prediction cells; no backbone was retrained.
+
+These checks establish that the evaluated software followed the declared comparison and preserved the frozen classifier on complete input. They do not establish that the original checkpoint selection was fully independent of E, nor do they make the bootstrap interval a substitute for an independent cohort.
+
+\section{Results}
+\begin{center}
+\begin{tabular}{@{}lrrrr@{}}\toprule
+Electrodes kept & Zero fill & Fixed cov. & Learned cov. & Difference \\
+\midrule
+22 (complete input) & 81.13\% & 81.13\% & 81.13\% & 0.00\pp\\
+16 & 43.70\% & 75.46\% & 77.55\% & +2.09\pp\\
+6 & 33.01\% & 45.79\% & 62.80\% & +17.00\pp\\
+\bottomrule
+\end{tabular}
+\end{center}
+The primary comparison averages the two degraded conditions equally. Learned covariance exceeded fixed covariance by 9.55 points (95\% participant-bootstrap interval 6.32--12.55 points; 2,000 resamples). Against zero fill, its mean advantage was 31.82 points. Every participant's average effect across the two degraded conditions was positive, ranging from 1.52 to 16.06 points. The result was not uniformly positive in every cell: for 16 retained channels, A02 was down 0.28 points and A09 was down 2.50 points. These cases are retained in the aggregate.
+
+\section{Verdict and limits}
+For this admitted checkpoint family and whole-trial static electrode loss, learning the covariance improved average classification over keeping the training-estimated covariance fixed. The evidence is strongest when severe loss leaves only six electrodes. Fixed covariance itself substantially outperformed zero fill, showing that exploiting channel relationships matters in this experiment; fitting those relationships to the classification objective added a further gain, especially under severe loss.
+
+The result remains exploratory and descriptive for several reasons:
+\begin{itemize}
+ \item The external checkpoints have grade-B provenance. Their history is compatible with T-only selection, but does not prove it; earlier project exposure to E outcomes is also unknown.
+ \item The published model and its historical per-channel/per-timepoint normalization were fitted using all T trials, including trials later assigned to covariance validation. Thus that validation set was not wholly unseen by the backbone pipeline.
+ \item The three seeds are covariance-training seeds, not independent pretrained-model seeds. The cohort contains nine participants from one dataset and one classifier family.
+ \item Evaluation here concerns static whole-trial channel removal. It does not test changing electrodes within a trial or transfer to a new acquisition setup.
+\end{itemize}
+Therefore, the appropriate verdict is: \textbf{promising evidence that task-trained covariance completion can improve robustness to missing electrodes in this specific frozen-classifier setting, especially under severe loss; independent confirmation is still needed.} The result is not a state-of-the-art claim and should not be read as proof of broad generalization.
+
+\section*{Reproducibility and further reading}
+The complete accepted numeric outputs and machine-readable report are under \href{../../results/published-covariance-v1-cuda-root/report.md}{the study output directory}. The audited experiment verdict, checkpoint audit, data description, training specification and runbook are in \texttt{docs/published-covariance/}. Mathematical detail and implementation diagrams appear in the companion document \texttt{docs/concept/learned\_covariance.tex}. The accepted study identity is SHA-256 \texttt{6153df7e7d434f6e6bc6a2403f7671f835936ff60da60f420af6106da29299d7}.
+
+\end{document}

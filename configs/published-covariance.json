@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "study_id": "published-checkpoint-covariance-v1",
+  "subjects": ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09"],
+  "seeds": [0, 1, 2],
+  "arms": ["zero", "covariance_fixed", "covariance_learned"],
+  "conditions": {"full_22": 1, "static_16": 5, "static_6": 5},
+  "selection": "maximum mean BA across static16/static6; then lower log loss; then earlier epoch",
+  "training": {"learning_rate": 0.001, "betas": [0.9, 0.999], "epsilon": 1e-8, "weight_decay": 0.0, "batch_size": 32, "gradient_clip_global_norm": 1.0, "max_epochs": 100, "min_epochs": 10, "patience": 20, "loss": "CE+0.1*hidden_sample_MSE+1e-4*mean((free-initial)^2)"},
+  "covariance": {"initial_jitter": 1e-6, "ridge_fraction_of_mean_diagonal": 0.001, "free_parameter_count": 253},
+  "split": {"train_fraction": 0.8, "validation_fraction": 0.2, "algorithm": "classwise-PCG64-seed-original-order-v1", "validation_count": "max(1,floor(0.2*n_class))"},
+  "mask_protocol": {"name": "static-subset-sha256-pcg64-v1", "namespace": "published-checkpoint-covariance-v1", "key": ["static-subset-sha256-pcg64-v1", "namespace", "subject", "seed", "original_trial_id", "partition", "retained_count", "repeat", "epoch"], "key_json": "UTF-8 JSON, ensure_ascii=true, separators=(',', ':')", "rng": "PCG64(int.from_bytes(SHA256(key)[:16], 'little'))", "sampling": "uniform-without-replacement", "retained_counts": [22, 16, 6], "validation_repeats": 5, "evaluation_repeats": 5, "subset_bucket": "bits=sum(1<<channel_index); SHA256(f'{protocol}:partition:{bits}')[:8] little-endian mod 3; train=0 validation=1 E=2", "pool_partitioned": true},
+  "normalization": {"algorithm": "author StandardScaler axis=0", "fit_session": "T", "fit_scope": "all T trials", "shuffle_seed": 42, "input_slice": [375, 1500], "historical_covariance_validation_exposure": true},
+  "optimizer": {"name": "Adam", "learning_rate": 0.001, "betas": [0.9, 0.999], "epsilon": 1e-8, "weight_decay": 0.0, "gradient_clip_global_norm": 1.0, "scheduler": null},
+  "early_stopping": {"epoch_zero_eligible": true, "selection": "maximum mean BA across static16/static6; then lower log loss; then earlier epoch", "synthetic_max_epochs": 2, "synthetic_min_epochs": 1, "synthetic_patience": 1},
+  "provenance": {"checkpoint_grade": "B", "prior_project_E_exposure": "unknown", "checkpoint_E_selection_excluded": false},
+  "bootstrap": {"draws": 2000, "seed": 20261006, "unit": "participant-paired"},
+  "real_assets": ".session-runs/published-checkpoint-covariance/assets",
+  "output": "results/published-covariance-v1"
+}
