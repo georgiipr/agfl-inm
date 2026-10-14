@@ -1,6 +1,8 @@
 {
   "extends": "study.json",
-  "name": "pilot_four_models_one_seed_v5",
-  "seeds": [0],
-  "output_dir": "results/inm-v5-pilot"
+  "name": "pilot_six_models_one_seed_v6",
+  "seeds": [
+    0
+  ],
+  "output_dir": "results/inm-covariance-v6-pilot"
 }

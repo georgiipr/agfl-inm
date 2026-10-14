@@ -1,9 +1,11 @@
-# Four models with built-in MHA
+# Two backbones, three completion variants, fixed MHA
 
-The concrete classes are `EEGNet`, `EEGNetTensor`, `SignalTransformer` and
-`SignalTransformerTensor`, in `eeg_models/models/`. Use `build_model(model_key,
-metadata, model_options, window_samples=250, tensor_options=...)` to construct
-one of these models. There is no attention argument, attention registry or
+The concrete classes are `EEGNet`, `EEGNetFrozenCovariance`,
+`EEGNetLearnedCovariance`, `SignalTransformer`,
+`SignalTransformerFrozenCovariance` and `SignalTransformerLearnedCovariance`.
+Use `build_model(model_key, metadata, model_options, window_samples=250,
+covariance_options=...)` to construct a variant.
+There is no attention argument, attention registry or
 attention factory. MHA uses four heads directly in each backbone.
 The fixed implementation in `_shared/layers.py` uses the original separate
 linear Q/K/V and output projections, explicit scaled softmax scores, and an
@@ -36,7 +38,7 @@ Temporal bin order remains in the tokenizer; attention mixes electrodes rather
 than time positions. The tokenizer and every classifier layer are trained end
 to end, independently of EEGNet.
 
-## Masks and tensor variants
+## Masks and covariance variants
 
 Every `forward(raw, mask)` accepts raw `[B,C,T]` signals and Boolean `[B,C,P]`
 availability. `SignalInput` uses selection before any convolution or arithmetic
@@ -44,15 +46,20 @@ on hidden entries. Missing normalized samples become zero in baseline models,
 which is the training-channel mean. The channel axis always has 22 original
 sensor positions; it is never physically shortened or renumbered.
 
-Tensor variants use Tucker-2 to complete only missing signal windows before the
-same backbone. The signal tensor is `[B,22,4,250]`: channels and within-window
-samples have training-fitted factors; the four window positions stay ordered.
-Factors are frozen buffers. No classifier parameters are frozen. Full-channel
-training/validation bypass completion exactly, preserving every signal sample.
-Paired models use matched initialization and batch order; the tensor intervention
-therefore targets inference under missing inputs, not full-channel compression.
+Covariance variants complete only missing signal windows before the same
+backbone. The `[B,22,4,250]` view preserves every ordered sample and window;
+a train-only 22×22 second moment provides frozen and learned initialization.
+There is no low-rank temporal compression. Full-input training/validation bypass
+completion exactly. A backbone is trained once and its selected checkpoint is
+shared across all three variants.
 
-Both variants retain the original mask for MHA keys. EEGNet excludes unavailable
+Frozen covariance requires only unsupervised calibration. Learned covariance
+then optimizes 253 Cholesky coordinates using simulated training outages and
+labels, with the selected classifier, MHA, BatchNorm and dropout held fixed.
+The 100-epoch calibration retains the final state, never a degraded-validation
+selected state. Both completion variants are frozen before evaluation.
+
+All variants retain the original mask for MHA keys. EEGNet excludes unavailable
 electrodes at each time sample. Signal Transformer excludes an electrode key
 only if it is absent throughout the trial; partially observed channels retain
 their masked/completed temporal token. Inferred channels can still contribute
@@ -70,4 +77,4 @@ masked/completed trial; their neighbors are observations, zero placeholders or
 estimates, never hidden reference samples. Train-only channel normalization is
 shared by both backbones and variants.
 
-See [tensor mathematics](tensor_math.md) and [experiment protocol](experiment.md).
+See [covariance mathematics](covariance_math.md) and [experiment protocol](experiment.md).

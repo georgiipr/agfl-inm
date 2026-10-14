@@ -1,0 +1,28 @@
+{
+  "repository": "https://github.com/georgiipr/agfl-inm",
+  "revision": "516922dff6d1fe9879e774ace76bb7366dcc5f28",
+  "subdirectory": "published_covariance",
+  "original_files_sha256": {
+    "published_covariance/__init__.py": "7cba1d131fbad42f3700eb6b69e06c78e4a3ff9a2ce989c11e1863524e7dde39",
+    "published_covariance/__main__.py": "79ee6f134c5c5193377cf9b189cbdcc3e2095e49ba9cec310114441c15a917c4",
+    "published_covariance/atcnet_native.py": "7b1cd778acfa6a027a9a68e996436514ac7daace30a14c5df2b8ae7342970574",
+    "published_covariance/audit.py": "67540ecafdb1b77ef9fb96616e6f565772f5c2311b60f4410293c5e12e6ba0b3",
+    "published_covariance/classifier.py": "2a58c584c606d97d034df35385f61b1c9e0171803e47af5377239ae541d2e5e0",
+    "published_covariance/cli.py": "188fb6efd6d274d628d1a87b15b56166dd1d87eeb4133db850c24fb5f0348f46",
+    "published_covariance/completion.py": "c99f3c004cd7e134c509774cc336c61b04809f0c6d003dca2f07437b911cf5ce",
+    "published_covariance/data.py": "ccdbc010d7f7ea88d381fd776f7bb546dd8885c60214f46431f3420a4d1cd96c",
+    "published_covariance/masks.py": "ba31b56532a10734341a44d7f790fddf42c3fc26d7b3d1d1fcea7398eacce024",
+    "published_covariance/native_reference.py": "3b1129bcb029255f2ca54907bf05e772e6f04bffdabe376658bb291211e0be38",
+    "published_covariance/native_smoke.py": "e2a039aa6dad5e09cdbe295f98f88bbbb6b91f644e6aea3af4356cc3892b0fa6",
+    "published_covariance/protocol.py": "a4de70d6e3f64fb406ac48217bff6c47070e634251a02585dd6fb7fdbee31076",
+    "published_covariance/reporting.py": "90634bf8720b0d45ec217638d89b7e6a9b1ac635ebf720741ed5c873d6077815",
+    "published_covariance/study.py": "d8aec2df1ba2086c08be0adc2c8e7fc1061cc62868b2c89cd33f9a224adcf85d",
+    "published_covariance/training.py": "87b00d0400767ceed932eaa9ec751ec6a8c8f6c0a7acfe847dff418865ecc4c4"
+  },
+  "adaptations": [
+    "Portable runtime assets and source provenance",
+    "Existing cluster TensorFlow module with explicit legacy-MHA preflight",
+    "Slurm fit/evaluation barriers and serialized writes",
+    "Independent saved-prediction verification"
+  ]
+}

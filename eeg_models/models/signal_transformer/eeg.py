@@ -28,11 +28,21 @@ class SignalTransformer(SignalBackbone):
         super().__init__(options, metadata, tokenizer, window_samples=window_samples)
 
 
-class SignalTransformerTensor(SignalTransformer):
-    model_key = 'signal_transformer_tensor'
+class SignalTransformerFrozenCovariance(SignalTransformer):
+    model_key = 'signal_transformer_covariance_frozen'
 
-    def __init__(self, options, metadata, *, window_samples=250, tensor_options=None):
+    def __init__(self, options, metadata, *, window_samples=250, covariance_options=None):
         super().__init__(options, metadata, window_samples=window_samples)
-        from .._shared.tensor import Tucker2
-        self.signal_input.completion = Tucker2(
-            channels=metadata['channels'], features=window_samples, **(tensor_options or {}))
+        from .._shared.covariance import CovarianceCompletion
+        self.signal_input.completion = CovarianceCompletion(
+            channels=metadata['channels'], learned=False, **(covariance_options or {}))
+
+
+class SignalTransformerLearnedCovariance(SignalTransformer):
+    model_key = 'signal_transformer_covariance_learned'
+
+    def __init__(self, options, metadata, *, window_samples=250, covariance_options=None):
+        super().__init__(options, metadata, window_samples=window_samples)
+        from .._shared.covariance import CovarianceCompletion
+        self.signal_input.completion = CovarianceCompletion(
+            channels=metadata['channels'], learned=True, **(covariance_options or {}))

@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .venv/
 results/
+/output/
 *.log
 *.sbatch
 
@@ -22,6 +23,10 @@ results/
 *.ckpt
 *.slurm
 slurm-*.out
+# Downloaded published-model assets and generated validation checks.
+/assets/
+/scratch/
+*.h5
 # Anchor recording directories to the root; eeg_models/datasets/ is source code.
 /data/
 /datasets/

@@ -176,7 +176,7 @@ def make_mask_bank(
 ) -> np.ndarray:
     """Create a deterministic evaluation bank, shape [N,22,P], dtype bool.
 
-    Seed keys deliberately exclude model name and tensor variant.
+    Seed keys deliberately exclude model name and completion variant.
     Supply stable original-trial IDs to remain invariant to trial reordering.
     Nonfull subsets are disjoint across train/validation/test partitions.
     """
@@ -239,7 +239,12 @@ def availability_metadata(window_samples: int = 250) -> dict[str, object]:
             "native_gaps": "fixed GDF/run boundaries from original loading; never crossed by filtering",
             "filter_mode": "offline zero-phase, not causal inference",
         },
-        "evaluation_only": {"retained_counts": [16, 11, 6], "patterns": list(DEGRADED_PATTERNS)},
+        "evaluation": {"retained_counts": [16, 11, 6], "patterns": list(DEGRADED_PATTERNS)},
+        "learned_completion_calibration": {
+            "partition": "train", "retained_counts": [22, 16, 11, 6],
+            "patterns": list(DEGRADED_PATTERNS), "backbone_frozen": True,
+            "selection": "fixed final epoch; no degraded validation selection",
+        },
         "dynamic_schedule": "A for [0,P//3), B for [P//3,2*P//3), A thereafter",
         "dynamic_count": "exactly k observed electrodes in every window",
         "partition_disjointness": "canonical subset SHA256 modulo 3; full mask is shared exception",

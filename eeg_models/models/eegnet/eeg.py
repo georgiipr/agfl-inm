@@ -1,4 +1,4 @@
-"""The two concrete EEGNet models; MHA is part of their backbone."""
+"""EEGNet and two covariance variants; MHA is part of the backbone."""
 from .backbone import EEGNetBackbone
 
 
@@ -6,11 +6,21 @@ class EEGNet(EEGNetBackbone):
     model_key = 'eegnet'
 
 
-class EEGNetTensor(EEGNetBackbone):
-    model_key = 'eegnet_tensor'
+class EEGNetFrozenCovariance(EEGNetBackbone):
+    model_key = 'eegnet_covariance_frozen'
 
-    def __init__(self, options, metadata, *, window_samples=250, tensor_options=None):
+    def __init__(self, options, metadata, *, window_samples=250, covariance_options=None):
         super().__init__(options, metadata, window_samples=window_samples)
-        from .._shared.tensor import Tucker2
-        self.signal_input.completion = Tucker2(
-            channels=metadata['channels'], features=window_samples, **(tensor_options or {}))
+        from .._shared.covariance import CovarianceCompletion
+        self.signal_input.completion = CovarianceCompletion(
+            channels=metadata['channels'], learned=False, **(covariance_options or {}))
+
+
+class EEGNetLearnedCovariance(EEGNetBackbone):
+    model_key = 'eegnet_covariance_learned'
+
+    def __init__(self, options, metadata, *, window_samples=250, covariance_options=None):
+        super().__init__(options, metadata, window_samples=window_samples)
+        from .._shared.covariance import CovarianceCompletion
+        self.signal_input.completion = CovarianceCompletion(
+            channels=metadata['channels'], learned=True, **(covariance_options or {}))

@@ -87,8 +87,18 @@ def _validated_checkpoint(path: Path, payload: dict) -> None:
             or selected.get('identity') != payload['identity']
             or selected.get('model') != payload['model']
             or selected.get('checkpoint_sha256') != payload['checkpoint_sha256']
-            or selected.get('selection') != payload['selection']):
+            or selected.get('selection') != payload['selection']
+            or selected.get('backbone_checkpoint_sha256') != payload['backbone_checkpoint_sha256']
+            or selected.get('completion_fit') != payload['completion_fit']):
         raise ValueError('Selected checkpoint/record is missing or conflicts with the result')
+    if payload['model']['completion'] == 'covariance_learned':
+        fitting = _load(path.parent / 'completion_fit.json')
+        if fitting != payload['completion_fit']:
+            raise ValueError('Learned completion record differs from its checkpoint/result')
+        for name, field in (('completion_history.json', 'history_sha256'),
+                            ('completion_training.npz', 'schedule_sha256')):
+            if hashlib.sha256((path.parent / name).read_bytes()).hexdigest() != fitting[field]:
+                raise ValueError('Learned covariance history/schedule checksum mismatch')
 
 
 def _validated_result(
@@ -110,11 +120,29 @@ def _validated_result(
     if any(not _is_sha256(identity.get(key)) for key in IDENTITY_HASHES):
         raise ValueError("result identity needs dataset_fingerprint, split_id and calibration_sha256 hashes")
     if not isinstance(value.get("model"), dict) or any(
-        value["model"].get(key) != model[key] for key in ("name", "backbone", "tensor")
+        value["model"].get(key) != model[key] for key in ("name", "backbone", "completion")
     ):
         raise ValueError("result model does not match its declared configuration")
     if not _is_sha256(value.get('checkpoint_sha256')):
         raise ValueError('result lacks a selected-checkpoint checksum')
+    if not _is_sha256(value.get('backbone_checkpoint_sha256')):
+        raise ValueError('result lacks the shared full-channel backbone checksum')
+    completion_fit = value.get('completion_fit')
+    if model['completion'] == 'covariance_learned':
+        if (not isinstance(completion_fit, dict) or completion_fit.get('partition') != 'train'
+                or completion_fit.get('selection') != 'fixed_final_epoch'
+                or completion_fit.get('validation_used') is not False
+                or completion_fit.get('test_used') is not False
+                or completion_fit.get('backbone_unchanged') is not True
+                or completion_fit.get('full_input_unchanged') is not True
+                or type(completion_fit.get('epochs_trained')) is not int
+                or completion_fit['epochs_trained'] < 1
+                or completion_fit.get('selected_epoch') != completion_fit['epochs_trained']
+                or not _is_sha256(completion_fit.get('schedule_sha256'))
+                or not _is_sha256(completion_fit.get('history_sha256'))):
+            raise ValueError('Invalid train-only learned covariance calibration record')
+    elif completion_fit is not None:
+        raise ValueError('Only learned covariance may have supervised completion fitting')
     selection = value.get('selection')
     if (not isinstance(selection, dict)
             or selection.get('selection') != CHECKPOINT_SELECTION
@@ -193,12 +221,15 @@ def _run_table(records: dict, payloads: dict) -> list[dict]:
                 full = _scenario_scores(indexed, partition, "full_22")
                 row = {
                     "study_id": payload["study_id"], "subject": payload["subject"], "seed": payload["seed"],
-                    "model": model["name"], "backbone": model["backbone"], "tensor": model["tensor"],
+                    "model": model["name"], "backbone": model["backbone"], "completion": model["completion"],
                     "partition": partition, "scenario": scenario["name"], "pattern": scenario["pattern"],
                     "retained": scenario["retained"], "mask_repeats": len(cells),
                     "best_epoch": payload["selection"].get("best_epoch"),
                     "trainable_parameters": payload.get("trainable_parameters"),
                     "checkpoint_sha256": payload.get("checkpoint_sha256"),
+                    "backbone_checkpoint_sha256": payload['backbone_checkpoint_sha256'],
+                    "completion_fit_epochs": (payload['completion_fit']['epochs_trained']
+                                              if payload['completion_fit'] is not None else 0),
                     "elapsed_seconds": payload.get("elapsed_seconds"),
                     **{name: payload["identity"][name] for name in IDENTITY_HASHES},
                     "mask_sha256": ";".join(cell["mask_sha256"] for cell in cells),
@@ -224,7 +255,7 @@ def _subject_tables(records: dict, cfg: dict, declared_models: list[dict]) -> tu
                 for scenario in evaluation_scenarios():
                     row = {
                         "subject": subject, "model": model["name"],
-                        "backbone": model["backbone"], "tensor": model["tensor"], "partition": partition,
+                        "backbone": model["backbone"], "completion": model["completion"], "partition": partition,
                         "scenario": scenario["name"], "pattern": scenario["pattern"],
                         "retained": scenario["retained"], "complete": complete,
                         "seeds_completed": len(seed_records), "seeds_expected": len(cfg["seeds"]),
@@ -259,7 +290,7 @@ def _overall_tables(by_subject: dict, cfg: dict, declared_models: list[dict]) ->
                             for subject in cfg["subjects"]]
                 complete = all(item["complete"] for item in subjects)
                 row = {
-                    "model": model["name"], "backbone": model["backbone"], "tensor": model["tensor"],
+                    "model": model["name"], "backbone": model["backbone"], "completion": model["completion"],
                     "partition": partition, "scenario": scenario["name"],
                     "pattern": scenario["pattern"], "retained": scenario["retained"],
                     "complete": complete,
@@ -299,7 +330,7 @@ def _robustness_tables(by_subject: dict, cfg: dict, declared_models: list[dict])
                         })
                 complete = len(subject_values) == len(cfg["subjects"])
                 row = {
-                    "model": model["name"], "backbone": model["backbone"], "tensor": model["tensor"],
+                    "model": model["name"], "backbone": model["backbone"], "completion": model["completion"],
                     "partition": partition, "pattern": pattern, "retained_counts": "22;16;11;6",
                     "count_weights": "0.25;0.25;0.25;0.25", "complete": complete,
                     "subjects_completed": len(subject_values), "subjects_expected": len(cfg["subjects"]),
@@ -330,26 +361,32 @@ def _paired_tables(records: dict, cfg: dict, study_id: str) -> tuple[list[dict],
          "retained": "22;16;11;6", "names": ["full_22", *[f"{pattern}_{k}" for k in (16, 11, 6)]]}
         for pattern in DEGRADED_PATTERNS
     ]
+    comparisons = []
     for backbone in ('eegnet', 'signal_transformer'):
-        base_name, tensor_name = backbone, backbone + '_tensor'
-        if base_name not in cfg['models'] or tensor_name not in cfg['models']:
-            continue
+        frozen, learned = backbone + '_covariance_frozen', backbone + '_covariance_learned'
+        comparisons.extend((backbone, reference, comparison) for reference, comparison in
+                           ((backbone, frozen), (backbone, learned), (frozen, learned))
+                           if reference in cfg['models'] and comparison in cfg['models'])
+    for backbone, base_name, comparison_name in comparisons:
         paired = {}
         for subject, seed in tasks(cfg):
             base = records.get((subject, seed, base_name))
-            tensor = records.get((subject, seed, tensor_name))
-            if base is None or tensor is None:
+            comparison = records.get((subject, seed, comparison_name))
+            if base is None or comparison is None:
                 continue
-            mismatched = [key for key in base if any(base[key][field] != tensor[key][field]
+            mismatched = [key for key in base if any(base[key][field] != comparison[key][field]
                           for field in ('mask_sha256', 'input_sha256'))]
-            if mismatched:
+            full_conflict = any(abs(base[key][metric] - comparison[key][metric]) > 1e-12
+                                for key in base if key[1] == 'full_22' for metric in METRICS)
+            if mismatched or full_conflict:
                 issues.append({
                     "subject": subject, "seed": seed, "backbone": backbone,
-                    "reason": "baseline/tensor masks or preprocessed inputs differ; pair excluded from all paired tables",
+                    "reason": "paired masks, inputs or full-input scores differ; pair excluded from all paired tables",
+                    "reference_model": base_name, "comparison_model": comparison_name,
                     "mismatched_cells": [list(key) for key in mismatched],
                 })
                 continue
-            paired[(subject, seed)] = (base, tensor)
+            paired[(subject, seed)] = (base, comparison)
         for partition in PARTITIONS:
             for specification in specifications:
                 subject_differences = []
@@ -358,14 +395,14 @@ def _paired_tables(records: dict, cfg: dict, study_id: str) -> tuple[list[dict],
                         continue
                     seed_differences = []
                     for seed in cfg["seeds"]:
-                        base, tensor = paired[(subject, seed)]
+                        base, comparison = paired[(subject, seed)]
                         # First average repeats within each scenario, then
                         # count conditions, then seeds within the subject.
                         differences = []
                         for name in specification["names"]:
                             base_score = _scenario_scores(base, partition, name)
-                            tensor_score = _scenario_scores(tensor, partition, name)
-                            differences.append({metric: 100.0 * (tensor_score[metric] - base_score[metric])
+                            comparison_score = _scenario_scores(comparison, partition, name)
+                            differences.append({metric: 100.0 * (comparison_score[metric] - base_score[metric])
                                                 for metric in METRICS})
                         seed_differences.append({metric: _mean([value[metric] for value in differences])
                                                  for metric in METRICS})
@@ -374,7 +411,8 @@ def _paired_tables(records: dict, cfg: dict, study_id: str) -> tuple[list[dict],
                 complete = len(subject_differences) == len(subjects)
                 row = {
                     "backbone": backbone, "partition": partition,
-                    "baseline_model": base_name, "tensor_model": tensor_name,
+                    "reference_model": base_name, "comparison_model": comparison_name,
+                    "contrast": comparison_name + "_minus_" + base_name,
                     "kind": specification["kind"], "scenario": specification["scenario"],
                     "pattern": specification["pattern"], "retained": specification["retained"],
                     "complete": complete, "paired_subjects_completed": len(subject_differences),
@@ -407,9 +445,10 @@ def _summary_text(progress: dict, overall: list[dict], paired: list[dict]) -> st
         f"**{progress['completed_fits']}/{progress['expected_fits']} model runs complete.** "
         f"Status: {progress['status']}. Invalid results: {len(progress['invalid_results'])}. "
         f"Recorded unresolved error files: {progress['failed_fit_count']}.", '',
-        'Each model is trained end to end once on 22 channels. Full-channel validation alone selects '
-        'the checkpoint. Both validation and held-out test availability sweeps happen after selection; '
-        'degraded or test scores never fit factors, select epochs or change the protocol.', '',
+        'Each backbone is trained once on 22 channels and shared across its variants. Full-channel validation selects '
+        'the checkpoint. Learned covariance then receives fixed-budget train-only outage calibration through '
+        'the frozen backbone. Both validation and held-out test availability sweeps happen after all fitting. '
+        'Degraded validation and test scores never fit covariance or select weights.', '',
         f"Checkpoint rule: {progress['checkpoint_selection']}. Reported balanced accuracy is "
         'the primary evaluation metric, not the checkpoint criterion.', '',
         'Means average mask repeats, then seeds within each participant, then equally over all '
@@ -427,22 +466,22 @@ def _summary_text(progress: dict, overall: list[dict], paired: list[dict]) -> st
                 f"{_format(row['balanced_accuracy_subject_sd_pp'])} | "
                 f"{_format(row['accuracy_mean_percent'])} | {_format(row['f1_macro_mean_percent'])} |")
     lines += [
-        '', '## Paired tensor gains', '',
+        '', '## Paired completion gains', '',
         'Robustness equally weights 22, 16, 11 and 6 retained channels. Differences compare the '
-        'tensor model with its matching backbone using the same participant, seed, split, '
-        'calibration and mask bank. Positive gains favor tensor completion. All outcomes are retained.', '',
+        'completion variants with the baseline and learned covariance with frozen covariance using the same participant, seed, split, '
+        'calibration and mask bank. Positive gains favor the comparison model. All outcomes are retained.', '',
         'The pointwise 95% percentile intervals resample participants after averaging paired seed '
         'differences within each participant. They are exploratory, without multiple-comparison '
         'correction. No interval is reported for one participant.', '',
-        '| Backbone | Pattern | Paired subjects | Balanced accuracy gain (pp) | 95% CI (pp) | Accuracy gain (pp) |',
-        '|---|---|---:|---:|---|---:|',
+        '| Reference | Comparison | Pattern | Paired subjects | Balanced accuracy gain (pp) | 95% CI (pp) | Accuracy gain (pp) |',
+        '|---|---|---|---:|---:|---|---:|',
     ]
     for row in paired:
         if row['partition'] == 'test' and row['kind'] == 'robustness':
             low, high = row['balanced_accuracy_ci95_low_pp'], row['balanced_accuracy_ci95_high_pp']
             interval = 'unavailable' if low is None else f'[{low:.2f}, {high:.2f}]'
             lines.append(
-                f"| {row['backbone']} | {row['pattern']} | "
+                f"| {row['reference_model']} | {row['comparison_model']} | {row['pattern']} | "
                 f"{row['paired_subjects_completed']}/{row['subjects_expected']} | "
                 f"{_format(row['balanced_accuracy_gain_pp'])} | {interval} | "
                 f"{_format(row['accuracy_gain_pp'])} |")
@@ -452,11 +491,11 @@ def _summary_text(progress: dict, overall: list[dict], paired: list[dict]) -> st
         '- `accuracy_by_subject.csv`: seed-averaged participant results and degradation.',
         '- `accuracy_table.csv`: participant-averaged validation and test curves with subject SD.',
         '- `robustness_table.csv`: equally weighted 22/16/11/6-channel results per loss pattern.',
-        '- `paired_tensor_gain.csv`: tensor-minus-baseline comparisons and subject bootstrap intervals.',
+        '- `paired_completion_gain.csv`: covariance-minus-baseline and learned-minus-frozen comparisons and subject bootstrap intervals.',
         '- `progress.json`: declared models, missing/invalid runs, errors and pairing issues.',
         '- `plots/`: optional PNG/PDF validation/test availability curves and paired robustness figures.',
         '', 'Hidden-sample reconstruction NRMSE is secondary. It scores normalized EEG only after '
-        'inference and never enters fitting or checkpoint selection. Lower reconstruction error '
+        'evaluation; those validation/test targets never enter fitting or checkpoint selection. The learned variant uses hidden training targets only. Lower reconstruction error '
         'does not guarantee better classification. Missing NRMSE remains blank.', '',
     ]
     return "\n".join(lines)
@@ -508,13 +547,16 @@ def summarize(output: Path, cfg: dict, study_id: str) -> dict:
             mismatched_cells = [cell for cell in expected
                                 if len({(records[key][cell]['mask_sha256'], records[key][cell]['input_sha256'])
                                         for key in task_keys}) > 1]
-            if len(identities) <= 1 and not mismatched_cells:
+            backbone_conflict = any(len({payloads[key]['backbone_checkpoint_sha256'] for key in task_keys
+                                    if payloads[key]['model']['backbone'] == backbone}) > 1
+                                    for backbone in ('eegnet', 'signal_transformer'))
+            if len(identities) <= 1 and not mismatched_cells and not backbone_conflict:
                 continue
             # Neither the first model encountered nor the majority identifies the
             # correct provenance. Exclude the whole conflicting task explicitly.
             identity_conflicts.append({
                 "subject": subject, "seed": seed,
-                "reason": "models disagree on dataset/split/calibration, masks or inputs; entire task excluded",
+                "reason": "models disagree on data/split/calibration, masks, inputs or shared backbone; entire task excluded",
                 "mismatched_observation_cells": [list(cell) for cell in mismatched_cells],
                 "models": [{"model": key[2], **{name: payloads[key]["identity"][name]
                                            for name in IDENTITY_HASHES}} for key in task_keys],
@@ -558,12 +600,16 @@ def summarize(output: Path, cfg: dict, study_id: str) -> dict:
             "aggregation": "mean repeats, then seeds within each subject, then equally over all subjects",
             "primary_metric": "balanced_accuracy", "bootstrap_unit": "subject mean paired difference",
             "checkpoint_selection": "lowest full-input validation loss using training class weights; ties keep the earlier epoch",
+            "completion_selection": "fixed final calibration epoch; training signals/labels only; backbone frozen",
+            "expected_backbone_fits": len(tasks(cfg)) * len({model['backbone'] for model in declared_models}),
+            "expected_learned_completion_fits": len(tasks(cfg)) * sum(
+                model['completion'] == 'covariance_learned' for model in declared_models),
         }
         _write_csv(report / "accuracy_by_run.csv", by_run)
         _write_csv(report / "accuracy_by_subject.csv", by_subject)
         _write_csv(report / "accuracy_table.csv", overall)
         _write_csv(report / "robustness_table.csv", robustness)
-        _write_csv(report / "paired_tensor_gain.csv", paired)
+        _write_csv(report / "paired_completion_gain.csv", paired)
         _atomic_text(report / "summary.md", _summary_text(progress, overall, paired))
         # Publish progress last so it serves as a completion marker for this refresh.
         _write_json(report / "progress.json", progress)

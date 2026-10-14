@@ -26,7 +26,7 @@ class SignalInput(nn.Module):
         if not bool(mask.any(dim=1).all()):
             raise ValueError('Every window must retain at least one electrode')
         # Keep the original full-channel tensor and computation route, including
-        # in tensor variants: no reshape/selection or completion on this path.
+        # in covariance variants: no reshape/selection or completion on this path.
         if bool(mask.all()):
             if not bool(torch.isfinite(raw).all()):
                 raise ValueError('Observed EEG contains nonfinite samples')
@@ -36,7 +36,7 @@ class SignalInput(nn.Module):
         if not bool(torch.isfinite(observed).all()):
             raise ValueError('Observed EEG contains nonfinite samples')
         # The full-channel training/validation path is an exact pass-through.
-        # Baselines replace missing normalized samples with zero. Tensor models
+        # Baselines replace missing normalized samples with zero. Covariance models
         # fill only missing entries; hidden reference values never enter a solve.
         if self.completion is not None:
             observed = self.completion.complete(observed, mask)

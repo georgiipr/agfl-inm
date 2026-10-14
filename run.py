@@ -1,15 +1,15 @@
-"""Entry point for the four-model channel-availability study."""
+"""Entry point for the covariance channel-availability study."""
 from __future__ import annotations
 import argparse
 from inm.protocol import load_config, models, tasks
 
 
 def main():
-    parser = argparse.ArgumentParser(description='EEGNet / Signal Transformer, each with and without tensors; built-in MHA')
+    parser = argparse.ArgumentParser(description='EEGNet / Signal Transformer, alone or with frozen/learned covariance; fixed MHA')
     parser.add_argument('--config', default='configs/study.json')
     parser.add_argument('--plots', action='store_true', help='Saved-table plots with --summarize-only')
     operation = parser.add_mutually_exclusive_group(required=True)
-    operation.add_argument('--task-index', type=int, help='Participant/seed task; each trains the configured models once')
+    operation.add_argument('--task-index', type=int, help='Participant/seed task; train each backbone once, calibrate and evaluate variants')
     operation.add_argument('--task-count', action='store_true', help='Print the declared participant/seed task count')
     operation.add_argument('--summarize-only', action='store_true')
     operation.add_argument('--plan', action='store_true', help='Print the declared models and tasks without training')
@@ -23,7 +23,11 @@ def main():
         print('Models: ' + ', '.join(cfg['models']))
         for index, (subject, seed) in enumerate(tasks(cfg)):
             print(f'{index}: A{subject:02d}, seed={seed}, model runs={len(models(cfg))}')
-        print(f'Total model runs: {len(tasks(cfg)) * len(models(cfg))}; train on 22 channels once per run')
+        backbones = {model['backbone'] for model in models(cfg)}
+        learned = sum(model['completion'] == 'covariance_learned' for model in models(cfg))
+        print(f'Total model evaluations: {len(tasks(cfg)) * len(models(cfg))}; '
+              f'full-channel backbone fits: {len(tasks(cfg)) * len(backbones)}; '
+              f'train-only learned covariance fits: {len(tasks(cfg)) * learned}')
     elif args.summarize_only:
         from inm.study import summarize_existing
         result = summarize_existing(cfg)

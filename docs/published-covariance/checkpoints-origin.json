@@ -1,0 +1,32 @@
+{
+  "repository": "https://github.com/Altaheri/EEG-ATCNet",
+  "revision": "65162fb359ea46a2f62c885a9987247ab491ee7a",
+  "download_utc": "2026-10-06T14:16:29.820532+00:00",
+  "files": {
+    "attention_models.py": "c118372098138f6503266ed9973b33b57fed90dcaa5c6730ce854201348452c7",
+    "models.py": "d64ba0cadbad664f69342ef4b946465af472f6bcce2c231a59b5f4adcdf17b2c",
+    "README.md": "9737ce0f25e46646cf25ddf831178a0a96577be3f152f5ce276013ea959f46ec",
+    "main_TrainTest.py": "f5dff689a81086b8f80fe4b2df15a7fdf12aae878380049461646e6d10223d0c",
+    "preprocess.py": "44361ca8a5697abb695ee139af2bd0b9e303f7cd2ef699032fcf9f949d690e5e",
+    "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "preprocess_HGD.py": "4f7b84bc27c5d39f477bd86e60dd0aa1ee82185fbab81e175080aea519e8ca05",
+    "main_TrainValTest.py": "9d99abb3a3c88a1cf2df2462ecdae572c7a13a06dbda1550d5555e48bcbb5cfa",
+    "results/log.txt": "2bb7d682d7492e8adedb683708befea52569b112a22b28815d41c92e3fb33990",
+    "results/best models.txt": "2b252623d732b1c57f0074a18a52f08af3fb1ff956eb88c7b1fc1cad52a6542f",
+    "results/subject_All.png": "04a6f47b68430634e563ee4046c0a335b2341ac3a53099571cc52383b89a2713",
+    "docs/ATCNet_poster_1.pdf": "fa39718e324e7408d4b78612cb25ffd42c2e4801e4d7815a00f7166dfa6f72c2",
+    "docs/ATCNet paper - All_TII-22-2210.R1.pdf": "3c5dc88b9c1b2f4722177486baf90d2ee6522f8b7d7415981f544e4bd0f2bfcd",
+    "docs/ATCNet_poster.pdf": "45319045c336ad9ea86f46b5d43379f6d35118c81b2a991a39d76b48ecc143c8",
+    "docs/D-ATCNet_poster.pdf": "ab33d6c75f2c828015d8cd1f72ac80833beb8e6ebf47258f18f2c2956410524e",
+    "docs/D-ATCNet paper - IoT-25991-2022.R1.pdf": "f3da81e4275c93f11b532deceab4074246cce931fca32bc28f801eb06a45abae",
+    "results/saved models/run-1/subject-5.h5": "685da44928c8c0d57dcd9247016b0a48f09af02e041a923596ff5c5077c1aeee",
+    "results/saved models/run-1/subject-8.h5": "86ba692320a1d057b116b9a88f9b1de966ae7f93487bfc05d097fd87e18363c7",
+    "results/saved models/run-1/subject-9.h5": "46bc137b2b6e34e6ecdc092099918b2c2fd322830786bdbfc93d6f0ea7c97ba8",
+    "results/saved models/run-1/subject-7.h5": "a9cb9da09f0b52f331fdcdd47899a7eec3affa4d4a3cfd674e2e8c4ac85f0866",
+    "results/saved models/run-1/subject-1.h5": "15a6a6cd7454d4d5b1b59adfe1d9636140fb0bd5a5e0f42adafadb4a36e9b1fd",
+    "results/saved models/run-1/subject-6.h5": "ddfffffa081e197b4e5117c24a186a056a74a358cc4f81f436864ae34b16be3d",
+    "results/saved models/run-1/subject-2.h5": "e9a26fca0e07a82b1374ffbdeedf3bf8d16ba67a39603d39160613a54590171d",
+    "results/saved models/run-1/subject-3.h5": "acec4e58ac81d0df72c89e1910aca444cda11a8c76465780b709c318925c2e9b",
+    "results/saved models/run-1/subject-4.h5": "87a3e5973b35d6e81500f6d134669a6dda16eeca41e24a90da7cbc757f457b92"
+  }
+}

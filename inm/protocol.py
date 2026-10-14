@@ -1,4 +1,4 @@
-"""Four-model study configuration, atomic records and source provenance."""
+"""Covariance study configuration, atomic records and source provenance."""
 from __future__ import annotations
 from copy import deepcopy
 import hashlib
@@ -9,7 +9,7 @@ from eeg_models.models import MODEL_KEYS, model_definition
 from eeg_models.config import merge
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 CHECKPOINT_SELECTION = 'validation_loss'
 
 
@@ -35,7 +35,8 @@ def source_identity():
     import platform
     import torch
     files = sorted([*ROOT.glob('*.py'), *(ROOT / 'eeg_models').rglob('*.py'),
-                    *(ROOT / 'inm').rglob('*.py'), *(ROOT / 'configs').rglob('*.json')])
+                    *(ROOT / 'inm').rglob('*.py'), *(ROOT / 'tests').rglob('*.py'),
+                    *(ROOT / 'configs').rglob('*.json')])
     hashes = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     versions = {name: importlib.metadata.version(name)
                 for name in ('torch', 'numpy', 'scipy', 'scikit-learn', 'mne', 'tqdm')}
@@ -92,9 +93,9 @@ def _number(value, name, *, minimum=0, strict=False):
 def load_config(path):
     cfg, sources = _read_preset(path)
     required = {'schema_version', 'name', 'subjects', 'seeds', 'data', 'split', 'models',
-                'model_options', 'training', 'tensor', 'availability', 'mask_repeats', 'bootstrap_repeats', 'output_dir'}
+                'model_options', 'training', 'covariance', 'availability', 'mask_repeats', 'bootstrap_repeats', 'output_dir'}
     if set(cfg) != required or cfg['schema_version'] != SCHEMA_VERSION:
-        raise ValueError('Use the four-model schema in configs/study.json; older studies need a separate output directory.')
+        raise ValueError('Use the covariance schema in configs/study.json; older studies need a separate output directory.')
     if (not cfg['subjects'] or len(set(cfg['subjects'])) != len(cfg['subjects'])
             or any(type(s) is not int or not 1 <= s <= 9 for s in cfg['subjects'])):
         raise ValueError('subjects must be unique integers in 1..9')
@@ -104,7 +105,7 @@ def load_config(path):
     if not cfg['models'] or len(set(cfg['models'])) != len(cfg['models']) or not set(cfg['models']) <= set(MODEL_KEYS):
         raise ValueError(f'models must be a nonempty unique selection from {MODEL_KEYS}')
     if set(cfg['model_options']) != {'eegnet', 'signal_transformer'}:
-        raise ValueError('model_options must describe the two backbones, shared by their tensor variants')
+        raise ValueError('model_options must describe the two backbones, shared by their covariance variants')
     data = cfg['data']
     if (data['filter_scope'] != 'run' or data['sessions'] != ['T']
             or data['normalization'] != 'train_channel'):
@@ -125,13 +126,27 @@ def load_config(path):
         raise ValueError('Change protocol version explicitly before changing the split design')
     for key in ('mask_repeats', 'bootstrap_repeats'):
         _positive(cfg[key], key)
-    tensor = cfg['tensor']
-    for key in ('rank_channels', 'rank_features', 'fit_epochs', 'fit_batch_size'):
-        _positive(tensor[key], f'tensor.{key}')
-    if tensor['rank_channels'] > 22 or tensor['rank_features'] > window_samples:
-        raise ValueError('Tensor ranks exceed the signal dimensions')
-    for key in ('ridge', 'fit_lr'):
-        _number(tensor[key], f'tensor.{key}', strict=True)
+    covariance = cfg['covariance']
+    if set(covariance) != {'ridge_scale', 'initialization_jitter', 'diagonal_floor', 'learned'}:
+        raise ValueError('Use the declared covariance settings in configs/study.json')
+    for key in ('ridge_scale', 'initialization_jitter', 'diagonal_floor'):
+        _number(covariance[key], f'covariance.{key}', strict=True)
+    learned = covariance['learned']
+    if set(learned) != {'epochs', 'batch_size', 'learning_rate', 'reconstruction_weight',
+                        'anchor_weight', 'gradient_clip', 'seed_offset', 'selection',
+                        'training_retained_counts', 'training_patterns'}:
+        raise ValueError('Unexpected learned-covariance training settings')
+    for key in ('epochs', 'batch_size'):
+        _positive(learned[key], f'covariance.learned.{key}')
+    _positive(learned['seed_offset'], 'covariance.learned.seed_offset', zero=True)
+    for key in ('learning_rate', 'gradient_clip'):
+        _number(learned[key], f'covariance.learned.{key}', strict=True)
+    for key in ('reconstruction_weight', 'anchor_weight'):
+        _number(learned[key], f'covariance.learned.{key}')
+    if (learned['selection'] != 'fixed_final_epoch'
+            or learned['training_retained_counts'] != [22, 16, 11, 6]
+            or learned['training_patterns'] != ['random_static', 'spatial_static', 'dynamic_random', 'dynamic_spatial']):
+        raise ValueError('Learned covariance uses fixed train-only fitting and all declared outage families')
     options = cfg['training']
     for key in ('epochs', 'batch_size'):
         _positive(options[key], f'training.{key}')

@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "experiment": "q2",
+  "study_id": "atcnet-reduced-channel-distilled-v1",
+  "subjects": [
+    "A01",
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "A07",
+    "A08",
+    "A09"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "retained_counts": [
+    16,
+    6
+  ],
+  "mask_repeats": 5,
+  "mask_namespace": "published-checkpoint-covariance-v1",
+  "normalization": "student:T-train-only; teacher:historical-all-T",
+  "selection": "maximum validation BA; lower log loss; earlier epoch",
+  "training": {
+    "optimizer": "Adam",
+    "learning_rate": 0.001,
+    "betas": [0.9, 0.999],
+    "epsilon": 1e-08,
+    "batch_size": 64,
+    "gradient_clip_global_norm": 1.0,
+    "max_epochs": 500,
+    "min_epochs": 100,
+    "patience": 100,
+    "native_regularizers": true
+  },
+  "distillation": {
+    "enabled": true,
+    "weight": 0.5,
+    "temperature": 4.0
+  },
+  "bootstrap": {
+    "draws": 2000,
+    "seed": 20261006,
+    "unit": "participant"
+  },
+  "output": "results/q2-atcnet-selected-channels-v1",
+  "backend_sha256": {
+    "published_covariance/data.py": "ccdbc010d7f7ea88d381fd776f7bb546dd8885c60214f46431f3420a4d1cd96c",
+    "published_covariance/masks.py": "ba31b56532a10734341a44d7f790fddf42c3fc26d7b3d1d1fcea7398eacce024",
+    "published_covariance/atcnet_native.py": "5d8e966818ae8fbe909fb7b24cdde7737db6dc8ece9e6e45a571e91c8f8331e7",
+    "published_covariance/tf_compat.py": "9ffad28f481844092c2394a541a2855fedbf50202e56d677f4872ca5fc2821a4",
+    "published_covariance/classifier.py": "bbca358fbf1a7c70bf68017535aa00754ec437c70500aaebe51a2d2dc251395f",
+    "published_covariance/assets.py": "8992d6dc21bd87fafea284335c24203e040227adbb7a31ce9299f934d27573e9",
+    "published_covariance/preflight.py": "bd7ef6c547c5e868f5cec1e3873096f0f3a66d0cf2a11115312a307953cc39a3"
+  }
+}

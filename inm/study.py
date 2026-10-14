@@ -1,4 +1,4 @@
-"""Train each full-trial model once; sweep availability after epoch selection."""
+"""Share selected backbones, calibrate covariance, then sweep availability."""
 from __future__ import annotations
 import fcntl
 import hashlib
@@ -8,14 +8,14 @@ import traceback
 import numpy as np
 import torch
 from eeg_models.datasets.splits import get_split
-from eeg_models.models import build_model
+from eeg_models.models import build_model, model_definition
 from eeg_models.reproducibility import seed_everything
 from eeg_models.storage import run_directory
 from .availability import (CHANNEL_IDS, availability_metadata, evaluation_scenarios,
                            make_mask_bank, mask_bank_digest)
 from .data import load_subject
 from .protocol import SCHEMA_VERSION, digest, models, n_windows, read_json, source_identity, task_name, tasks, write_json
-from eeg_models.models._shared.tensor import Tucker2
+from eeg_models.models._shared.covariance import training_second_moment
 from .training import fit, metrics, predict
 
 
@@ -75,12 +75,8 @@ def _register_dataset(output, subject, bundle):
         write_json(output / 'report' / 'datasets.json', records)
 
 
-def _full(n, windows):
-    return torch.ones(n, 22, windows, dtype=torch.bool)
-
-
-def _calibrate(cfg, bundle, split, directory, identity, seed, device):
-    """Fit train-only signal statistics and shared raw-window Tucker factors.
+def _calibrate(cfg, bundle, split, directory, identity):
+    """Fit train-only signal statistics and one shared channel second moment.
 
     No classifier or encoder is fitted here. Both backbones remain trainable
     end to end; paired variants share exactly the same data calibration.
@@ -102,23 +98,18 @@ def _calibrate(cfg, bundle, split, directory, identity, seed, device):
     std = np.maximum(bundle.x[train].std(axis=(0, 2), keepdims=True, dtype=np.float64), 1e-8).astype(np.float32)
     raw = torch.from_numpy(((bundle.x - mean) / std).astype(np.float32))
     stage = {'identity': identity, 'raw_mean': torch.from_numpy(mean),
-             'raw_std': torch.from_numpy(std), 'tensor': None}
-    if any(model['tensor'] for model in models(cfg)):
-        _seed(seed)
-        tensor = Tucker2(channels=22, features=cfg['availability']['window_samples'], **cfg['tensor']).to(device)
-        train_windows = raw[train].reshape(len(train), 22, n_windows(cfg), -1).to(device)
-        print(f'{directory.name}: fitting train-only Tucker signal factors', flush=True)
-        history = tensor.fit(train_windows, _full(len(train), n_windows(cfg)).to(device))
-        write_json(directory / 'factor_history.json', history)
-        stage['tensor'] = tensor.cpu().state_dict()
-        del tensor, train_windows
+             'raw_std': torch.from_numpy(std), 'second_moment': None}
+    if any(model['completion'] != 'none' for model in models(cfg)):
+        print(f'{directory.name}: fitting train-only channel covariance', flush=True)
+        stage['second_moment'] = training_second_moment(raw[train], partition='train')
     save_torch(cache, stage)
     checksum = file_sha256(cache)
     write_json(record, {'identity': identity, 'cache_sha256': checksum,
-                       'calibration': 'training-only channel statistics and raw-window Tucker factors; no frozen encoder',
+                       'calibration': 'training-only channel normalization and channel second moment',
                        'raw_mean': mean.tolist(), 'raw_std': std.tolist(),
-                       'tensor_fitted': stage['tensor'] is not None,
-                       'tensor_input': [22, n_windows(cfg), cfg['availability']['window_samples']]})
+                       'covariance_fitted': stage['second_moment'] is not None,
+                       'training_trials': len(train),
+                       'input_windows': [22, n_windows(cfg), cfg['availability']['window_samples']]})
     return raw, stage, checksum
 
 
@@ -139,10 +130,10 @@ def _evaluation_banks(cfg, bundle, split, subject, seed):
 
 
 @torch.no_grad()
-def _reconstruction_scores(tensor, raw, bundle, split, banks, stage, cfg, device):
+def _reconstruction_scores(completer, raw, bundle, split, banks, stage, cfg, device):
     """Hidden reference samples are targets ONLY for post-fit scoring."""
     scores = {}
-    tensor.to(device)
+    completer.to(device)
     for row, mask in banks:
         key = (row['partition'], row['scenario'], row['mask_repeat'])
         if row['retained'] == 22:
@@ -157,12 +148,11 @@ def _reconstruction_scores(tensor, raw, bundle, split, banks, stage, cfg, device
                                                                             cfg['availability']['window_samples'])
             available = mask[start:start + batch_size].to(device)
             observed = observed_input[start:start + batch_size].to(device).reshape_as(truth)
-            estimate = tensor.reconstruct(observed, available)
+            estimate = completer.complete(observed, available)
             hidden = ~available[..., None]
             denominator += float(torch.where(hidden, truth.double().square(), 0.).sum())
             numerator += float(torch.where(hidden, (estimate.double() - truth.double()).square(), 0.).sum())
         scores[key] = (numerator / denominator) ** .5 if denominator > 0 else None
-    tensor.cpu()
     return scores
 
 
@@ -197,8 +187,48 @@ def _valid_result(path, identity, model, cfg):
     return True
 
 
+def _backbone_or_restore(directory, identity, definition, cfg, raw, bundle, split, seed, device):
+    """One selected full-channel fit shared by every variant of this backbone."""
+    backbone = definition['backbone']
+    base_definition = model_definition(backbone)
+    base_dir = directory.parent.parent / 'BACKBONES' / backbone
+    base_dir.mkdir(parents=True, exist_ok=True)
+    checkpoint, record = base_dir / 'checkpoint.pt', base_dir / 'checkpoint.json'
+    if checkpoint.is_file() and record.is_file():
+        saved = read_json(record)
+        checksum = file_sha256(checkpoint)
+        if (saved.get('identity') != identity or saved.get('model') != base_definition
+                or saved.get('checkpoint_sha256') != checksum):
+            raise RuntimeError('Shared backbone identity/checksum mismatch')
+        payload = torch.load(checkpoint, map_location='cpu', weights_only=False)
+        if payload['identity'] != identity or payload['model'] != base_definition:
+            raise RuntimeError('Shared backbone payload identity mismatch')
+        if saved.get('history_sha256') != file_sha256(base_dir / 'history.json'):
+            raise RuntimeError('Shared backbone history checksum mismatch')
+        return payload, checksum, base_dir
+    _seed(seed)
+    base = build_model(backbone, bundle.metadata, cfg['model_options'][backbone],
+                       window_samples=cfg['availability']['window_samples'])
+    try:
+        train, val = split['train'], split['validation']
+        selection = fit(base, raw[train], bundle.y[train], raw[val], bundle.y[val], cfg['training'],
+                        seed=seed, device=device, history_path=base_dir / 'history.json',
+                        description=backbone)
+        payload = {'identity': identity, 'model': base_definition, 'selection': selection,
+                   'state_dict': {key: value.detach().cpu().clone() for key, value in base.state_dict().items()}}
+        save_torch(checkpoint, payload)
+        checksum = file_sha256(checkpoint)
+        write_json(record, {'identity': identity, 'model': base_definition, 'selection': selection,
+                            'checkpoint_sha256': checksum,
+                            'history_sha256': file_sha256(base_dir / 'history.json')})
+        return payload, checksum, base_dir
+    finally:
+        base.cpu()
+        del base
+
+
 def _train_or_restore(model, directory, identity, definition, cfg, raw, bundle, split, stage, seed, device):
-    """A saved selected checkpoint avoids retraining if evaluation was interrupted."""
+    """Restore a completed variant or reuse the matched selected backbone."""
     checkpoint, record = directory / 'checkpoint.pt', directory / 'checkpoint.json'
     if checkpoint.is_file() and record.is_file():
         saved = read_json(record)
@@ -208,23 +238,45 @@ def _train_or_restore(model, directory, identity, definition, cfg, raw, bundle, 
         payload = torch.load(checkpoint, map_location='cpu', weights_only=False)
         if payload['identity'] != identity or payload['model'] != definition:
             raise RuntimeError('Checkpoint payload identity mismatch')
+        from .reporting import _validated_checkpoint
+        _validated_checkpoint(directory / 'result.json',
+                              {**payload, 'checkpoint_sha256': saved['checkpoint_sha256']})
         model.load_state_dict(payload['state_dict'])
         model.to(device).eval()
-        return payload['selection'], saved['checkpoint_sha256']
-    train, val = split['train'], split['validation']
-    selection = fit(model, raw[train], bundle.y[train], raw[val], bundle.y[val], cfg['training'],
-                    seed=seed, device=device,
-                    history_path=directory / 'history.json', description=definition['name'])
+        if definition['completion'] == 'covariance_learned':
+            model.signal_input.completion.free.requires_grad_(False)
+        return payload['selection'], saved['checkpoint_sha256'], payload['backbone_checkpoint_sha256'], payload['completion_fit']
+    backbone, backbone_hash, base_dir = _backbone_or_restore(
+        directory, identity, definition, cfg, raw, bundle, split, seed, device)
+    incompatible = model.load_state_dict(backbone['state_dict'], strict=False)
+    prefix = 'signal_input.completion.'
+    if incompatible.unexpected_keys or any(not key.startswith(prefix) for key in incompatible.missing_keys):
+        raise RuntimeError('Variant does not match its shared backbone')
+    selection = backbone['selection']
+    (directory / 'history.json').write_bytes((base_dir / 'history.json').read_bytes())
+    model.to(device).eval()
+    completion_fit = None
+    if definition['completion'] == 'covariance_learned':
+        from .completion_training import fit_completion
+        train = split['train']
+        _seed((seed + cfg['covariance']['learned']['seed_offset']) % (2**31))
+        completion_fit = fit_completion(
+            model, raw[train], bundle.y[train], [bundle.sample_ids[i] for i in train],
+            lambda mask: _observed_input(bundle, train, mask, stage, cfg, raw), cfg,
+            subject=identity['subject'], seed=seed, device=device, directory=directory,
+            partition='train')
     payload = {'identity': identity, 'model': definition, 'selection': selection,
                'state_dict': {key: value.detach().cpu().clone() for key, value in model.state_dict().items()},
-               'model_options': cfg['model_options'][definition['backbone']], 'tensor_options': cfg['tensor'],
+               'backbone_checkpoint_sha256': backbone_hash, 'completion_fit': completion_fit,
+               'model_options': cfg['model_options'][definition['backbone']], 'covariance_options': cfg['covariance'],
                'window_samples': cfg['availability']['window_samples'], 'metadata': bundle.metadata,
                'raw_mean': stage['raw_mean'], 'raw_std': stage['raw_std']}
     save_torch(checkpoint, payload)
     checksum = file_sha256(checkpoint)
     write_json(record, {'identity': identity, 'model': definition, 'selection': selection,
-                        'checkpoint_sha256': checksum})
-    return selection, checksum
+                        'checkpoint_sha256': checksum, 'backbone_checkpoint_sha256': backbone_hash,
+                        'completion_fit': completion_fit})
+    return selection, checksum, backbone_hash, completion_fit
 
 
 def _run_models(cfg, output, study_id, directory, subject, seed, device):
@@ -238,10 +290,9 @@ def _run_models(cfg, output, study_id, directory, subject, seed, device):
     write_json(directory / 'dataset.json', bundle.metadata)
     identity = {'study_id': study_id, 'subject': subject, 'seed': seed,
                 'dataset_fingerprint': bundle.fingerprint, 'split_id': split['split_id']}
-    raw, stage, checksum = _calibrate(cfg, bundle, split, directory, identity, seed, device)
+    raw, stage, checksum = _calibrate(cfg, bundle, split, directory, identity)
     identity = {**identity, 'calibration_sha256': checksum}
     banks = _evaluation_banks(cfg, bundle, split, subject, seed)
-    reconstruction = None
     failures = []
     definitions = models(cfg)
     for number, definition in enumerate(definitions, 1):
@@ -256,25 +307,23 @@ def _run_models(cfg, output, study_id, directory, subject, seed, device):
                 continue
             if digest({'config': cfg, 'source': source_identity()}) != study_id:
                 raise RuntimeError('Source/environment changed during the study; use a new output directory.')
-            # Matched baseline/tensor initialization and batch order. Completion
-            # adds only buffers and is bypassed on all full-channel training batches.
+            # All variants reuse one full-channel selected backbone. Covariance
+            # construction consumes no RNG and full inputs bypass completion.
             _seed(seed)
             print(f'{directory.name} model {number}/{len(definitions)}: {definition["name"]}', flush=True)
             write_json(model_dir / 'config.json', {'identity': identity, 'model': definition, 'config': cfg})
             model = build_model(definition['name'], bundle.metadata,
                                 cfg['model_options'][definition['backbone']],
-                                window_samples=cfg['availability']['window_samples'], tensor_options=cfg['tensor'])
-            if definition['tensor']:
-                model.signal_input.completion.load_state_dict(stage['tensor'])
-            selection, checkpoint_hash = _train_or_restore(model, model_dir, identity, definition, cfg, raw,
-                                                           bundle, split, stage, seed, device)
+                                window_samples=cfg['availability']['window_samples'],
+                                covariance_options={key: value for key, value in cfg['covariance'].items() if key != 'learned'})
+            if definition['completion'] != 'none':
+                model.signal_input.completion.initialize(stage['second_moment'], partition='train')
+            selection, checkpoint_hash, backbone_hash, completion_fit = _train_or_restore(
+                model, model_dir, identity, definition, cfg, raw, bundle, split, stage, seed, device)
             # Everything is fitted/selected before the degraded sweep. Test
-            # labels are read only by metrics, never by training or factor fitting.
-            if definition['tensor'] and reconstruction is None:
-                tensor = Tucker2(channels=22, features=cfg['availability']['window_samples'], **cfg['tensor'])
-                tensor.load_state_dict(stage['tensor'])
-                reconstruction = _reconstruction_scores(tensor, raw, bundle, split, banks, stage, cfg, device)
-                del tensor
+            # labels are read only by metrics, never by covariance fitting.
+            reconstruction = (_reconstruction_scores(model.signal_input.completion, raw, bundle, split,
+                              banks, stage, cfg, device) if definition['completion'] != 'none' else None)
             rows = []
             for row, mask in banks:
                 indices = split[row['partition']]
@@ -283,12 +332,13 @@ def _run_models(cfg, output, study_id, directory, subject, seed, device):
                 key = (row['partition'], row['scenario'], row['mask_repeat'])
                 input_hash = hashlib.sha256(memoryview(observed.numpy()).cast('B')).hexdigest()
                 rows.append({**row, 'input_sha256': input_hash, **metrics(bundle.y[indices], probabilities),
-                             'reconstruction_nrmse': reconstruction[key] if definition['tensor'] else None})
+                             'reconstruction_nrmse': reconstruction[key] if reconstruction is not None else None})
             if digest({'config': cfg, 'source': source_identity()}) != study_id:
                 raise RuntimeError('Source/environment changed during this model run; no complete result published.')
             result = {'schema_version': SCHEMA_VERSION, 'status': 'complete', 'study_id': study_id, 'identity': identity,
                       'subject': subject, 'seed': seed, 'model': definition, 'selection': selection,
                       'metrics': rows, 'checkpoint_sha256': checkpoint_hash,
+                      'backbone_checkpoint_sha256': backbone_hash, 'completion_fit': completion_fit,
                       'token_axis': model.token_axis, 'attention_tokens': model.num_tokens,
                       'trainable_parameters': sum(p.numel() for p in model.parameters() if p.requires_grad),
                       'elapsed_seconds': time.monotonic() - started}

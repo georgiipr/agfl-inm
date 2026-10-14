@@ -52,7 +52,7 @@ class SignalBackbone(nn.Module):
         tokens = self.tokenizer(raw) + self.position
         # A token summarizes the full trial of one electrode. A channel with
         # any observed window is a key; an entirely absent channel is not.
-        # The same rule applies to measured and tensor-completed inputs.
+        # The same rule applies to measured and covariance-completed inputs.
         padding = None if mask is None else ~mask.any(dim=2)
         for block in self.blocks:
             tokens = block(tokens, padding)

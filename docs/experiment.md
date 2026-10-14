@@ -1,132 +1,126 @@
 # Experiment pipeline
 
-The full preset is `configs/study.json`: four models, nine individually trained
-participants, three seeds, **108 end-to-end training runs**. A task owns one
-participant/seed and runs its selected models sequentially. `pilot.json` has one
-seed (36 runs); `debug.json` has EEGNet on three participants, one seed and
-12 epochs (3 runs). Presets
-inherit the full configuration and use distinct output directories.
-`smoke.json` runs all four model paths on one participant with the short debug
-budget (4 runs), exercising both tensor paths before a full run.
+Schema v6 retains the two fixed-MHA backbones, each alone, with frozen covariance,
+and with learned covariance. The full preset has nine participants, three seeds
+and six variants: **162 variant evaluations**, **54 backbone fits** and **54
+learned covariance calibrations**. A task owns one participant/seed and processes
+its variants sequentially.
 
-The two EEGNet-only comparisons retain EEGNet and EEGNet with tensors:
-`eegnet_3subjects.json` uses A03/A04/A09 (6 fits), and
-`eegnet_all_subjects.json` uses all nine participants (18 fits). Both use seed 0,
-batch size 64, weight decay 0.001 and the restored 500-epoch recipe. They have
-separate output directories, calibration records, selected checkpoints and
-reports. Each comparison trains
-its own declared participants; the nine-participant report does not pool results
-from a different experiment.
+| Next EEGNet preset | Participants | Seed | Backbone fits | Learned fits | Variant evaluations |
+|---|---|---:|---:|---:|---:|
+| `eegnet_3subjects.json` | A03/A04/A09 | 0 | 3 | 3 | 9 |
+| `eegnet_all_subjects.json` | All nine | 0 | 9 | 9 | 27 |
 
-## Data and fitting
+These independent experiments use separate output directories and reports.
+The all-nine experiment trains all nine again; it does not pool pilot artifacts.
+Debug uses one baseline on three participants. Smoke exercises all six paths
+on one participant with 12 backbone epochs, three calibration epochs and one
+mask repeat; its scores are only for workflow debugging.
 
-Load cue-aligned four-second T-session trials from BCI IV 2a, include marked
-artifact trials as in the original baseline, and retain the canonical 22 EEG
-channels at 250 Hz. Artifact counts remain recorded. Four one-second
-availability windows describe masks and tensor axes. Full inputs use the
-original 2–30 Hz zero-phase run-level bandpass before trial extraction,
-including native GDF gaps and run boundaries. Each model receives the entire
-trial, with ordered temporal information.
+## Data and backbone fitting
 
-For each degraded trial, remove hidden raw intervals before filtering. Each
-electrode is processed independently over its remaining contiguous observed
-spans. Synthetic outages apply within the cue-aligned trial; outside-trial
-recording context remains observed. Native gaps and run boundaries are retained.
-Electrodes observed throughout the trial reuse the original filtered input.
-Partial-electrode views are cached by trial, electrode and availability schedule
-and reused across scenarios and models. This preserves the historical full-input
-preprocessing without allowing hidden intervals into observed degraded inputs.
+Keep the restored v5 design: cue-aligned four-second BCI IV 2a T-session trials,
+all 22 EEG electrodes, artifacts included, 2–30 Hz zero-phase run filtering
+before cutting trials, preserved native gaps/run boundaries, and stratified
+60/20/20 training/validation/test trial splits. Fit channel mean/std on training
+samples in float64; store/apply in float32 with the original 1e-8 std floor.
 
-Persist a class-stratified 60/20/20 train/validation/test split per participant
-and seed. Both backbones and their tensor variants use that same split. Fit
-channel means and standard deviations only on training samples in float64,
-then store and apply them in float32, with the original minimum standard
-deviation of 1e-8. If tensor models are selected, fit one shared Tucker
-channel/sample factor pair on
-normalized full-channel training windows. Factors and normalization remain
-fixed afterward. There is no supervised common-encoder pretraining or frozen
-feature cache.
+For outages remove hidden raw intervals before filtering each observed electrode
+span. Outside-trial recording context remains observed. Uninterrupted electrodes
+reuse original filtered values. The same observed-input cache serves all variants
+and learned completion's masked training inputs.
 
-Train each model once, on all 22 channels. All backbone, MHA and classifier
-parameters receive gradients. The production recipe restores 500 epochs, no
-early stopping, batch size 64, AdamW learning rate 0.001, weight decay 0.001,
-balanced training-class weights, cross entropy, ten warmup epochs followed by
-cosine decay, and no gradient clipping. Debug and smoke deliberately use a
-short budget. PyTorch DataLoader uses shuffle=True, a seed-initialized generator
-that advances across epochs, zero workers and no dropped final batch.
-Use one CPU thread and deterministic CUDA settings as in the original recipe.
-Full-channel model calls bypass completion, signal selection and MHA key masks.
+Train each backbone end to end once on 22 channels: 500 epochs, batch size 64,
+AdamW learning rate/weight decay 0.001, ten warmup epochs then cosine decay,
+balanced class weights, no early stopping or gradient clipping. Keep original
+seeded DataLoader order, initialization, one CPU thread and deterministic CUDA.
+Class weights are `N_train/(4 N_train,c)`; average weighted example losses rather
+than normalizing by their weight sum. Full-channel validation uses these same
+training weights. Strictly lowest validation loss selects the epoch; exact ties
+keep the earlier epoch. Test and degraded validation never select it.
 
-For class c, weights are N_train / (4 * N_train,c). Loss is the mean of these
-weights times each example's cross entropy, matching the original implementation;
-it is not normalized by the sum of weights. Validation uses those same
-training-fitted weights and averages batch losses by example count. Evaluate
-only 22-channel validation during training; select the epoch with the lowest
-validation loss. Strict improvement is required; ties keep the earlier epoch.
-Unweighted validation log loss remains descriptive. Test labels and
-degraded validation scores never participate in checkpoint selection.
+Keep both architectures and their original MHA initialization streams unchanged.
+Every completion variant reuses the same selected backbone checkpoint, recorded
+by checksum. Full inputs bypass completion and MHA key masks exactly.
 
-Fixed four-head MHA uses the original Linear(dim, 3*dim) Q/K/V and Linear(dim,
-dim) output projections and explicit scaled softmax scores, with the original
-availability mask excluding missing keys. Initialization uses a separate CPU
-generator seeded by `(model_seed + 104729 * (layer_index + 1)) % 2**63`,
-restoring the backbone RNG state after construction. EEGNet keeps the original
-convolution/attention/classifier construction order. There is no attention
-registry, factory or switch.
+## Covariance calibration
 
-Save the selected checkpoint before evaluation. After selection, predict on
-validation and then held-out test for 22, 16, 11 and 6 channels. Each degraded
-count has random/spatial static and dynamic masks, five repeats by default.
-There are 13 scenarios and 61 prediction conditions per partition, 122 metric
-rows per full-preset model run. All sweeps use the same selected weights, with
-no optimizer steps or factor updates. Masks are shared across all four models.
+Fit one shared 22×22 second moment on normalized full-channel training samples.
+Frozen and learned arms initialize identical float64 SPD conditional-completion
+operators. Frozen covariance has no supervised fitting. See
+[covariance mathematics](covariance_math.md) for the solve and parameterization.
 
-## Outputs and aggregation
+Learned covariance optimizes only 253 Cholesky coordinates through the frozen
+selected backbone. Keep BatchNorm and dropout in evaluation mode. Sample
+22/16/11/6 channels and random/spatial static/dynamic patterns from the reserved
+train subset bucket, disjoint from validation/test subsets. Apply outages before
+filtering. Combine the existing training-weighted classification loss, 0.1
+hidden-training MSE and 0.0001 initialization anchor.
 
-Use `results/inm-v5` for full, separate pilot/debug directories for presets.
-The EEGNet comparisons use `results/eegnet-a03-a04-a09-restored-v5` and
-`results/eegnet-all9-restored-v5`. Older result directories remain intact.
-Schema/source/environment identities prevent reusing previous-protocol results.
-Model records live in `artifacts/Axx_seed_s/MODELS/<model>/`. Each contains
-configuration, training history, selected `checkpoint.pt`, checksum/selection
-metadata and all validation/test metrics. A participant/seed calibration cache
-stores train-only normalization and factors. Splits, trial IDs, dataset source
-checksums, exclusions, settings, source hashes and package versions accompany
-the study. CUDA/cuDNN versions, GPU names and deterministic runtime settings are
-also recorded. Each condition records a preprocessed-input hash; paired reports
-require both input and mask equality. Do not edit a running study's inputs or source.
+Use Adam at 0.001, batch size 32, clipping at 1, no weight decay/scheduler, and
+100 fixed epochs. Full batches skip updates. Retain the final state and save
+all training masks/order and history. No validation/test arrays enter this fit.
+Runtime guards require unchanged backbone tensors and unchanged full-input
+training-probe logits.
 
-Rerunning a task skips complete provenance/checksum-verified runs. If training
-completed but evaluation was interrupted, restore the selected checkpoint and
-finish inference rather than train again. Failed models are recorded while the
-remaining declared models continue; errors and unfavorable outcomes are kept.
+This extra supervised calibration is the learned arm's intervention. Frozen
+covariance retains full-only fitting. The final-epoch rule differs from the
+research branch's degraded-validation selection. This is a new matched study
+in our restored setup, not reproduction of that branch's numerical results.
+The learned arm evaluates unseen trials/subsets, not unseen outage families.
 
-Balanced accuracy is primary; ordinary accuracy and macro-F1 are also reported.
-For each condition, average mask repeats, then seeds within each participant,
-then equally over configured participants. Full means require all declared
-participants/seeds; unfinished means stay blank. Completed individual runs remain
-visible. Subject SD describes participant variation, not independent seeds.
-Paired tensor gains require matching dataset, split, calibration and mask hashes.
-Robustness gives equal weight to 22/16/11/6 counts within a loss pattern. Bootstrap
-intervals resample participants after averaging paired seed differences; they are
-pointwise exploratory intervals with no multiple-comparison correction.
+## Evaluation and aggregation
 
-Reports update after runs. Optional PNG/PDF plots of validation/test availability
-and paired robustness are rebuilt from saved tables through `--summarize-only
---plots`. Plotting never runs checkpoints. See [README](../README.md) for commands.
+Freeze all weights before validation and held-out test evaluation. Keep the
+previous 22/16/11/6 counts, four outage patterns, ABA schedule and five repeats:
+61 conditions per partition, 122 metric rows per production variant. All models
+receive identical observed-input and mask hashes. No sweep performs fitting.
+
+Keep all participants/seeds and unfavorable outcomes. Average repeats, then
+seeds within participant, then participants equally. Balanced accuracy is primary;
+report accuracy, macro-F1, degradation and post-fit hidden-sample NRMSE too.
+Better reconstruction does not guarantee better classification. Incomplete
+means remain blank while completed individual runs stay visible. Robustness
+averages 22/16/11/6 equally within each pattern.
+
+Pair frozen-minus-baseline, learned-minus-baseline and learned-minus-frozen.
+Require matching data/split/calibration, backbone checksum, masks and inputs.
+Conflicting full-input scores exclude the pair. Pointwise bootstrap intervals
+resample participant mean differences without multiple-comparison correction.
+
+## Artifacts and resuming
+
+Use fresh `results/eegnet-a03-a04-a09-covariance-v6` and
+`results/eegnet-all9-covariance-v6` directories. Historical restored-v5 results
+remain intact. Source/config/environment identity prevents previous-protocol
+artifacts from being silently reused.
+
+Each participant/seed directory preserves splits, sample IDs, dataset provenance,
+normalization and covariance initialization. `BACKBONES/<backbone>/` stores its
+shared selected checkpoint/history. `MODELS/<model>/` stores complete variant
+weights, backbone checksum, selection record and all evaluation scores. Learned
+variants retain `completion_history.json`, `completion_fit.json` and
+`completion_training.npz`, with checksums. The study manifest records source,
+configuration inheritance, launcher and runtime provenance.
+
+Completed evaluation resumes from the saved variant checkpoint. Interrupted
+calibration restarts deterministically from train-only initialization, reusing
+the verified backbone within that study. Failed variants are recorded while
+remaining variants continue; any failure makes the task exit unsuccessfully.
+Changed source/settings need a new output directory.
+
+The supplied launcher runs the CUDA preflight in `tests/test_covariance.py`
+before first-stage training. It checks conditional estimates, hidden-value
+isolation, full bypass, train-reserved masks, covariance gradients and frozen
+backbone invariance. These checks have not been executed locally.
+
+Reports update under a process lock. CSV/Markdown and optional PNG/PDF
+availability/paired-gain plots stay separate per preset. Plotting reads saved
+tables and never runs training. See the [README](../README.md) for commands.
 
 ## Research limits
 
-This is a within-session offline availability study, not competition T-to-E
-performance or unseen-participant generalization. Raw-window tensor completion
-may fail to recover task information, especially under severe or grouped loss. Full-channel pass-through does not assert accuracy or tensor benefit;
-these require experimental measurements. Hidden-sample NRMSE is secondary and is
-scored only after fitting, never used as a model input or tuning objective.
-
-The v5 recipe restores the original full-channel run filtering as well as
-training and initialization. Degraded trials are refiltered after removing raw
-outages; zeroing an already filtered intact dynamic trial would leak hidden
-intervals into observed inputs. This protocol assumes known recording context
-outside the evaluated trial and uses offline zero-phase filtering. Historical
-accuracy replication must be measured with matching participants, seeds and
-runtime versions; static source inspection cannot establish numerical parity.
+This is offline within-session evaluation with recording context, not causal
+streaming, unseen-participant generalization or competition T-to-E performance.
+Covariance accuracy and historical full-input parity require cluster measurements;
+static inspection cannot establish them. No covariance result is claimed yet.

@@ -1,6 +1,16 @@
 {
   "extends": "eegnet_3subjects.json",
-  "name": "eegnet_tensor_all_subjects_restored_v5",
-  "subjects": [1, 2, 3, 4, 5, 6, 7, 8, 9],
-  "output_dir": "results/eegnet-all9-restored-v5"
+  "name": "eegnet_covariance_all_subjects_v6",
+  "subjects": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "output_dir": "results/eegnet-all9-covariance-v6"
 }

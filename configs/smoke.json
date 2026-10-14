@@ -1,7 +1,16 @@
 {
   "extends": "debug.json",
-  "name": "smoke_four_models_one_subject_v5",
-  "subjects": [1],
-  "models": ["eegnet", "eegnet_tensor", "signal_transformer", "signal_transformer_tensor"],
-  "output_dir": "results/inm-v5-smoke"
+  "name": "smoke_six_models_one_subject_v6",
+  "subjects": [
+    1
+  ],
+  "models": [
+    "eegnet",
+    "eegnet_covariance_frozen",
+    "eegnet_covariance_learned",
+    "signal_transformer",
+    "signal_transformer_covariance_frozen",
+    "signal_transformer_covariance_learned"
+  ],
+  "output_dir": "results/inm-covariance-v6-smoke"
 }
